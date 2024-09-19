@@ -16,6 +16,14 @@ export class UsersService {
     return this.http.get<User[]>(this.apiUrl);
   }
 
+  getUser(id: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`);
+  }
+
+  updateUser(id: string, user: Omit<User, 'id'>): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${id}`, user);
+  }
+
   createUser(user: Omit<User, 'id'>): Observable<User> {
     console.log('called createUser', user);
     // const newUser = { ...user, id: uuidv4() };
