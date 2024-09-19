@@ -1,45 +1,58 @@
 <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-  <div>
-    <label for="firstName">First Name</label>
+  <mat-form-field>
+    <mat-label>First Name</mat-label>
     <input
+      matInput
       type="text"
       id="firstName"
       name="firstName"
       formControlName="firstName"
       required
+      [errorStateMatcher]="matcher"
     />
-  </div>
-  <div>
-    <label for="lastName">Last Name</label>
+    @if (userForm.get("firstName")?.hasError('required')) {
+    <mat-error>Please enter your first name.</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Last Name</mat-label>
     <input
+      matInput
       type="text"
       id="lastName"
       name="lastName"
       formControlName="lastName"
       required
+      [errorStateMatcher]="matcher"
     />
-  </div>
-  <div>
-    <label for="email">Email</label>
+    @if (userForm.get("lastName")?.hasError('required')) {
+    <mat-error>Please enter your last name.</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Email</mat-label>
     <input
+      matInput
       type="text"
       id="email"
       name="email"
       formControlName="email"
       required
+      [errorStateMatcher]="matcher"
     />
-  </div>
+    @if (userForm.get("email")?.hasError('required') ||
+    userForm.get("email")?.hasError('email')) {
+    <mat-error>Please enter a valid email address.</mat-error>
+    }
+  </mat-form-field>
+  <mat-checkbox
+    type="checkbox"
+    id="isActive"
+    name="isActive"
+    formControlName="isActive"
+    >Is Active?</mat-checkbox
+  >
   <div>
-    <label for="isActive">Is Active?</label>
-    <input
-      type="checkbox"
-      id="isActive"
-      name="isActive"
-      formControlName="isActive"
-      required
-    />
-  </div>
-  <div>
-    <button type="submit">Submit</button>
+    <button mat-flat-button type="submit">Submit</button>
   </div>
 </form>
