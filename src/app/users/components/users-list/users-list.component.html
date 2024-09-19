@@ -1,8 +1,8 @@
 <mat-card>
   <mat-card-content>
-    @if (filteredUsers.length > 0) {
+    @if (users$ | async; as users) {
     <ol>
-      @for (user of filteredUsers; track user.id) {
+      @for (user of users; track user.id) {
       <li>
         <h3>{{ user.firstName }} {{ user.lastName }}</h3>
         <p>{{ user.email }}</p>
