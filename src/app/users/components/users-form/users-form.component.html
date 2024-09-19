@@ -1,0 +1,45 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="firstName">First Name</label>
+    <input
+      type="text"
+      id="firstName"
+      name="firstName"
+      formControlName="firstName"
+      required
+    />
+  </div>
+  <div>
+    <label for="lastName">Last Name</label>
+    <input
+      type="text"
+      id="lastName"
+      name="lastName"
+      formControlName="lastName"
+      required
+    />
+  </div>
+  <div>
+    <label for="email">Email</label>
+    <input
+      type="text"
+      id="email"
+      name="email"
+      formControlName="email"
+      required
+    />
+  </div>
+  <div>
+    <label for="isActive">Is Active?</label>
+    <input
+      type="checkbox"
+      id="isActive"
+      name="isActive"
+      formControlName="isActive"
+      required
+    />
+  </div>
+  <div>
+    <button type="submit">Submit</button>
+  </div>
+</form>

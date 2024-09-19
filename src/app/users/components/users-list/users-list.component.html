@@ -1,0 +1,17 @@
+<mat-card>
+  <mat-card-content>
+    @if (filteredUsers.length > 0) {
+    <ol>
+      @for (user of filteredUsers; track user.id) {
+      <li>
+        <h3>{{ user.firstName }} {{ user.lastName }}</h3>
+        <p>{{ user.email }}</p>
+        <p>Is active? {{ user.isActive ? "Yes" : "No" }}</p>
+      </li>
+      }
+    </ol>
+    } @else {
+    <p>No users to show.</p>
+    }
+  </mat-card-content>
+</mat-card>
