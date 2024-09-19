@@ -1,0 +1,37 @@
+.mat-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-title {
+  font-size: 1.5em;
+  font-weight: 500;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+
+  li {
+    margin: 0 10px;
+
+    a {
+      text-decoration: none;
+      color: indigo;
+    }
+    a:hover {
+      color: #303f9f;
+      text-decoration: underline;
+    }
+    a:active {
+      color: #1a237e;
+    }
+  }
+}
