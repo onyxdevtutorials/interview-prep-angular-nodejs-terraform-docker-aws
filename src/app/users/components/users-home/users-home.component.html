@@ -1,15 +1,2 @@
-<h2>All Users</h2>
-@if (users$ | async; as users) {
-<app-users-list [users]="users" />
-} @else {
-<p>No users.</p>
-}
-
-<h2>Users Whose Last Names Start with "B"</h2>
-@if (users$ | async; as users) {
-<app-users-list [users]="users" [filterCriteria]="bUsersFilter" />
-} @else {
-<p>No users whose last names start with "B."</p>
-}
-
-<app-users-create />
+<h2>Users Home</h2>
+<router-outlet></router-outlet>
