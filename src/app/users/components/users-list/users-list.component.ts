@@ -7,7 +7,7 @@ import {
 import { User } from '../../models/user.model';
 import { MatCardModule } from '@angular/material/card';
 import { UsersService } from '../../services/users.service';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -21,12 +21,16 @@ import { CommonModule } from '@angular/common';
 export class UsersListComponent implements OnInit {
   usersService = inject(UsersService);
 
-  users$: Observable<User[]> = of([]);
+  users$ = new BehaviorSubject<User[]>([]);
 
   // bUsersFilter = (user: User) => user.lastName.startsWith('B');
 
   ngOnInit(): void {
-    this.users$ = this.usersService.getUsers();
+    this.usersService.getUsers().subscribe({
+      next: (users) => this.users$.next(users),
+      error: (error) => console.error('Error getting users:', error),
+      complete: () => console.log('Users retrieval complete'),
+    });
   }
 
   // @Input() users: User[] = [];
