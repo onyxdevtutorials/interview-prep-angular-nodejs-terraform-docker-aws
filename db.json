@@ -1,0 +1,74 @@
+{
+  "users": [
+    {
+      "id": "0",
+      "firstName": "Artie",
+      "lastName": "Schermerhorn",
+      "email": "aschermerhorn@bobandray.com",
+      "isActive": true
+    },
+    {
+      "id": "1",
+      "firstName": "Mary",
+      "lastName": "Backstayge",
+      "email": "mbackstayge@bobandray.com",
+      "isActive": false
+    },
+    {
+      "id": "2",
+      "firstName": "Harry",
+      "lastName": "Backstayge",
+      "email": "hbackstayge@bobandray.com",
+      "isActive": true
+    },
+    {
+      "id": "3",
+      "firstName": "Calvin",
+      "lastName": "Hoogavin",
+      "email": "choogavin@bobandray.com",
+      "isActive": false
+    },
+    {
+      "id": "0fac",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.com",
+      "isActive": true
+    },
+    {
+      "id": "f922",
+      "firstName": "Pierpont",
+      "lastName": "Lolly",
+      "email": "plolly@bobandray.com",
+      "isActive": true
+    },
+    {
+      "id": "c192",
+      "firstName": "Bodin",
+      "lastName": "Pardew",
+      "email": "bpardew@bobandray.com",
+      "isActive": true
+    },
+    {
+      "firstName": "Cyril",
+      "lastName": "Gore",
+      "email": "cgore@bobandray.com",
+      "isActive": true,
+      "id": "9654"
+    },
+    {
+      "firstName": "Mary ",
+      "lastName": "Magoon",
+      "email": "mmagoon@bobandray.com",
+      "isActive": true,
+      "id": "8842"
+    },
+    {
+      "id": "f1af",
+      "firstName": "Wally",
+      "lastName": "Ballew",
+      "email": "wballew@bobandray.com",
+      "isActive": false
+    }
+  ]
+}
