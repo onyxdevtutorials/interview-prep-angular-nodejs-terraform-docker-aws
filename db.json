@@ -1,11 +1,11 @@
 {
   "users": [
     {
-      "id": "0",
       "firstName": "Artie",
       "lastName": "Schermerhorn",
       "email": "aschermerhorn@bobandray.com",
-      "isActive": true
+      "isActive": false,
+      "id": "0"
     },
     {
       "id": "1",
@@ -64,11 +64,34 @@
       "id": "8842"
     },
     {
-      "id": "f1af",
       "firstName": "Wally",
       "lastName": "Ballew",
       "email": "wballew@bobandray.com",
-      "isActive": false
+      "isActive": true,
+      "id": "f1af"
+    },
+    {
+      "id": "20df",
+      "firstName": "Fielding",
+      "lastName": "Backstayge",
+      "email": "fbackstayge@bobandray.com",
+      "isActive": true
+    },
+    {
+      "firstName": "Milford",
+      "lastName": "Longhorn",
+      "email": "mlonghorn@bobandray.com",
+      "isActive": false,
+      "id": "351e"
+    }
+  ],
+  "products": [
+    {
+      "name": "iPhone 100",
+      "description": "The iPhone designed for the new millennium",
+      "price": 12345,
+      "isActive": false,
+      "id": "cd17"
     }
   ]
 }
