@@ -3,7 +3,13 @@
   <span class="spacer"></span>
   <ul>
     <li><a routerLink="/" routerLinkActive="active">Home</a></li>
-    <li><a routerLink="/users" routerLinkActive="active">Users</a></li>
+    <li>
+      <a [matMenuTriggerFor]="usersMenu" routerLinkActive="active">Users</a>
+      <mat-menu #usersMenu="matMenu">
+        <button mat-menu-item routerLink="/users">List</button>
+        <button mat-menu-item routerLink="/users/new">New User</button>
+      </mat-menu>
+    </li>
     <li><a routerLink="/products" routerLinkActive="active">Products</a></li>
   </ul>
 </mat-toolbar>
