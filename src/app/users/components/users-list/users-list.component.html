@@ -4,7 +4,11 @@
     <ol>
       @for (user of users; track user.id) {
       <li>
-        <h3>{{ user.firstName }} {{ user.lastName }}</h3>
+        <h3>
+          <a [routerLink]="['/users/update/', user.id]"
+            >{{ user.firstName }} {{ user.lastName }}</a
+          >
+        </h3>
         <p>{{ user.email }}</p>
         <p>Is active? {{ user.isActive ? "Yes" : "No" }}</p>
       </li>

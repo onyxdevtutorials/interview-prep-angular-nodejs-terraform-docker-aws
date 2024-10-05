@@ -2,6 +2,7 @@ import { Component, inject, OnInit, input } from '@angular/core';
 import { UsersFormComponent } from '../users-form/users-form.component';
 import { UsersService } from '../../services/users.service';
 import { User } from '../../models/user.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-users-update',
@@ -12,6 +13,7 @@ import { User } from '../../models/user.model';
 })
 export class UsersUpdateComponent implements OnInit {
   usersService = inject(UsersService);
+  router = inject(Router);
 
   userId = input.required<string>();
 
@@ -20,7 +22,10 @@ export class UsersUpdateComponent implements OnInit {
   handleFormSubmit(formData: Omit<User, 'id'>): void {
     console.log(formData);
     this.usersService.updateUser(this.userId(), formData).subscribe({
-      next: (user) => console.log('User updated:', user),
+      next: (user) => {
+        console.log('User updated:', user);
+        this.router.navigate(['/users']);
+      },
       error: (error) => console.error('Error updating user:', error),
       complete: () => console.log('User update complete'),
     });
