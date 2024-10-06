@@ -1,0 +1,63 @@
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input
+      matInput
+      type="text"
+      id="name"
+      name="name"
+      formControlName="name"
+      required
+      [errorStateMatcher]="matcher"
+    />
+    @if (productForm.get("name")?.hasError('required')) {
+    <mat-error>Please enter the product name.</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Description</mat-label>
+    <input
+      matInput
+      type="text"
+      id="description"
+      name="description"
+      formControlName="description"
+      required
+      [errorStateMatcher]="matcher"
+    />
+    @if (productForm.get("description")?.hasError('required')) {
+    <mat-error>Please enter the product description.</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Price</mat-label>
+    <input
+      matInput
+      type="number"
+      id="price"
+      name="price"
+      formControlName="price"
+      required
+      [errorStateMatcher]="matcher"
+    />
+    @if (productForm.get("price")?.hasError('required')) {
+    <mat-error>Please enter the product price.</mat-error>
+    } @if (productForm.get("price")?.hasError('min')) {
+    <mat-error>Price must be .01 or greater.</mat-error>
+    } @if (productForm.get("price")?.hasError("pattern")) {
+    <mat-error
+      >Price must be a positive number with up to two decimal places.</mat-error
+    >
+    }
+  </mat-form-field>
+  <mat-checkbox
+    type="checkbox"
+    id="isActive"
+    name="isActive"
+    formControlName="isActive"
+    >Is Active?</mat-checkbox
+  >
+  <div>
+    <button mat-flat-button type="submit">Submit</button>
+  </div>
+</form>
