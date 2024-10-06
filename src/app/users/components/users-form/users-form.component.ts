@@ -7,10 +7,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import {
-  FormBuilder,
-  FormControl,
-  FormGroupDirective,
-  NgForm,
+  NonNullableFormBuilder,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -22,22 +19,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatCardModule } from '@angular/material/card';
 import { MatLabel } from '@angular/material/form-field';
 import { MatError } from '@angular/material/form-field';
-import { ErrorStateMatcher } from '@angular/material/core';
+import { MyErrorStateMatcher } from '../../../shared/utils/error-state-matcher';
 
 /** Error when invalid control is dirty, touched, or submitted. */
-export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(
-    control: FormControl | null,
-    form: FormGroupDirective | NgForm | null
-  ): boolean {
-    const isSubmitted = form && form.submitted;
-    return !!(
-      control &&
-      control.invalid &&
-      (control.dirty || control.touched || isSubmitted)
-    );
-  }
-}
 
 @Component({
   selector: 'app-users-form',
@@ -59,7 +43,7 @@ export class UsersFormComponent {
   @Input() user: User | null = null;
   @Output() formSubmit = new EventEmitter<Omit<User, 'id'>>();
 
-  fb = inject(FormBuilder);
+  fb = inject(NonNullableFormBuilder);
 
   userForm = this.fb.group({
     firstName: ['', Validators.required],
