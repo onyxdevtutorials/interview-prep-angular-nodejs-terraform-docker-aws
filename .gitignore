@@ -37,6 +37,23 @@ yarn-error.log
 testem.log
 /typings
 
+# Ignore Terraform variable files
+terraform.tfvars
+
+# Ignore Terraform state files
+*.tfstate
+*.tfstate.*
+
+# Ignore Terraform crash log files
+crash.log
+
+# Ignore Terraform plan files
+*.tfplan
+tfplan
+
+# Ignore .terraform directory
+.terraform/
+
 # System files
 .DS_Store
 Thumbs.db
