@@ -1,17 +1,31 @@
 version: "3.8"
 
 services:
-  app:
-    image: 909500381447.dkr.ecr.us-east-1.amazonaws.com/interview-prep:latest
+  frontend:
+    image: 909500381447.dkr.ecr.us-east-1.amazonaws.com/interview-prep-frontend:latest
     ports:
       - "80:80"
     depends_on:
-      - json-server
+      - backend
 
-  json-server:
-    image: clue/json-server
+  backend:
+    image: 909500381447.dkr.ecr.us-east-1.amazonaws.com/interview-prep-backend:latest
     ports:
       - "3000:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on: db
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
     volumes:
-      - ./db.json:/data/db.json
-    command: json-server --watch /data/db.json --port 3000
+      - postgres-data:/var/lib/postgresql/data
+
+  volumes:
+    postgres-data:
