@@ -122,6 +122,13 @@ resource "aws_security_group" "ec2_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port = 0
     to_port = 0
@@ -164,8 +171,11 @@ resource "aws_db_instance" "postgres" {
 resource "aws_instance" "app_instance" {
   ami = "ami-0fff1b9a61dec8a5f"
   instance_type = "t2.micro"
-  subnet_id = aws_subnet.subnet_a.id
-  security_groups = [aws_security_group.ec2_sg.id]
+  key_name = "OnyxKeyPair"
+  network_interface {
+    network_interface_id = aws_network_interface.app_network_interface.id
+    device_index = 0
+  }
   tags = {
     Name = "interview-prep-app-instance"
   }
@@ -177,6 +187,15 @@ resource "aws_network_interface" "app_network_interface" {
   tags = {
     Name = "interview-prep-app-network-interface"
   }
+}
+
+resource "aws_eip" "app_eip" {
+  associate_with_private_ip = aws_instance.app_instance.private_ip
+}
+
+resource "aws_eip_association" "app_eip_assoc" {
+  allocation_id = aws_eip.app_eip.id
+  instance_id = aws_instance.app_instance.id
 }
 
 # subnets
