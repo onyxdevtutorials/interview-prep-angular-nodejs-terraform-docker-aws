@@ -82,13 +82,15 @@ resource "aws_route_table_association" "assoc_b" {
 # Security Group for RDS
 resource "aws_security_group" "db_sg" {
   name = "interview-prep-db-sg"
+  description = "Managed by Terraform"
   vpc_id = aws_vpc.main.id
 
   ingress {
     from_port = 5432
     to_port = 5432
     protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    # cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.ec2_sg.id]
   }
 
   egress {
@@ -106,20 +108,14 @@ resource "aws_security_group" "db_sg" {
 # Security Group for EC2
 resource "aws_security_group" "ec2_sg" {
   name = "interview-prep-ec2-sg"
+  description = "Managed by Terraform"
   vpc_id = aws_vpc.main.id
 
   ingress {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port = 5432
-    to_port = 5432
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["2001:5a8:42bf:6400:3155:dd42:c5dc:b451/128"]  # Allow SSH from a specific IPv6 address
   }
 
   ingress {
