@@ -198,28 +198,116 @@ resource "aws_eip_association" "app_eip_assoc" {
   instance_id = aws_instance.app_instance.id
 }
 
-# subnets
-# "SubnetId": "subnet-0198ed44e2ba16b12" interview-prep-db-subnet-a
-# "SubnetId": "subnet-010340cd699a29323" interview-prep-subnet-a
-# "SubnetId": "subnet-0cf4a467f95e42575" interview-prep-subnet-b
-# "SubnetId": "subnet-09cab1c9483c9f659" interview-prep-db-subnet-b
+resource "aws_ecr_repository" "frontend" {
+  name = "interview-prep-frontend"
+}
 
-# internet gateway
-# "InternetGatewayId": "igw-0a4879e467270c3d0"
+resource "aws_ecr_repository" "backend" {
+  name = "interview-prep-backend"
+}
 
-# ec2 instance
-# "InstanceId": "i-0e6e643b1de35a967"
+resource "aws_ecs_cluster" "main" {
+  name = "interview-prep-cluster"
+}
 
-# network interfaces
-# "NetworkInterfaceId": "eni-045b6f9b39d09e23e"
+resource "aws_ecs_task_definition" "frontend" {
+  family = "interview-prep-frontend"
+  network_mode = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu = "256"
+  memory = "512"
+  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
 
-# route tables
-# "RouteTableId": "rtb-0160d75bad26fd37b"
+  container_definitions = jsonencode([
+    {
+      name = "frontend"
+      image = "${aws_ecr_repository.frontend.repository_url}:latest"
+      essential = true
+      portMappings = [
+        {
+          containerPort = 80
+          hostPort = 80
+          protocol = "tcp"
+        }
+      ]
+    }
+  ])
+}
 
-# security groups
-# "GroupId": "sg-096c95794157c3733" 
-# "GroupName": "default", "Description": "default VPC security group" 
+resource "aws_ecs_task_definition" "backend" {
+  family = "interview-prep-backend"
+  network_mode = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu = "256"
+  memory = "512"
+  execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
 
-# "GroupId": "sg-02ad1008f26dc5762" interview-prep-ec2-sg
+  container_definitions = jsonencode([
+    {
+      name = "backend"
+      image = "${aws_ecr_repository.backend.repository_url}:latest"
+      essential = true
+      portMappings = [
+        {
+          containerPort = 3000
+          hostPort = 3000
+        }
+      ]
+      environment = [
+        {
+          name = "DATABASE_URL"
+          value = "postgres://$${DB_USERNAME}:$${DB_PASSWORD}@interviewprepdbinstance:5432/interviewprepdb"
+        }
+      ]
+    }
+  ])
+}
 
-# "GroupId": "sg-07420c31584bb9d36" interview-prep-db-sg
+resource "aws_ecs_service" "frontend" {
+  name            = "interview-prep-frontend-service"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.frontend.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    subnets         = [aws_subnet.subnet_a.id, aws_subnet.db_subnet_b.id]
+    security_groups = [aws_security_group.ec2_sg.id]
+    assign_public_ip = true
+  }
+}
+
+resource "aws_ecs_service" "backend" {
+  name            = "interview-prep-backend-service"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.backend.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    subnets         = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+    security_groups = [aws_security_group.ec2_sg.id]
+    assign_public_ip = true
+  }
+}
+
+resource "aws_iam_role" "ecs_task_execution_role" {
+  name = "interview-prep-ecs-task-execution-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
+  role       = aws_iam_role.ecs_task_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
