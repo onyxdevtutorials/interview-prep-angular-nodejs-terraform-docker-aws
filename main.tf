@@ -11,7 +11,7 @@ resource "aws_vpc" "main" {
   }
 }
 
-# Create subnets
+# Create subnets. subnet_a and subnet_b are public subnets, db_subnet_a and db_subnet_b are private subnets
 resource "aws_subnet" "subnet_a" {
   vpc_id = aws_vpc.main.id
   cidr_block = var.subnet_a_cidr
@@ -79,6 +79,95 @@ resource "aws_route_table_association" "assoc_b" {
   route_table_id = aws_route_table.route_table.id
 }
 
+# Associate Route Table with DB Subnets
+resource "aws_route_table" "private_route_table" {
+  vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "interview-prep-private-route-table"
+  }
+}
+
+resource "aws_route_table_association" "db_assoc_a" {
+  subnet_id      = aws_subnet.db_subnet_a.id
+  route_table_id = aws_route_table.private_route_table.id
+}
+
+resource "aws_route_table_association" "db_assoc_b" {
+  subnet_id      = aws_subnet.db_subnet_b.id
+  route_table_id = aws_route_table.private_route_table.id
+}
+
+# Security Group for EC2. Frontend security group.
+resource "aws_security_group" "frontend_sg" {
+  name = "interview-prep-frontend-sg"
+  description = "Managed by Terraform"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Allow all HTTP traffic
+  }
+
+  ingress {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Allow all HTTPS traffic
+  }
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["52.207.253.244/32"] # Allow SSH from my IP
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "interview-prep-frontend-sg"
+  }
+}
+
+# Backend security group
+resource "aws_security_group" "backend_sg" {
+  name = "interview-prep-backend-sg"
+  description = "Managed by Terraform"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port = 3000
+    to_port = 3000
+    protocol = "tcp"
+    security_groups = [aws_security_group.frontend_sg.id] # Allow traffic from frontend
+  }
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["52.207.253.244/32"] # Allow SSH from my IP
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "interview-prep-backend-sg"
+  }
+}
+
 # Security Group for RDS
 resource "aws_security_group" "db_sg" {
   name = "interview-prep-db-sg"
@@ -89,8 +178,14 @@ resource "aws_security_group" "db_sg" {
     from_port = 5432
     to_port = 5432
     protocol = "tcp"
-    # cidr_blocks = ["0.0.0.0/0"]
-    security_groups = [aws_security_group.ec2_sg.id]
+    security_groups = [aws_security_group.backend_sg.id] # Allow traffic from backend
+  }
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["52.207.253.244/32"] # Allow SSH from my IP
   }
 
   egress {
@@ -102,38 +197,6 @@ resource "aws_security_group" "db_sg" {
 
   tags = {
     Name = "interview-prep-db-sg"
-  }
-}
-
-# Security Group for EC2
-resource "aws_security_group" "ec2_sg" {
-  name = "interview-prep-ec2-sg"
-  description = "Managed by Terraform"
-  vpc_id = aws_vpc.main.id
-
-  ingress {
-    from_port = 22
-    to_port = 22
-    protocol = "tcp"
-    ipv6_cidr_blocks = ["2001:5a8:42bf:6400:3155:dd42:c5dc:b451/128"]  # Allow SSH from a specific IPv6 address
-  }
-
-  ingress {
-    from_port = 80
-    to_port = 80
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "interview-prep-ec2-sg"
   }
 }
 
@@ -179,12 +242,13 @@ resource "aws_instance" "app_instance" {
 
 resource "aws_network_interface" "app_network_interface" {
   subnet_id = aws_subnet.subnet_a.id
-  security_groups = [aws_security_group.ec2_sg.id]
+  security_groups = [aws_security_group.frontend_sg.id]
   tags = {
     Name = "interview-prep-app-network-interface"
   }
 }
 
+# Elastic IP
 resource "aws_eip" "app_eip" {
   associate_with_private_ip = aws_instance.app_instance.private_ip
 }
@@ -268,7 +332,7 @@ resource "aws_ecs_service" "frontend" {
 
   network_configuration {
     subnets         = [aws_subnet.subnet_a.id, aws_subnet.db_subnet_b.id]
-    security_groups = [aws_security_group.ec2_sg.id]
+    security_groups = [aws_security_group.frontend_sg.id]
     assign_public_ip = true
   }
 }
@@ -282,8 +346,8 @@ resource "aws_ecs_service" "backend" {
 
   network_configuration {
     subnets         = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
-    security_groups = [aws_security_group.ec2_sg.id]
-    assign_public_ip = true
+    security_groups = [aws_security_group.backend_sg.id]
+    assign_public_ip = false
   }
 }
 
@@ -306,4 +370,37 @@ resource "aws_iam_role" "ecs_task_execution_role" {
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+
+# Security Group for EC2
+resource "aws_security_group" "ec2_sg" {
+  name = "interview-prep-ec2-sg"
+  description = "Managed by Terraform"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    ipv6_cidr_blocks = ["2001:5a8:42bf:6400:3155:dd42:c5dc:b451/128"]  # Allow SSH from a specific IPv6 address
+  }
+
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "interview-prep-ec2-sg"
+  }
 }
