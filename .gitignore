@@ -62,3 +62,8 @@ Thumbs.db
 .env.local
 .env.production
 .env.*.local
+
+# Flyway
+flyway.conf
+
+notes.md
