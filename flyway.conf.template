@@ -1,0 +1,19 @@
+# Default configuration
+flyway.url=jdbc:postgresql://localhost:5432/your_local_db
+flyway.user=your_local_user
+flyway.password=your_local_password
+
+# Dev environment
+flyway.url.dev=jdbc:postgresql://dev-db-host:5432/your_dev_db
+flyway.user.dev=your_dev_user
+flyway.password.dev=your_dev_password
+
+# Stage environment
+flyway.url.stage=jdbc:postgresql://stage-db-host:5432/your_stage_db
+flyway.user.stage=your_stage_user
+flyway.password.stage=your_stage_password
+
+# Production environment
+flyway.url.prod=jdbc:postgresql://prod-db-host:5432/your_prod_db
+flyway.user.prod=your_prod_user
+flyway.password.prod=your_prod_password
