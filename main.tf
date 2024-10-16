@@ -188,9 +188,10 @@ resource "aws_security_group" "db_sg" {
     from_port = 5432
     to_port = 5432
     protocol = "tcp"
-    security_groups = [aws_security_group.backend_sg.id] # Allow traffic from backend
+    security_groups = [aws_security_group.backend_sg.id, aws_security_group.bastion_sg.id] # Allow traffic from backend and bastion
   }
 
+  # Remove this after bastion is working
   ingress {
     from_port = 5432
     to_port = 5432
@@ -233,7 +234,7 @@ resource "aws_db_instance" "postgres" {
   db_subnet_group_name    = aws_db_subnet_group.db_subnet_group.name
   skip_final_snapshot     = true
   apply_immediately       = false
-  publicly_accessible = true
+  publicly_accessible = false
   tags                    = {}
 }
 
@@ -414,4 +415,62 @@ resource "aws_security_group" "ec2_sg" {
   tags = {
     Name = "interview-prep-ec2-sg"
   }
+}
+
+resource "aws_security_group" "bastion_sg" {
+  name = "interview-prep-bastion-sg"
+  description = "Managed by Terraform"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["45.147.172.140/32"]  # Allow VPN
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "interview-prep-bastion-sg"
+  }
+}
+
+resource "aws_instance" "bastion" {
+  ami = "ami-0fff1b9a61dec8a5f"
+  instance_type = "t2.micro"
+  key_name = "OnyxKeyPair"
+  network_interface {
+    network_interface_id = aws_network_interface.bastion_eni.id
+    device_index = 0
+  }
+
+  tags = {
+    Name = "interview-prep-bastion"
+  }
+}
+
+resource "aws_eip" "bastion_eip" {
+  tags = {
+    Name = "interview-prep-bastion-eip"
+  }
+}
+
+resource "aws_network_interface" "bastion_eni" {
+  subnet_id = aws_subnet.subnet_a.id
+  security_groups = [aws_security_group.bastion_sg.id]
+
+  tags = {
+    Name = "interview-prep-bastion-eni"
+  }
+}
+
+resource "aws_eip_association" "bastion_eip_assoc" {
+  allocation_id = aws_eip.bastion_eip.id
+  network_interface_id = aws_network_interface.bastion_eni.id
 }
