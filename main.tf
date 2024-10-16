@@ -82,9 +82,19 @@ resource "aws_route_table_association" "assoc_b" {
 # Associate Route Table with DB Subnets
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.main.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
   tags = {
     Name = "interview-prep-private-route-table"
   }
+}
+
+resource "aws_route" "private_subnet_route" {
+  route_table_id = aws_route_table.private_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id = aws_internet_gateway.igw.id
 }
 
 resource "aws_route_table_association" "db_assoc_a" {
@@ -121,7 +131,7 @@ resource "aws_security_group" "frontend_sg" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = ["52.207.253.244/32"] # Allow SSH from my IP
+    cidr_blocks = ["45.147.172.140/32"] # Allow SSH from VPN
   }
 
   egress {
@@ -153,7 +163,7 @@ resource "aws_security_group" "backend_sg" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = ["52.207.253.244/32"] # Allow SSH from my IP
+    cidr_blocks = ["45.147.172.140/32"] # Allow from VPN
   }
 
   egress {
@@ -182,10 +192,10 @@ resource "aws_security_group" "db_sg" {
   }
 
   ingress {
-    from_port = 22
-    to_port = 22
+    from_port = 5432
+    to_port = 5432
     protocol = "tcp"
-    cidr_blocks = ["52.207.253.244/32"] # Allow SSH from my IP
+    cidr_blocks = ["45.147.172.140/32"] # Allow from VPN
   }
 
   egress {
@@ -223,6 +233,7 @@ resource "aws_db_instance" "postgres" {
   db_subnet_group_name    = aws_db_subnet_group.db_subnet_group.name
   skip_final_snapshot     = true
   apply_immediately       = false
+  publicly_accessible = true
   tags                    = {}
 }
 
@@ -383,7 +394,7 @@ resource "aws_security_group" "ec2_sg" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    ipv6_cidr_blocks = ["2001:5a8:42bf:6400:3155:dd42:c5dc:b451/128"]  # Allow SSH from a specific IPv6 address
+    cidr_blocks = ["45.147.172.140/32"]  # Allow VPN
   }
 
   ingress {
