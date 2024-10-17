@@ -17,7 +17,9 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "lib": ["ES2022", "dom"]
+    "lib": ["ES2022", "dom"],
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
