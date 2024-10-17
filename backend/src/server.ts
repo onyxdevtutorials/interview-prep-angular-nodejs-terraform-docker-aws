@@ -1,12 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { Pool } from 'pg';
 import dotenv from 'dotenv';
 import knex from 'knex';
 import knexConfig from './knex';
 
 const envFile =
-  process.env['NODE_ENV'] === 'production' ? '.env.production' : '.env.local';
+  process.env['NODE_ENV'] === 'production'
+    ? '../.env.production'
+    : '../.env.local';
 dotenv.config({ path: envFile });
 
 const app = express();
