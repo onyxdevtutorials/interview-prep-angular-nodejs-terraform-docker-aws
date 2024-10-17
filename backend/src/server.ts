@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import knex from 'knex';
 import knexConfig from './knex';
+import cors from 'cors';
 
 const envFile =
   process.env['NODE_ENV'] === 'production'
@@ -14,6 +15,7 @@ const app = express();
 const port = process.env['PORT'] || 3000;
 
 app.use(bodyParser.json());
+app.use(cors());
 
 console.log('DATABASE_URL:', process.env['DATABASE_URL']);
 
