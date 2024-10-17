@@ -48,7 +48,6 @@ resource "aws_subnet" "db_subnet_b" {
   }
 }
 
-# Use existing Internet Gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
   tags = {
@@ -82,19 +81,9 @@ resource "aws_route_table_association" "assoc_b" {
 # Associate Route Table with DB Subnets
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.main.id
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
   tags = {
     Name = "interview-prep-private-route-table"
   }
-}
-
-resource "aws_route" "private_subnet_route" {
-  route_table_id = aws_route_table.private_route_table.id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id = aws_internet_gateway.igw.id
 }
 
 resource "aws_route_table_association" "db_assoc_a" {
@@ -105,6 +94,13 @@ resource "aws_route_table_association" "db_assoc_a" {
 resource "aws_route_table_association" "db_assoc_b" {
   subnet_id      = aws_subnet.db_subnet_b.id
   route_table_id = aws_route_table.private_route_table.id
+}
+
+# Route for private subnets to use NAT Gateway
+resource "aws_route" "private_route" {
+  route_table_id = aws_route_table.private_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id = aws_nat_gateway.nat_gw.id
 }
 
 # Security Group for EC2. Frontend security group.
@@ -131,7 +127,7 @@ resource "aws_security_group" "frontend_sg" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = ["45.147.172.140/32"] # Allow SSH from VPN
+    security_groups = [aws_security_group.bastion_sg.id] # Allow bastion host to ssh in
   }
 
   egress {
@@ -147,6 +143,7 @@ resource "aws_security_group" "frontend_sg" {
 }
 
 # Backend security group
+# ssh in from bastion, allow traffic from frontend
 resource "aws_security_group" "backend_sg" {
   name = "interview-prep-backend-sg"
   description = "Managed by Terraform"
@@ -163,7 +160,7 @@ resource "aws_security_group" "backend_sg" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = ["45.147.172.140/32"] # Allow from VPN
+    security_groups = [aws_security_group.bastion_sg.id] # Allow bastion host to ssh in
   }
 
   egress {
@@ -189,14 +186,6 @@ resource "aws_security_group" "db_sg" {
     to_port = 5432
     protocol = "tcp"
     security_groups = [aws_security_group.backend_sg.id, aws_security_group.bastion_sg.id] # Allow traffic from backend and bastion
-  }
-
-  # Remove this after bastion is working
-  ingress {
-    from_port = 5432
-    to_port = 5432
-    protocol = "tcp"
-    cidr_blocks = ["45.147.172.140/32"] # Allow from VPN
   }
 
   egress {
@@ -268,6 +257,21 @@ resource "aws_eip" "app_eip" {
 resource "aws_eip_association" "app_eip_assoc" {
   allocation_id = aws_eip.app_eip.id
   instance_id = aws_instance.app_instance.id
+}
+
+resource "aws_eip" "nat_eip" {
+  tags = {
+    Name = "interview-prep-nat-eip"
+  }
+}
+
+# NAT Gateway for Outbound Internet Access from private subnets
+resource "aws_nat_gateway" "nat_gw" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id = aws_subnet.subnet_a.id # Public subnet
+  tags = {
+    Name = "interview-prep-nat-gw"
+  }
 }
 
 resource "aws_ecr_repository" "frontend" {
@@ -386,6 +390,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
 
 
 # Security Group for EC2
+# This actually isn't used but I'm having trouble deleting it because of dependencies
 resource "aws_security_group" "ec2_sg" {
   name = "interview-prep-ec2-sg"
   description = "Managed by Terraform"
