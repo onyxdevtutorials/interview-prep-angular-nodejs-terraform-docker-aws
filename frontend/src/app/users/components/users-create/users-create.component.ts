@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { UsersFormComponent } from '../users-form/users-form.component';
-import { User } from '../../models/user.model';
+import { User } from '@shared/types/user';
 import { Router } from '@angular/router';
 
 @Component({

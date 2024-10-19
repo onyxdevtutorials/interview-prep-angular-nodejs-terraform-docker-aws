@@ -4,7 +4,7 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { User } from '../../models/user.model';
+import { User } from '@shared/types/user';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UsersService } from '../../services/users.service';

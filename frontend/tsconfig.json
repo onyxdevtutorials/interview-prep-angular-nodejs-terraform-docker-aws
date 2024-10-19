@@ -22,7 +22,8 @@
     "lib": ["ES2022", "dom"],
     "baseUrl": ".",
     "paths": {
-      "@shared/*": ["../shared/*"]
+      "@shared/*": ["../shared/*"], // Shared by frontend and backend
+      "@frontend-shared/*": ["../shared/*"]
     }
   },
   "angularCompilerOptions": {

@@ -11,12 +11,14 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { User } from '../../models/user.model';
+import { User } from '@shared/types/user';
+import { UserStatus } from '@shared/types/userStatus';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatCardModule } from '@angular/material/card';
+import { MatSelectModule } from '@angular/material/select';
 import { MatLabel } from '@angular/material/form-field';
 import { MatError } from '@angular/material/form-field';
 import { MyErrorStateMatcher } from '../../../shared/utils/error-state-matcher';
@@ -33,6 +35,7 @@ import { MyErrorStateMatcher } from '../../../shared/utils/error-state-matcher';
     MatFormFieldModule,
     MatCheckboxModule,
     MatCardModule,
+    MatSelectModule,
     MatLabel,
     MatError,
   ],
@@ -46,11 +49,13 @@ export class UsersFormComponent {
   fb = inject(NonNullableFormBuilder);
 
   userForm = this.fb.group({
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
+    first_name: ['', Validators.required],
+    last_name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    isActive: [false],
+    status: ['', Validators.required],
   });
+
+  userStatuses = Object.values(UserStatus);
 
   matcher = new MyErrorStateMatcher();
 

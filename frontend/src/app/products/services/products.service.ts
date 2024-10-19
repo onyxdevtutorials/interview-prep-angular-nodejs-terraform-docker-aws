@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { Product } from '../models/product.model';
+import { Product } from '@shared/types/product';
 import { HttpErrorHandlerService } from '../../core/services/http-error-handler.service';
 
 @Injectable({

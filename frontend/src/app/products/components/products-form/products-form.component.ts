@@ -11,7 +11,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Product } from '../../models/product.model';
+import { Product } from '@shared/types/product';
+import { ProductStatus } from '@shared/types/productStatus';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,6 +20,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatCardModule } from '@angular/material/card';
 import { MatLabel } from '@angular/material/form-field';
 import { MatError } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MyErrorStateMatcher } from '../../../shared/utils/error-state-matcher';
 
 @Component({
@@ -31,6 +33,7 @@ import { MyErrorStateMatcher } from '../../../shared/utils/error-state-matcher';
     MatFormFieldModule,
     MatCheckboxModule,
     MatCardModule,
+    MatSelectModule,
     MatLabel,
     MatError,
   ],
@@ -54,8 +57,10 @@ export class ProductsFormComponent {
         Validators.min(0.01),
       ],
     ],
-    isActive: [false],
+    status: ['', Validators.required],
   });
+
+  productStatuses = Object.values(ProductStatus);
 
   matcher = new MyErrorStateMatcher();
 
@@ -63,11 +68,7 @@ export class ProductsFormComponent {
     if (this.product) {
       const productWithDefaults = {
         ...this.product,
-        // name: this.product.name || '',
-        // description: this.product.description || '',
         price: this.product.price ? (this.product.price / 100).toFixed(2) : '',
-        // isActive:
-        //   this.product.isActive !== null ? this.product.isActive : false,
       };
       this.productForm.patchValue(productWithDefaults);
     }
@@ -80,10 +81,7 @@ export class ProductsFormComponent {
         name: formValue.name || '',
         description: formValue.description || '',
         price: formValue.price ? parseFloat(formValue.price) : 0,
-        isActive:
-          formValue.isActive !== null && formValue.isActive !== undefined
-            ? formValue.isActive
-            : false,
+        status: (formValue.status as ProductStatus) || ProductStatus.PENDING,
       };
       this.formSubmit.emit(product);
     }

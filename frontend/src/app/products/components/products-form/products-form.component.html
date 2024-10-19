@@ -50,13 +50,19 @@
     >
     }
   </mat-form-field>
-  <mat-checkbox
-    type="checkbox"
-    id="isActive"
-    name="isActive"
-    formControlName="isActive"
-    >Is Active?</mat-checkbox
-  >
+  <mat-form-field>
+    <mat-label>Status</mat-label>
+    <mat-select formControlName="status" required>
+      @for (status of productStatuses; track status) {
+      <mat-option [value]="status">
+        {{ status }}
+      </mat-option>
+      }
+    </mat-select>
+    @if (productForm.get("status")?.hasError('required')) {
+    <mat-error>Please select the product status.</mat-error>
+    }
+  </mat-form-field>
   <div>
     <button mat-flat-button type="submit">Submit</button>
   </div>

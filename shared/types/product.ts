@@ -6,6 +6,6 @@ export interface Product {
   price: number;
   description: string;
   status: ProductStatus;
-  created_at: Date;
-  updated_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }

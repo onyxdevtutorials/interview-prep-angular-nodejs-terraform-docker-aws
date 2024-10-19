@@ -6,11 +6,11 @@
       <li>
         <h3>
           <a [routerLink]="['/users/update/', user.id]"
-            >{{ user.firstName }} {{ user.lastName }}</a
+            >{{ user.first_name }} {{ user.last_name }}</a
           >
         </h3>
         <p>{{ user.email }}</p>
-        <p>Is active? {{ user.isActive ? "Yes" : "No" }}</p>
+        <p>Status: {{ user.status }}</p>
       </li>
       }
     </ol>

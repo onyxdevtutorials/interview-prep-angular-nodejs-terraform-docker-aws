@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, input } from '@angular/core';
 import { ProductsFormComponent } from '../products-form/products-form.component';
 import { ProductsService } from '../../services/products.service';
-import { Product } from '../../models/product.model';
+import { Product } from '@shared/types/product';
 import { Router } from '@angular/router';
 
 @Component({
