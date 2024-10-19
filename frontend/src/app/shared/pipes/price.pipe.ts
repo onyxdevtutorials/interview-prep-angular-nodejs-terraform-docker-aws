@@ -9,6 +9,9 @@ export class PricePipe implements PipeTransform {
     if (value === null || value === undefined) {
       return '';
     }
-    return `$${(value / 100).toFixed(2)}`;
+    return `$${(value / 100).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   }
 }
