@@ -1,0 +1,19 @@
+@use "@angular/material" as mat;
+
+@include mat.core();
+
+$custom-theme: mat.define-theme(
+  (
+    color: (
+      primary: mat.$blue-palette,
+    ),
+  )
+);
+
+:root {
+  @include mat.all-component-colors($custom-theme);
+}
+
+.mat-mdc-card {
+  background-color: #dddddd !important;
+}

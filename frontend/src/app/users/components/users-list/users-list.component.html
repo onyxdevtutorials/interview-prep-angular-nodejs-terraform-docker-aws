@@ -1,21 +1,25 @@
-<mat-card>
-  <mat-card-content>
+<div>
+  <div>
     @if (users$ | async; as users) {
     <ol>
       @for (user of users; track user.id) {
-      <li>
-        <h3>
-          <a [routerLink]="['/users/update/', user.id]"
-            >{{ user.first_name }} {{ user.last_name }}</a
-          >
-        </h3>
-        <p>{{ user.email }}</p>
-        <p>Status: {{ user.status }}</p>
+      <li class="mb-4">
+        <mat-card>
+          <mat-card-content>
+            <h3>
+              <a [routerLink]="['/users/update/', user.id]"
+                >{{ user.first_name }} {{ user.last_name }}</a
+              >
+            </h3>
+            <p>{{ user.email }}</p>
+            <p>Status: {{ user.status }}</p>
+          </mat-card-content>
+        </mat-card>
       </li>
       }
     </ol>
     } @else {
     <p>No users to show.</p>
     }
-  </mat-card-content>
-</mat-card>
+  </div>
+</div>

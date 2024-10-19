@@ -1,22 +1,26 @@
-<mat-card>
-  <mat-card-content>
+<div>
+  <div>
     @if (products$ | async; as products) {
     <ol>
       @for (product of products; track product.id) {
-      <li>
-        <h3>
-          <a [routerLink]="['/products/update/', product.id]">{{
-            product.name
-          }}</a>
-        </h3>
-        <p>{{ product.description }}</p>
-        <p>Price: {{ product.price | price }}</p>
-        <p>Status: {{ product.status }}</p>
+      <li class="mb-4">
+        <mat-card>
+          <mat-card-content>
+            <h3>
+              <a [routerLink]="['/products/update/', product.id]">{{
+                product.name
+              }}</a>
+            </h3>
+            <p>{{ product.description }}</p>
+            <p>Price: {{ product.price | price }}</p>
+            <p>Status: {{ product.status }}</p>
+          </mat-card-content>
+        </mat-card>
       </li>
       }
     </ol>
     } @else {
     <p>No products to show.</p>
     }
-  </mat-card-content>
-</mat-card>
+  </div>
+</div>
