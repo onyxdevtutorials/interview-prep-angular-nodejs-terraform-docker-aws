@@ -1,64 +1,78 @@
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-  <mat-form-field>
-    <mat-label>First Name</mat-label>
-    <input
-      matInput
-      type="text"
-      id="first_name"
-      name="first_name"
-      formControlName="first_name"
-      required
-      [errorStateMatcher]="matcher"
-    />
-    @if (userForm.get("first_name")?.hasError('required')) {
-    <mat-error>Please enter your first name.</mat-error>
-    }
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>Last Name</mat-label>
-    <input
-      matInput
-      type="text"
-      id="last_name"
-      name="last_name"
-      formControlName="last_name"
-      required
-      [errorStateMatcher]="matcher"
-    />
-    @if (userForm.get("last_name")?.hasError('required')) {
-    <mat-error>Please enter your last name.</mat-error>
-    }
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>Email</mat-label>
-    <input
-      matInput
-      type="text"
-      id="email"
-      name="email"
-      formControlName="email"
-      required
-      [errorStateMatcher]="matcher"
-    />
-    @if (userForm.get("email")?.hasError('required') ||
-    userForm.get("email")?.hasError('email')) {
-    <mat-error>Please enter a valid email address.</mat-error>
-    }
-  </mat-form-field>
-  <mat-form-field>
-    <mat-label>Status</mat-label>
-    <mat-select formControlName="status" required>
-      @for (status of userStatuses; track status) {
-      <mat-option [value]="status">
-        {{ status }}
-      </mat-option>
+<form
+  [formGroup]="userForm"
+  (ngSubmit)="onSubmit()"
+  class="flex flex-col gap-4"
+>
+  <div class="flex flex-row gap-4">
+    <mat-form-field class="flex-1">
+      <mat-label>First Name</mat-label>
+      <input
+        matInput
+        type="text"
+        id="first_name"
+        name="first_name"
+        formControlName="first_name"
+        required
+        [errorStateMatcher]="matcher"
+      />
+      @if (userForm.get("first_name")?.hasError('required')) {
+      <mat-error>Please enter your first name.</mat-error>
       }
-    </mat-select>
-    @if (userForm.get("status")?.hasError('required')) {
-    <mat-error>Please select a status.</mat-error>
-    }
-  </mat-form-field>
-  <div>
-    <button mat-flat-button type="submit">Submit</button>
+    </mat-form-field>
+  </div>
+  <div class="flex flex-row gap-4">
+    <mat-form-field class="flex-1">
+      <mat-label>Last Name</mat-label>
+      <input
+        matInput
+        type="text"
+        id="last_name"
+        name="last_name"
+        formControlName="last_name"
+        required
+        [errorStateMatcher]="matcher"
+      />
+      @if (userForm.get("last_name")?.hasError('required')) {
+      <mat-error>Please enter your last name.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="flex flex-row gap-4">
+    <mat-form-field class="flex-1">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        type="text"
+        id="email"
+        name="email"
+        formControlName="email"
+        required
+        [errorStateMatcher]="matcher"
+      />
+      @if (userForm.get("email")?.hasError('required') ||
+      userForm.get("email")?.hasError('email')) {
+      <mat-error>Please enter a valid email address.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="flex flex-row gap-4">
+    <mat-form-field class="flex-1">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status" required>
+        @for (status of userStatuses; track status) {
+        <mat-option [value]="status">
+          {{ status }}
+        </mat-option>
+        }
+      </mat-select>
+      @if (userForm.get("status")?.hasError('required')) {
+      <mat-error>Please select a status.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="flex flex-row gap-4">
+    <div>
+      <button mat-flat-button type="submit">Submit</button>
+    </div>
   </div>
 </form>
