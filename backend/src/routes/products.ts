@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import knex from 'knex';
 import knexConfig from '../knex';
-import { Product } from '@shared/types/product';
+import { Product } from '@onyxdevtutorials/interview-prep-shared';
 import { productSchema, productPatchSchema } from '../validation/productSchema';
 import { ValidationError } from '../errors/ValidationError';
 import { NotFoundError } from '../errors/NotFoundError';
