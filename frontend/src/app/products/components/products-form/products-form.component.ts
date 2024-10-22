@@ -11,8 +11,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Product } from '@shared/types/product';
-import { ProductStatus } from '@shared/types/productStatus';
+import { Product } from '@onyxdevtutorials/interview-prep-shared';
+import { ProductStatus } from '@onyxdevtutorials/interview-prep-shared';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';

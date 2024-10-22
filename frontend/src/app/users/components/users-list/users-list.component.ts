@@ -4,7 +4,7 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { User } from '@shared/types/user';
+import { User } from '@onyxdevtutorials/interview-prep-shared';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UsersService } from '../../services/users.service';

@@ -9,6 +9,15 @@ import { NotFoundError } from '../errors/NotFoundError';
 const router = Router();
 const db = knex(knexConfig[process.env['NODE_ENV'] || 'development']);
 
+// Log database connection status
+db.raw('SELECT 1')
+  .then(() => {
+    console.log('Database connection successful');
+  })
+  .catch((error) => {
+    console.error('Database connection error:', error);
+  });
+
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const products: Product[] = await db.select('*').from('products');

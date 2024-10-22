@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { ProductStatus } from '@shared/types/productStatus';
+import { ProductStatus } from '@onyxdevtutorials/interview-prep-shared';
 
 export const productSchema = Joi.object({
   name: Joi.string().required(),

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { User } from '@shared/types/user';
+import { User } from '@onyxdevtutorials/interview-prep-shared';
 import { HttpErrorHandlerService } from '../../core/services/http-error-handler.service';
 
 @Injectable({

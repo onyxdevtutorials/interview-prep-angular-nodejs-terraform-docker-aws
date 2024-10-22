@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import knex from 'knex';
 import knexConfig from '../knex';
-import { User } from '@shared/types/user';
+import { User } from '@onyxdevtutorials/interview-prep-shared';
 import { userSchema, userPatchSchema } from '../validation/userSchema';
 import { ValidationError } from '../errors/ValidationError';
 import { NotFoundError } from '../errors/NotFoundError';

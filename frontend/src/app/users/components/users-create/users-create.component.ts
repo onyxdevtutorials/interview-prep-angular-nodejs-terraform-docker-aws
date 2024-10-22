@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { UsersFormComponent } from '../users-form/users-form.component';
-import { User } from '@shared/types/user';
+import { User } from '@onyxdevtutorials/interview-prep-shared';
 import { Router } from '@angular/router';
 
 @Component({
