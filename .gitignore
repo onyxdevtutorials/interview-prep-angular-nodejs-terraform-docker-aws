@@ -59,9 +59,9 @@ tfplan
 Thumbs.db
 
 .env
-.env.local
-.env.production
-.env.*.local
+.env.*
+
+!.env.example
 
 # Flyway
 flyway.conf
