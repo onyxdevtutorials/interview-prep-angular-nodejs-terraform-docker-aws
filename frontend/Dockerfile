@@ -1,20 +1,20 @@
-FROM node:20 as build
+FROM node:20-bookworm AS build
 
-WORKDIR /app
+WORKDIR /app/frontend
 
-COPY package.json ./
+COPY frontend/package.json frontend/package-lock.json ./
+
+RUN rm -rf node_modules package-lock.json
 
 RUN npm install
 
-COPY . .
+RUN npm install @rollup/rollup-linux-arm64-musl
+RUN npm install @rollup/rollup-linux-arm64-gnu
+
+COPY frontend /app/frontend
 
 RUN npm run build --prod
 
-FROM nginx:alpine
+EXPOSE 4200
 
-COPY --from=build /app/dist/interview-prep/browser /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npm", "start"]

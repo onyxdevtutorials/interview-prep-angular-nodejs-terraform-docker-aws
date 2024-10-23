@@ -2,19 +2,35 @@ version: "3.8"
 
 services:
   frontend:
-    image: 909500381447.dkr.ecr.us-east-1.amazonaws.com/interview-prep-frontend:latest
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: interview-prep-frontend:latest
     ports:
-      - "80:80"
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app/frontend
+      - node_modules:/app/node_modules
+    working_dir: /app/frontend
+    command: npm run start
     depends_on:
       - backend
 
   backend:
-    image: 909500381447.dkr.ecr.us-east-1.amazonaws.com/interview-prep-backend:latest
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: interview-prep-backend:latest
     ports:
       - "3000:3000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
-    depends_on: db
+    volumes:
+      - ./backend:/app/backend
+      - /app/node_modules
+    command: npm run dev
+    depends_on:
+      - db
 
   db:
     image: postgres:latest
@@ -25,7 +41,16 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data # Persist data even after container is removed
 
-  volumes:
-    postgres-data:
+  flyway:
+    image: flyway/flyway:latest
+    command: -url=jdbc:postgresql://db:5432/interviewprepdbinstance -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} migrate
+    volumes:
+      - ./sql:/flyway/sql
+    depends_on:
+      - db
+
+volumes:
+  postgres-data:
+  node_modules:
