@@ -2,9 +2,7 @@ FROM node:20-bookworm AS build
 
 WORKDIR /app/frontend
 
-COPY frontend/package.json frontend/package-lock.json ./
-
-RUN rm -rf node_modules package-lock.json
+COPY frontend/package.json ./
 
 RUN npm install
 
