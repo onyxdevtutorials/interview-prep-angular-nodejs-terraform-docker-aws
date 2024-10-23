@@ -47,7 +47,7 @@ services:
     image: flyway/flyway:latest
     command: -url=jdbc:postgresql://db:5432/interviewprepdbinstance -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} migrate
     volumes:
-      - ./sql:/flyway/sql
+      - ./migrations:/flyway/migrations
     depends_on:
       - db
 
