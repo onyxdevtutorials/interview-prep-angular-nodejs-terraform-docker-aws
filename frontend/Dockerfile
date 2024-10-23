@@ -8,9 +8,6 @@ RUN rm -rf node_modules package-lock.json
 
 RUN npm install
 
-RUN npm install @rollup/rollup-linux-arm64-musl
-RUN npm install @rollup/rollup-linux-arm64-gnu
-
 COPY frontend /app/frontend
 
 RUN npm run build --prod
