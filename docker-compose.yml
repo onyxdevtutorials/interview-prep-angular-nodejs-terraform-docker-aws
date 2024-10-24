@@ -51,6 +51,17 @@ services:
     depends_on:
       - db
 
+  frontend-tests:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: interview-prep-frontend-tests:latest
+    volumes:
+      - ./frontend:/app/frontend
+      - node_modules_frontend:/app/frontend/node_modules
+    working_dir: /app/frontend
+    command: npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox
+
 volumes:
   postgres-data:
   node_modules_frontend:
