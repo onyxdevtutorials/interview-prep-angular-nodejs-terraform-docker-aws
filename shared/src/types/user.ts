@@ -6,6 +6,6 @@ export interface User {
   last_name: string;
   email: string;
   status: UserStatus;
-  created_at: Date;
-  updated_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }
