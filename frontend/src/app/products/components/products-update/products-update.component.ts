@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { ProductsFormComponent } from '../products-form/products-form.component';
 import { ProductsService } from '../../services/products.service';
 import { Product } from '@onyxdevtutorials/interview-prep-shared';

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { UsersFormComponent } from './users-form.component';
 
@@ -8,9 +9,8 @@ describe('UsersFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UsersFormComponent]
-    })
-    .compileComponents();
+      imports: [UsersFormComponent, BrowserAnimationsModule],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(UsersFormComponent);
     component = fixture.componentInstance;
