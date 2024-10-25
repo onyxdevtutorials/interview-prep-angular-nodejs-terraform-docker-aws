@@ -10,4 +10,25 @@ export class MockUsersService {
       status: UserStatus.ACTIVE,
     });
   }
+
+  getUsers() {
+    return of(mockUsers);
+  }
+
+  getUser(id: number) {
+    return of(mockUsers.find((u) => u.id === id));
+  }
+
+  updateUser(id: string, user: Omit<User, 'id'>) {
+    const index = mockUsers.findIndex((u) => u.id.toString() === id);
+    if (index !== -1) {
+      mockUsers[index] = {
+        id: parseInt(id, 10),
+        ...user,
+      };
+      return of(mockUsers[index]);
+    } else {
+      return of(null);
+    }
+  }
 }

@@ -1,38 +1,132 @@
-import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { UsersUpdateComponent } from './users-update.component';
+import { provideRouter, Router } from '@angular/router';
+import { MockUsersService } from '../../mocks/mock-users.service';
 import { UsersService } from '../../services/users.service';
+import { UsersUpdateComponent } from './users-update.component';
+import { routes } from '../../../app.routes';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { User, UserStatus } from '@onyxdevtutorials/interview-prep-shared';
+import { mockUsers } from '../../mocks/mock-users';
+import { of, throwError } from 'rxjs';
 
 describe('UsersUpdateComponent', () => {
   let component: UsersUpdateComponent;
   let fixture: ComponentFixture<UsersUpdateComponent>;
-
-  // @Component({
-  //   imports: [UsersUpdateComponent],
-  //   standalone: true,
-  //   template: '<app-users-update [userId]="userId" />',
-  // })
-  // class TestHost {
-  //   userId = '123';
-  // }
+  let mockUsersService: MockUsersService;
+  let router: Router;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UsersUpdateComponent],
-      providers: [provideHttpClient(), UsersService],
+      imports: [UsersUpdateComponent, BrowserAnimationsModule],
+      providers: [
+        provideHttpClient(),
+        provideRouter(routes),
+        { provide: UsersService, useClass: MockUsersService },
+      ],
     }).compileComponents();
 
-    // fixture = TestBed.createComponent(TestHost);
     fixture = TestBed.createComponent(UsersUpdateComponent);
 
-    fixture.componentRef.setInput('userId', '123');
+    // One method of setting the productId input. The other is the TestHost method.
+    fixture.componentRef.setInput('userId', '1');
 
     component = fixture.componentInstance;
+    mockUsersService = TestBed.inject(
+      UsersService
+    ) as unknown as MockUsersService;
+    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should call updateUser on UsersService when handleFormSubmit is called', () => {
+    const formData = {
+      first_name: 'Jerry',
+      last_name: 'Doe',
+      email: 'jerry.doe@xyz.com',
+      status: UserStatus.ACTIVE,
+    } as Omit<User, 'id'>;
+
+    spyOn(mockUsersService, 'updateUser').and.returnValue(
+      of({
+        ...formData,
+        id: 1,
+      })
+    );
+
+    component.handleFormSubmit(formData);
+
+    expect(mockUsersService.updateUser).toHaveBeenCalledWith('1', formData);
+  });
+
+  it('should navigate to /users after successful update', () => {
+    const formData = {
+      first_name: 'Jerry',
+      last_name: 'Doe',
+      email: 'jerry.doe@xyz.com',
+      status: UserStatus.ACTIVE,
+    } as Omit<User, 'id'>;
+
+    spyOn(mockUsersService, 'updateUser').and.returnValue(
+      of({
+        ...formData,
+        id: 1,
+      })
+    );
+
+    spyOn(router, 'navigate');
+
+    component.handleFormSubmit(formData);
+
+    expect(router.navigate).toHaveBeenCalledWith(['/users']);
+  });
+
+  it('should log an error if updateUser fails', () => {
+    const formData = {
+      first_name: 'Jerry',
+      last_name: 'Doe',
+      email: 'jerry.doe@xyz.com',
+      status: UserStatus.ACTIVE,
+    } as Omit<User, 'id'>;
+
+    spyOn(mockUsersService, 'updateUser').and.returnValue(
+      throwError(() => new Error('Simulated network error'))
+    );
+
+    spyOn(console, 'error');
+
+    component.handleFormSubmit(formData);
+
+    expect(console.error).toHaveBeenCalledWith(
+      'Error updating user:',
+      new Error('Simulated network error')
+    );
+  });
+
+  it('should set userData on init', () => {
+    spyOn(mockUsersService, 'getUser').and.returnValue(of(mockUsers[0]));
+
+    component.ngOnInit();
+
+    expect(component.userData).toEqual(mockUsers[0]);
+  });
+
+  it('should log an error if getUser fails', () => {
+    spyOn(mockUsersService, 'getUser').and.returnValue(
+      throwError(() => new Error('Simulated network error'))
+    );
+
+    spyOn(console, 'error');
+
+    component.ngOnInit();
+
+    expect(console.error).toHaveBeenCalledWith(
+      'Error getting user:',
+      new Error('Simulated network error')
+    );
   });
 });
