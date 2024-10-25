@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 import { MatSelectHarness } from '@angular/material/select/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 
-fdescribe('UsersFormComponent', () => {
+describe('UsersFormComponent', () => {
   let component: UsersFormComponent;
   let fixture: ComponentFixture<UsersFormComponent>;
 
