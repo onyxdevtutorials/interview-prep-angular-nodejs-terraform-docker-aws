@@ -14,4 +14,4 @@ else
 fi
 
 # Run Flyway migrations
-flyway -configFiles=flyway.conf migrate
+flyway -configFiles=flyway.conf migrate -X

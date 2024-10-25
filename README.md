@@ -52,11 +52,11 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Flyway and Migrations
 
-DB credentials and URLs are in `.env.local` and `.env.production`. Note that for the production credentials, I'm using `localhost:5433` for the `FLYWAY_URL`: that's based on using an SSH tunnel and using a non-standard port to avoid conflicting with the locally running Postgresql.
+DB credentials and URLs are in `.env.local` and `.env.development`. Set the environment to be used: `export NODE_ENV=local` or `export NODE_ENV=production`.
 
-Before running a migration, set the environment to be used: `export NODE_ENV=local` or `export NODE_ENV=production`.
+The migrations are run (if necessary) after the db container comes up.
 
-If you haven't done so before, make `run-flyway.sh` executable with `chmod +x run-flyway.sh`.
+Maybe obsolete:
 
 You need an SSH tunnel to be able to run the Flyway migrations on the db in AWS. Check for a tunnel by using `ps aux | grep ssh`. It will look something like
 
@@ -104,9 +104,13 @@ The security group only allows SSH connections from my VPN IP address.
 
 `aws ecr get-login-password --region us-east-1 --profile aws-cli-user | docker login --username AWS --password-stdin 909500381447.dkr.ecr.us-east-1.amazonaws.com`
 
-# Build the Docker image
+# Build the Docker images
 
-`docker build -t interview-prep .`
+To run locally:
+
+1. Authenticate Docker to ECR if necessary.
+1. From the app root directory (parent of frontend and backend) run `docker build -t interview-prep-frontend:latest -f frontend/Dockerfile .`
+1. `docker build -t interview-prep-backend:latest -f backend/Dockerfile .`
 
 # Tag the Docker image
 
@@ -115,3 +119,67 @@ The security group only allows SSH connections from my VPN IP address.
 # Push the Docker image to ECR
 
 `docker push 909500381447.dkr.ecr.us-east-1.amazonaws.com/interview-prep:latest`
+
+# Get IP Address of a Docker Container
+
+`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container_id>`
+E.g.,
+`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' c611004f5595`
+
+# Check Docker Network Settings
+
+`docker network ls`
+
+# Inspect Docker Container
+
+`docker inspect interview-prep-frontend-1`
+
+# Check the disk space usage by Docker resources
+
+`docker system df`
+
+# Remove Unused Docker Images
+
+`docker image prune -a`
+
+# Remove Unused Docker Containers
+
+`docker container prune`
+
+# Remove Unused Docker Volumes
+
+`docker volume prune`
+
+# Remove Unused Docker Volume Usage
+
+`docker network prune`
+
+# List Docker Volumes
+
+`docker volume ls`
+
+# Inspect a Particular Docker Volume
+
+`docker volume inspect <VOLUME NAME>`
+
+# Run Frontend Tests
+
+`docker-compose --env-file .env.local up frontend-tests`
+
+Or to do a build, too:
+
+`docker-compose --env-file .env.local up --build frontend-tests`
+
+Or:
+
+`docker-compose --env-file .env.local build --no-cache frontend-tests`
+
+`docker-compose --env-file .env.local up frontend-tests`
+
+# Shared
+
+## Update, Build and Publish
+
+1. Increase version number in `package.json`.
+1. `npm run build`
+1. `npm publish`
