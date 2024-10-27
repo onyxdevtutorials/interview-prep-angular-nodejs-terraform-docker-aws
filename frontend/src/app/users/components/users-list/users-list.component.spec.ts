@@ -3,12 +3,12 @@ import { UsersListComponent } from './users-list.component';
 import { UsersService } from '../../services/users.service';
 import { MockUsersService } from '../../mocks/mock-users.service';
 import { provideRouter, Router } from '@angular/router';
-import { routes } from 'src/app/app.routes';
+import { routes } from '../../../app.routes';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-fdescribe('UsersListComponent', () => {
+describe('UsersListComponent', () => {
   let component: UsersListComponent;
   let fixture: ComponentFixture<UsersListComponent>;
   let mockUsersService: MockUsersService;
