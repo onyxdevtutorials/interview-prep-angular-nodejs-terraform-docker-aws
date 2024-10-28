@@ -47,9 +47,9 @@ app.use(
     req.db = db;
     // console.log('Database connection set in middleware:', req.db.client.config);
 
-    const tables = await req.db.raw(
-      "SELECT name FROM sqlite_master WHERE type='table'"
-    );
+    // const tables = await req.db.raw(
+    //   "SELECT name FROM sqlite_master WHERE type='table'"
+    // );
     // console.log('Tables in database from middleware:', tables);
 
     // console.log('Request object in middleware:', req);
