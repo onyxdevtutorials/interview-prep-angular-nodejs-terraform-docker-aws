@@ -19,10 +19,10 @@
     "importHelpers": true,
     "lib": ["ES2022", "dom"],
     "typeRoots": ["./node_modules/@types"],
-    "types": ["node"],
+    "types": ["node", "jest"],
     "baseUrl": ".",
     "paths": {
-      "@shared/*": ["../shared/*"]
+      "*": ["node_modules/*"]
     }
   },
   "include": ["src/**/*.ts", "../shared/**/*.ts"],
