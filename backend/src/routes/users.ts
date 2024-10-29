@@ -116,7 +116,7 @@ router.delete(
         .where({ id })
         .del()
         .returning('*');
-      if (deletedUsers.length === 0) {
+      if (!deletedUsers || deletedUsers.length === 0) {
         return next(new NotFoundError('User not found'));
       } else {
         res.status(204).json(deletedUsers[0]);
