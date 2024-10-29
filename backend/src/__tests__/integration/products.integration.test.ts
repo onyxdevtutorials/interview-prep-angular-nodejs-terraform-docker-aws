@@ -79,25 +79,98 @@ describe('POST /products', () => {
 });
 
 describe('PUT /products/:id', () => {
-  it.skip('should update an existing product', async () => {});
+  it('should update an existing product', async () => {
+    const updatedProduct: Omit<Product, 'id'> = {
+      name: 'Updated Product',
+      price: 200,
+      description: 'Updated product description',
+      status: ProductStatus.AVAILABLE,
+    };
 
-  it.skip('should return a 400 for a product with missing fields', async () => {});
+    const response = await request(app).put('/products/1').send(updatedProduct);
 
-  it.skip('should return a 404 for a non-existent product', async () => {});
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(updatedProduct.name);
+    expect(response.body.price).toBe(updatedProduct.price);
+    expect(response.body.description).toBe(updatedProduct.description);
+    expect(response.body.status).toBe(updatedProduct.status);
+  });
+
+  it('should return a 400 for a product with missing fields', async () => {
+    const updatedProduct: Omit<Product, 'id' | 'description'> = {
+      name: 'Updated Product',
+      price: 200,
+      status: ProductStatus.AVAILABLE,
+    };
+
+    const response = await request(app).put('/products/1').send(updatedProduct);
+
+    expect(response.status).toBe(400);
+  });
+
+  it('should return a 404 for a non-existent product', async () => {
+    const updatedProduct: Omit<Product, 'id'> = {
+      name: 'Updated Product',
+      price: 200,
+      description: 'Updated product description',
+      status: ProductStatus.AVAILABLE,
+    };
+
+    const response = await request(app)
+      .put('/products/999')
+      .send(updatedProduct);
+
+    expect(response.status).toBe(404);
+  });
 });
 
 describe('PATCH /products/:id', () => {
-  it.skip('should update an existing product', async () => {});
+  it('should update an existing product', async () => {
+    const updatedProduct: Partial<Product> = {
+      name: 'Updated Product',
+    };
 
-  it.skip('should return a 400 for a product with missing fields', async () => {
-    // Test doesn't make sense for PATCH
+    const response = await request(app)
+      .patch('/products/1')
+      .send(updatedProduct);
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe(updatedProduct.name);
   });
 
-  it.skip('should return a 404 for a non-existent product', async () => {});
+  it('should not return a 400 for a product with "missing" fields', async () => {
+    const updatedProduct: Partial<Product> = {
+      name: 'Updated Product',
+    };
+
+    const response = await request(app)
+      .patch('/products/1')
+      .send(updatedProduct);
+
+    expect(response.status).toBe(200);
+  });
+
+  it('should return a 404 for a non-existent product', async () => {
+    const updatedProduct: Partial<Product> = {
+      name: 'Updated Product',
+    };
+
+    const response = await request(app)
+      .patch('/products/999')
+      .send(updatedProduct);
+
+    expect(response.status).toBe(404);
+  });
 });
 
 describe('DELETE /products/:id', () => {
-  it.skip('should delete an existing product', async () => {});
+  it('should delete an existing product', async () => {
+    const response = await request(app).delete('/products/1');
+    expect(response.status).toBe(204);
+  });
 
-  it.skip('should return a 404 for a non-existent product', async () => {});
+  it('should return a 404 for a non-existent product', async () => {
+    const response = await request(app).delete('/products/999');
+    expect(response.status).toBe(404);
+  });
 });
