@@ -74,7 +74,7 @@ services:
       - ./backend:/app/backend
       - node_modules_backend:/app/backend/node_modules
     working_dir: /app/backend
-    command: npm run test
+    command: sh -c "npx jest --clearCache && npm run test"
     depends_on:
       - db
 
