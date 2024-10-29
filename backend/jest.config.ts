@@ -108,7 +108,23 @@ const config: Config = {
   // projects: undefined,
 
   // Use this configuration option to add custom reporters to Jest
-  // reporters: undefined,
+  reporters: [
+    'default',
+    [
+      'jest-stare',
+      {
+        resultDir: 'jest-stare',
+        reportTitle: 'Test Report',
+        coverageLink: './coverage/lcov-report/index.html',
+      },
+    ],
+    [
+      'jest-html-reporter',
+      {
+        outputPath: './test-results/test-report.html',
+      },
+    ],
+  ],
 
   // Automatically reset mock state before every test
   // resetMocks: false,
@@ -155,7 +171,8 @@ const config: Config = {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[tj]s?(x)'],
+  // testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[tj]s?(x)'],
+  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
@@ -184,7 +201,7 @@ const config: Config = {
   // unmockedModulePathPatterns: undefined,
 
   // Indicates whether each individual test should be reported during the run
-  // verbose: undefined,
+  verbose: true,
 
   // An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
   // watchPathIgnorePatterns: [],
