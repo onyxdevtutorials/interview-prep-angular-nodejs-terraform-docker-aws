@@ -9,26 +9,19 @@ const router = Router();
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const db = req.db;
-    // console.log('Database connection in route handler:', db.client.config);
-    // const tables = await db.raw(
-    //   'SELECT name FROM sqlite_master WHERE type="table"'
-    // );
-    // console.log('Tables in database from products route:', tables);
     const products: Product[] = await db.select('*').from('products');
-    // console.log('Fetched products:', products);
     res.json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
-    res.status(500).send('Error fetching products');
+    // res.status(500).send('Error fetching products');
+    next(error);
   }
 });
 
-// Get individual product
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   try {
     const db = req.db;
-    // console.log('Database connection in route handler:', db.client.config);
     const product: Product = await db('products').where({ id }).first();
     if (!product) {
       return next(new NotFoundError('Product not found'));
@@ -37,7 +30,8 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     }
   } catch (error) {
     console.error('Error fetching product:', error);
-    res.status(500).send('Error fetching product');
+    // res.status(500).send('Error fetching product');
+    next(error);
   }
 });
 
