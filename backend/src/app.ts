@@ -6,7 +6,7 @@ import productsRouter from './routes/products';
 import { errorHandler } from './middleware/errorHandler';
 import { logger } from './middleware/logger';
 import knex from 'knex';
-import knexConfig from './knex';
+import knexConfig from './knexFile';
 import dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express-serve-static-core';
 

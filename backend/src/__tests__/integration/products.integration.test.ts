@@ -2,7 +2,7 @@ import { beforeAll, afterAll, describe, it, expect } from '@jest/globals';
 import request from 'supertest';
 import app from '../../app';
 import knex from 'knex';
-import knexConfig from '../../knex';
+import knexConfig from '../../knexFile';
 import dotenv from 'dotenv';
 import {
   Product,
@@ -138,7 +138,7 @@ describe('PATCH /products/:id', () => {
     expect(response.body.name).toBe(updatedProduct.name);
   });
 
-  it('should not return a 400 for a product with "missing" fields', async () => {
+  it('should not return a 400 for a product with "missing" fields (should return 200)', async () => {
     const updatedProduct: Partial<Product> = {
       name: 'Updated Product',
     };
