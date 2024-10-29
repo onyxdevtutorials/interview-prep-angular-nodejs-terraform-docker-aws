@@ -65,7 +65,17 @@ describe('POST /products', () => {
     expect(response.body.status).toBe(newProduct.status);
   });
 
-  it.skip('should return a 400 for a product with missing fields', async () => {});
+  it('should return a 400 for a product with missing fields', async () => {
+    const newProduct: Omit<Product, 'id' | 'description'> = {
+      name: 'New Product',
+      price: 100,
+      status: ProductStatus.AVAILABLE,
+    };
+
+    const response = await request(app).post('/products').send(newProduct);
+
+    expect(response.status).toBe(400);
+  });
 });
 
 describe('PUT /products/:id', () => {
