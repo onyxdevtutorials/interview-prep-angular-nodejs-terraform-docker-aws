@@ -115,7 +115,7 @@ const config: Config = {
       {
         resultDir: 'jest-stare',
         reportTitle: 'Test Report',
-        coverageLink: './coverage/lcov-report/index.html',
+        coverageLink: 'coverage/lcov-report/index.html',
       },
     ],
     [
