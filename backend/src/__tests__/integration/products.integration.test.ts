@@ -1,31 +1,26 @@
+import { beforeAll, afterAll, describe, it, expect } from '@jest/globals';
 import request from 'supertest';
 import app from '../../app';
 import knex from 'knex';
 import knexConfig from '../../knex';
 import dotenv from 'dotenv';
+import {
+  Product,
+  ProductStatus,
+} from '@onyxdevtutorials/interview-prep-shared';
 
 dotenv.config({ path: '../../../.env.test' });
 
 const db = knex(knexConfig['test']);
 
 beforeAll(async () => {
-  //   console.log('Running migrations...');
   await db.migrate.latest();
-  //   console.log('Migrations completed.');
 
-  //   console.log('Running seeds...');
   await db.seed.run();
-  //   console.log('Seeds completed.');
 
   app.set('db', db);
 
-  const tables = await db.raw(
-    'SELECT name FROM sqlite_master WHERE type="table"'
-  );
-  //   console.log('tables in database after seeding:', tables);
-
   const products = await db('products').select('*');
-  //   console.log('products in database after seeding:', products);
 });
 
 afterAll(async () => {
@@ -51,4 +46,48 @@ describe('GET /products/:id', () => {
     const response = await request(app).get('/products/999');
     expect(response.status).toBe(404);
   });
+});
+
+describe('POST /products', () => {
+  it('should create a new product', async () => {
+    const newProduct: Omit<Product, 'id'> = {
+      name: 'New Product',
+      price: 100,
+      description: 'New product description',
+      status: ProductStatus.AVAILABLE,
+    };
+
+    const response = await request(app).post('/products').send(newProduct);
+
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(newProduct.name);
+    expect(response.body.price).toBe(newProduct.price);
+    expect(response.body.status).toBe(newProduct.status);
+  });
+
+  it.skip('should return a 400 for a product with missing fields', async () => {});
+});
+
+describe('PUT /products/:id', () => {
+  it.skip('should update an existing product', async () => {});
+
+  it.skip('should return a 400 for a product with missing fields', async () => {});
+
+  it.skip('should return a 404 for a non-existent product', async () => {});
+});
+
+describe('PATCH /products/:id', () => {
+  it.skip('should update an existing product', async () => {});
+
+  it.skip('should return a 400 for a product with missing fields', async () => {
+    // Test doesn't make sense for PATCH
+  });
+
+  it.skip('should return a 404 for a non-existent product', async () => {});
+});
+
+describe('DELETE /products/:id', () => {
+  it.skip('should delete an existing product', async () => {});
+
+  it.skip('should return a 404 for a non-existent product', async () => {});
 });
