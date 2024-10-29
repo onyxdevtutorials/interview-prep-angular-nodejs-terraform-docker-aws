@@ -176,6 +176,19 @@ Or:
 
 `docker-compose --env-file .env.local up frontend-tests`
 
+# Run Backend Tests
+
+`docker-compose --env-file .env.test build backend-tests`
+`docker-compose --env-file .env.test up backend-tests`
+
+Run outside of Docker container:
+
+`npm run test`
+
+Could run in the background or in separate shell to have HTML reports loaded (and reloaded) in web browser:
+
+`npm run serve:report`
+
 # Shared
 
 ## Update, Build and Publish
@@ -183,3 +196,8 @@ Or:
 1. Increase version number in `package.json`.
 1. `npm run build`
 1. `npm publish`
+
+# Run the Whole App in Docker Locally
+
+Everything except the tests will run because frontend is dependent upon backend, which is dependent upon db.
+`docker-compose --env-file .env.local up --build frontend`
