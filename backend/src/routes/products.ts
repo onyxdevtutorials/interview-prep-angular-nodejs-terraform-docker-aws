@@ -119,7 +119,9 @@ router.delete(
         .where({ id })
         .del()
         .returning('*');
-      if (deletedProducts.length === 0) {
+      // If an id isn't matched, returns the number 0.
+      // Some libraries might return an empty array. Not sure about that.
+      if (!deletedProducts || deletedProducts.length === 0) {
         return next(new NotFoundError('Product not found'));
       } else {
         res.status(204).json(deletedProducts[0]);
