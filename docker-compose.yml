@@ -27,7 +27,7 @@ services:
       - DATABASE_URL=${DATABASE_URL}
     volumes:
       - ./backend:/app/backend
-      - node_modules_backend:/app/backend/node_modules # Docker manages node_modules inside the container
+      # - node_modules_backend:/app/backend/node_modules # Docker manages node_modules inside the container
     command: npm run dev
     depends_on:
       - db
@@ -72,11 +72,12 @@ services:
     image: interview-prep-backend-tests:latest
     volumes:
       - ./backend:/app/backend
-      - node_modules_backend:/app/backend/node_modules
+      # - node_modules_backend:/app/backend/node_modules
     working_dir: /app/backend
     command: sh -c "npx jest --clearCache && npm run test -- --verbose"
+    # command: tail -f /dev/null
 
 volumes:
   postgres-data:
   node_modules_frontend:
-  node_modules_backend:
+  # node_modules_backend:
