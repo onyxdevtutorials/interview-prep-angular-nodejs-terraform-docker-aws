@@ -8,4 +8,5 @@ export interface Product {
   status: ProductStatus;
   created_at?: Date;
   updated_at?: Date;
+  color?: string;
 }
