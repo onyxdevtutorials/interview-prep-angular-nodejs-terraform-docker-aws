@@ -22,7 +22,12 @@ const config: Config = {
   collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // collectCoverageFrom: undefined,
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "!src/__tests__/**/*.ts",
+    "!src/**/*.test.ts",
+    "!src/**/*.spec.ts",
+  ],
 
   // The directory where Jest should output its coverage files
   coverageDirectory: 'coverage',
@@ -33,7 +38,8 @@ const config: Config = {
   // ],
 
   // Indicates which provider should be used to instrument code for coverage
-  coverageProvider: 'v8',
+  // defaults to babel
+  // coverageProvider: 'v8',
 
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
@@ -118,12 +124,12 @@ const config: Config = {
         coverageLink: 'coverage/lcov-report/index.html',
       },
     ],
-    [
-      'jest-html-reporter',
-      {
-        outputPath: './test-results/test-report.html',
-      },
-    ],
+    // [
+    //   'jest-html-reporter',
+    //   {
+    //     outputPath: './test-results/test-report.html',
+    //   },
+    // ],
   ],
 
   // Automatically reset mock state before every test
@@ -142,9 +148,9 @@ const config: Config = {
   // rootDir: undefined,
 
   // A list of paths to directories that Jest should use to search for files in
-  roots: [
-    "src"
-  ],
+  // roots: [
+  //   "src"
+  // ],
 
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",
@@ -184,6 +190,7 @@ const config: Config = {
   // testRegex: [],
 
   // This option allows the use of a custom results processor
+  // If I set this to `./node_modules/jest-stare` (as the Jest Stare documentation suggests), then the link to Coverage in the Test Results web ui is disabled. Not sure what to do about that. https://www.npmjs.com/package/jest-stare
   // testResultsProcessor: undefined,
 
   // This option allows use of a custom test runner
@@ -205,9 +212,11 @@ const config: Config = {
   verbose: true,
 
   // An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
+  // "Because jest-stare writes *.js files when generating a report, you may get an infinite loop when using jest-stare and jest --watch." https://www.npmjs.com/package/jest-stare
   watchPathIgnorePatterns: [
     "/node_modules/",
     "/dist/",
+    ".*jest-stare.*\\.js",
   ],
 
   // Whether to use watchman for file crawling
