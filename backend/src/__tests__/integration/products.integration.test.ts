@@ -56,7 +56,7 @@ describe('GET /products/:id', () => {
     expect(response.status).toBe(404);
   });
 
-  it.skip('should non-404 errors', async () => {});
+  it.todo('should non-404 errors');
 });
 
 describe('POST /products', () => {
@@ -156,7 +156,7 @@ describe('PATCH /products/:id', () => {
   it('should not return a 400 for a product with "missing" fields (should return 200)', async () => {
     const updatedProduct: Partial<Product> = {
       name: 'Updated Product',
-      description: 'Updated Product Description'
+      description: 'Updated Product Description',
     };
 
     const response = await request(app)
@@ -178,7 +178,7 @@ describe('PATCH /products/:id', () => {
     expect(response.status).toBe(404);
   });
 
-  it.skip('should handle a validation error if field isn\'t in schema at all', async () => {});
+  it.skip("should handle a validation error if field isn't in schema at all", async () => {});
 
   it.skip('should handle other errors', async () => {});
 });
