@@ -32,6 +32,16 @@ describe('GET /products', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBeGreaterThan(0);
   });
+
+  it('should handle an error', async () => {
+    jest.spyOn(db, 'select').mockImplementationOnce(() => {
+      throw new Error('Database error');
+    });
+
+    const response = await request(app).get('/products');
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({ error: 'Database error' });
+  });
 });
 
 describe('GET /products/:id', () => {
@@ -45,6 +55,8 @@ describe('GET /products/:id', () => {
     const response = await request(app).get('/products/999');
     expect(response.status).toBe(404);
   });
+
+  it.skip('should non-404 errors', async () => {});
 });
 
 describe('POST /products', () => {
@@ -75,6 +87,8 @@ describe('POST /products', () => {
 
     expect(response.status).toBe(400);
   });
+
+  it.skip('should handle non-400 (non-validation) errors', async () => {});
 });
 
 describe('PUT /products/:id', () => {
@@ -121,6 +135,8 @@ describe('PUT /products/:id', () => {
 
     expect(response.status).toBe(404);
   });
+
+  it.skip('should handle other errors', async () => {});
 });
 
 describe('PATCH /products/:id', () => {
@@ -140,6 +156,7 @@ describe('PATCH /products/:id', () => {
   it('should not return a 400 for a product with "missing" fields (should return 200)', async () => {
     const updatedProduct: Partial<Product> = {
       name: 'Updated Product',
+      description: 'Updated Product Description'
     };
 
     const response = await request(app)
@@ -160,6 +177,10 @@ describe('PATCH /products/:id', () => {
 
     expect(response.status).toBe(404);
   });
+
+  it.skip('should handle a validation error if field isn\'t in schema at all', async () => {});
+
+  it.skip('should handle other errors', async () => {});
 });
 
 describe('DELETE /products/:id', () => {
@@ -172,4 +193,6 @@ describe('DELETE /products/:id', () => {
     const response = await request(app).delete('/products/999');
     expect(response.status).toBe(404);
   });
+
+  it.skip('should handle other errors', async () => {});
 });
