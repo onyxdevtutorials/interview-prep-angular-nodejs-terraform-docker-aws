@@ -6,10 +6,15 @@
   "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
   "features": {
     "ghcr.io/devcontainers-extra/features/angular-cli:2": {},
-    "ghcr.io/hspaans/devcontainer-features/sshpass:1": {}
+    "ghcr.io/hspaans/devcontainer-features/sshpass:1": {},
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
   },
+  "runArgs": ["--init", "--privileged"],
   "remoteUser": "root",
-  "mounts": ["source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached"]
+  "mounts": [
+    "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ]
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
