@@ -1,16 +1,14 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import knex from 'knex';
-import knexConfig from '../knex';
 import { User } from '@onyxdevtutorials/interview-prep-shared';
 import { userSchema, userPatchSchema } from '../validation/userSchema';
 import { ValidationError } from '../errors/ValidationError';
 import { NotFoundError } from '../errors/NotFoundError';
 
 const router = Router();
-const db = knex(knexConfig[process.env['NODE_ENV'] || 'development']);
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const db = req.db;
     const users: User[] = await db.select('*').from('users');
     res.json(users);
   } catch (error) {
@@ -23,6 +21,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   try {
+    const db = req.db;
     const user: User = await db('users').where({ id }).first();
     if (!user) {
       return next(new NotFoundError('User not found'));
@@ -43,6 +42,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
+    const db = req.db;
     const [user]: User[] = await db('users').insert(value).returning('*');
     res.status(201).json(user);
   } catch (error) {
@@ -59,6 +59,7 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
+    const db = req.db;
     const [user]: User[] = await db('users')
       .where({ id })
       .update(value)
@@ -87,6 +88,7 @@ router.patch(
     }
 
     try {
+      const db = req.db;
       const [user]: User[] = await db('users')
         .where({ id })
         .update(value)
@@ -109,11 +111,12 @@ router.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
+      const db = req.db;
       const deletedUsers: User[] = await db('users')
         .where({ id })
         .del()
         .returning('*');
-      if (deletedUsers.length === 0) {
+      if (!deletedUsers || deletedUsers.length === 0) {
         return next(new NotFoundError('User not found'));
       } else {
         res.status(204).json(deletedUsers[0]);

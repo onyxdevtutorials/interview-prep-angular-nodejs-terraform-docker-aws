@@ -8,4 +8,5 @@ export interface User {
   status: UserStatus;
   created_at?: Date;
   updated_at?: Date;
+  age?: number;
 }

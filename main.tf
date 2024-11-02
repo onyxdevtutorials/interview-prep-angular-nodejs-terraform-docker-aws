@@ -68,6 +68,18 @@ resource "aws_route_table" "route_table" {
   }
 }
 
+resource "aws_route_table" "main" {
+  vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "main-route-table"
+  }
+}
+
+resource "aws_main_route_table_association" "main" {
+  vpc_id = aws_vpc.main.id
+  route_table_id = aws_route_table.main.id
+}
+
 # Associate Route Table with Subnets
 resource "aws_route_table_association" "assoc_a" {
   subnet_id      = aws_subnet.subnet_a.id
@@ -212,35 +224,35 @@ resource "aws_db_subnet_group" "db_subnet_group" {
   }
 }
 
-resource "aws_db_instance" "postgres" {
-  identifier              = "interviewprepdbinstance"
-  instance_class          = "db.t3.micro"
-  allocated_storage       = 20
-  engine                  = "postgres"
-  engine_version          = "16.4"
-  username                = var.db_username
-  password                = var.db_password
-  vpc_security_group_ids  = [aws_security_group.db_sg.id]
-  db_subnet_group_name    = aws_db_subnet_group.db_subnet_group.name
-  skip_final_snapshot     = true
-  apply_immediately       = false
-  publicly_accessible = false
-  tags                    = {}
-}
+# resource "aws_db_instance" "postgres" {
+#   identifier              = "interviewprepdbinstance"
+#   instance_class          = "db.t3.micro"
+#   allocated_storage       = 20
+#   engine                  = "postgres"
+#   engine_version          = "16.4"
+#   username                = var.db_username
+#   password                = var.db_password
+#   vpc_security_group_ids  = [aws_security_group.db_sg.id]
+#   db_subnet_group_name    = aws_db_subnet_group.db_subnet_group.name
+#   skip_final_snapshot     = true
+#   apply_immediately       = false
+#   publicly_accessible = false
+#   tags                    = {}
+# }
 
 # EC2 Instance
-resource "aws_instance" "app_instance" {
-  ami = "ami-0fff1b9a61dec8a5f"
-  instance_type = "t2.micro"
-  key_name = "OnyxKeyPair"
-  network_interface {
-    network_interface_id = aws_network_interface.app_network_interface.id
-    device_index = 0
-  }
-  tags = {
-    Name = "interview-prep-app-instance"
-  }
-}
+# resource "aws_instance" "app_instance" {
+#   ami = "ami-0fff1b9a61dec8a5f"
+#   instance_type = "t2.micro"
+#   key_name = "OnyxKeyPair"
+#   network_interface {
+#     network_interface_id = aws_network_interface.app_network_interface.id
+#     device_index = 0
+#   }
+#   tags = {
+#     Name = "interview-prep-app-instance"
+#   }
+# }
 
 resource "aws_network_interface" "app_network_interface" {
   subnet_id = aws_subnet.subnet_a.id
@@ -251,14 +263,14 @@ resource "aws_network_interface" "app_network_interface" {
 }
 
 # Elastic IP
-resource "aws_eip" "app_eip" {
-  associate_with_private_ip = aws_instance.app_instance.private_ip
-}
+# resource "aws_eip" "app_eip" {
+#   associate_with_private_ip = aws_instance.app_instance.private_ip
+# }
 
-resource "aws_eip_association" "app_eip_assoc" {
-  allocation_id = aws_eip.app_eip.id
-  instance_id = aws_instance.app_instance.id
-}
+# resource "aws_eip_association" "app_eip_assoc" {
+#   allocation_id = aws_eip.app_eip.id
+#   instance_id = aws_instance.app_instance.id
+# }
 
 resource "aws_eip" "nat_eip" {
   tags = {
