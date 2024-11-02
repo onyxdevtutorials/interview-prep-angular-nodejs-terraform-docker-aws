@@ -29,6 +29,8 @@ describe('GET /users', () => {
     expect(response.status).toBe(200);
     expect(response.body.length).toBeGreaterThan(0);
   });
+
+  it.todo('should handle an error');
 });
 
 describe('GET /users/:id', () => {
@@ -42,6 +44,8 @@ describe('GET /users/:id', () => {
     const response = await request(app).get('/users/999');
     expect(response.status).toBe(404);
   });
+
+  it.todo('should handle non-404 errors');
 });
 
 describe('POST /users', () => {
@@ -74,6 +78,8 @@ describe('POST /users', () => {
 
     expect(response.status).toBe(400);
   });
+
+  it.todo('should handle other errors');
 });
 
 describe('PUT /users/:id', () => {
@@ -118,6 +124,8 @@ describe('PUT /users/:id', () => {
 
     expect(response.status).toBe(404);
   });
+
+  it.todo('should handle other errors');
 });
 
 describe('PATCH /users/:id', () => {
@@ -151,6 +159,8 @@ describe('PATCH /users/:id', () => {
 
     expect(response.status).toBe(404);
   });
+
+  it.todo('should handle other errors');
 });
 
 describe('DELETE /users/:id', () => {
@@ -163,4 +173,6 @@ describe('DELETE /users/:id', () => {
     const response = await request(app).delete('/users/999');
     expect(response.status).toBe(404);
   });
+
+  it.todo('should handle other errors');
 });
