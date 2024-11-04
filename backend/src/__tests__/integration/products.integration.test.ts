@@ -32,16 +32,13 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  await db.transaction(async (trx) => {
-    await trx.raw('BEGIN');
-    app.set('db', trx);
-  });
+  const trx = await db.transaction();
+  app.set('db', trx);
 });
 
 afterEach(async () => {
-  await db.transaction(async (trx) => {
-    await trx.raw('ROLLBACK');
-  });
+  const trx = app.get('db');
+  await trx.rollback();
 });
 
 describe('GET /products', () => {
