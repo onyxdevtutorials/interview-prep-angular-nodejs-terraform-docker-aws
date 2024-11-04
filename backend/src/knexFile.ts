@@ -21,18 +21,8 @@ const config: { [key: string]: Knex.Config } = {
     },
   },
   test: {
-    client: 'sqlite3',
-    connection: {
-      filename: ':memory:',
-    },
-    pool: {
-      min: 1,
-      max: 1,
-      afterCreate: (conn: any, done: any) => {
-        conn.run('PRAGMA foreign_keys = ON', done);
-      },
-    },
-    useNullAsDefault: true,
+    client: 'pg',
+    connection: process.env['DATABASE_URL'],
     migrations: {
       directory: './migrations',
     },
