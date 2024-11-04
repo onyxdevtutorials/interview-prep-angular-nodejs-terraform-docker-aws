@@ -10,23 +10,20 @@ export async function seed(knex: Knex): Promise<void> {
 
   await knex.raw('ALTER SEQUENCE products_id_seq RESTART WITH 1');
 
-  const products: Product[] = [
+  const products: Omit<Product, "id">[] = [
     {
-      id: 1,
       name: 'Product 1',
       description: 'product 1 description',
       price: 100,
       status: ProductStatus.AVAILABLE,
     },
     {
-      id: 2,
       name: 'Product 2',
       description: 'product 2 description',
       price: 200,
       status: ProductStatus.AVAILABLE,
     },
     {
-      id: 3,
       name: 'Product 3',
       description: 'product 3 description',
       price: 300,
