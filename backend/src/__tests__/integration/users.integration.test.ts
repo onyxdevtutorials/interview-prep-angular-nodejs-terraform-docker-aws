@@ -10,11 +10,6 @@ dotenv.config({ path: '../../../.env.test' });
 const db = knex(knexConfig['test']);
 
 beforeAll(async () => {
-  const tableExists = await db.schema.hasTable('users');
-  if (tableExists) {
-    await db.raw('TRUNCATE TABLE users RESTART IDENTITY CASCADE');
-  }
-
   await db.migrate.latest();
 
   await db.seed.run();
