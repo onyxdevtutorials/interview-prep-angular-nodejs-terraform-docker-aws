@@ -1,3 +1,6 @@
+networks:
+  devnetwork:
+
 services:
   frontend:
     build:
@@ -33,7 +36,22 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data # Persist data even after container is removed
+      - postgres-dev-data:/var/lib/postgresql/data # Persist data even after container is removed
+    networks:
+      - devnetwork
+
+  db-test:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-test-data:/var/lib/postgresql/data # Persist data even after container is removed
+    networks:
+      - devnetwork
 
   flyway:
     image: flyway/flyway:latest
@@ -50,6 +68,8 @@ services:
     image: interview-prep-frontend-tests:latest
     working_dir: /app/frontend
     command: npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox
+    networks:
+      - devnetwork
 
   backend-tests:
     build:
@@ -57,11 +77,16 @@ services:
       dockerfile: backend/Dockerfile
     environment:
       - NODE_ENV=test
-      - DATABASE_URL=postgres://user:password@db:5432/testdb
+      - DATABASE_URL=${DATABASE_URL}
     image: interview-prep-backend-tests:latest
     working_dir: /app/backend
+    depends_on:
+      - db-test
     command: sh -c "npx jest --clearCache && npm run test -- --verbose"
     # command: tail -f /dev/null
+    networks:
+      - devnetwork
 
 volumes:
-  postgres-data:
+  postgres-dev-data:
+  postgres-test-data:
