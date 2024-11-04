@@ -10,6 +10,8 @@ dotenv.config({ path: '../../../.env.test' });
 const db = knex(knexConfig['test']);
 
 beforeAll(async () => {
+  await db.raw('TRUNCATE TABLE users RESTART IDENTITY CASCADE');
+
   await db.migrate.latest();
 
   await db.seed.run();
@@ -21,6 +23,19 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await db.destroy();
+});
+
+beforeEach(async () => {
+  await db.transaction(async (trx) => {
+    await trx.raw('BEGIN');
+    app.set('db', trx);
+  });
+});
+
+afterEach(async () => {
+  await db.transaction(async (trx) => {
+    await trx.raw('ROLLBACK');
+  });
 });
 
 describe('GET /users', () => {
