@@ -42,6 +42,14 @@ describe('GET /products', () => {
   });
 });
 
+describe('GET /products/:id', () => {
+  it('should return a single product', async () => {
+    const response = await request(app).get('/products/1');
+    expect(response.status).toBe(200);
+    expect(response.body.id).toBe(1);
+  });
+});
+
 // describe('GET /products', () => {
 //   it('should return a list of products', async () => {
 //     const response = await request(app).get('/products');
