@@ -46,7 +46,7 @@ jobs:
           node-version: '22'
 
       - name: Create test database
-        run:
+        run: |
           sudo apt-get install -y postgresql-client
           psql -h localhost -U postgres -c "CREATE DATABASE testdb;"
 
