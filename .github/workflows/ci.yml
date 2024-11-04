@@ -47,7 +47,7 @@ jobs:
 
       - name: Create test database
         run: |
-          sudo apt-get install -y postgresql-client
+          sudo apt-get install -y postgresql-client && 
           psql -h localhost -U postgres -c "CREATE DATABASE testdb;"
 
       - name: Install dependencies for backend
