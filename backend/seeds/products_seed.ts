@@ -8,6 +8,8 @@ export async function seed(knex: Knex): Promise<void> {
   // Deletes ALL existing entries
   await knex('products').del();
 
+  await knex.raw('ALTER SEQUENCE products_id_seq RESTART WITH 1');
+
   const products: Product[] = [
     {
       id: 1,
