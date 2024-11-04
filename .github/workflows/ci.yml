@@ -35,6 +35,7 @@ jobs:
 
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+      PGPASSFILE: /home/runner/.pgpass
 
     steps:
       - name: Checkout code
@@ -44,6 +45,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '22'
+
+      - name: Create .pgpass file
+        run: |
+          echo "localhost:5432:postgres:postgres:postgres" > ~/.pgpass &&
+          echo "localhost:5432:testdb:postgres:postgres:postgres" >> ~/.pgpass &&
+          chmod 0600 ~/.pgpass
 
       - name: Create test database
         run: |
