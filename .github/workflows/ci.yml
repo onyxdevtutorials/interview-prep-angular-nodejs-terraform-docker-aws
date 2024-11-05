@@ -65,11 +65,11 @@ jobs:
         working-directory: ./backend
         run: npm test
 
-      # - name: Install dependencies for frontend
-      #   working-directory: ./frontend
-      #   run: npm install
+      - name: Install dependencies for frontend
+        working-directory: ./frontend
+        run: npm install
 
-      # - name: Run frontend tests
-      #   working-directory: ./frontend
-      #   run: npm test
+      - name: Run frontend tests
+        working-directory: ./frontend
+        run: npm test
 
