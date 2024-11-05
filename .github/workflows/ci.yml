@@ -73,5 +73,3 @@ jobs:
       #   working-directory: ./frontend
       #   run: npm test
 
-      - name: Cleanup
-
