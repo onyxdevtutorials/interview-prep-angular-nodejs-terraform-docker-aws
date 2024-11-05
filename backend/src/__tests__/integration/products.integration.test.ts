@@ -26,6 +26,14 @@ afterAll(async () => {
   await db.destroy();
 });
 
+beforeEach(async () => {
+  await db.raw('BEGIN')
+});
+
+afterEach(async () => {
+  await db.raw('ROLLBACK')
+});
+
 describe('GET /products', () => {
   it('should return a list of products', async () => {
     const response = await request(app).get('/products');

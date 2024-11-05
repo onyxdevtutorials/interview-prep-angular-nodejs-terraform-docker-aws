@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - development
+      - stage
+      - production
+  pull_request:
+    branches:
+      - main
+      - development
+      - stage
+      - production
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+      PGPASSFILE: /home/runner/.pgpass
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
+
+      - name: Create .pgpass file
+        run: |
+          echo "localhost:5432:postgres:postgres:postgres" > ~/.pgpass &&
+          echo "localhost:5432:testdb:postgres:postgres:postgres" >> ~/.pgpass &&
+          chmod 0600 ~/.pgpass
+
+      - name: Create test database
+        run: |
+          sudo apt-get install -y postgresql-client && 
+          psql -h localhost -U postgres -c "CREATE DATABASE testdb;"
+
+      - name: Install dependencies for backend
+        working-directory: ./backend
+        run: npm install
+
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npm test
+
+      - name: Install dependencies for frontend
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Run frontend tests
+        working-directory: ./frontend
+        run: npm test
+

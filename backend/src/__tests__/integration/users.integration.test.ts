@@ -23,6 +23,14 @@ afterAll(async () => {
   await db.destroy();
 });
 
+beforeEach(async () => {
+  await db.raw('BEGIN')
+});
+
+afterEach(async () => {
+  await db.raw('ROLLBACK')
+});
+
 describe('GET /users', () => {
   it('should return a list of users', async () => {
     const response = await request(app).get('/users');
