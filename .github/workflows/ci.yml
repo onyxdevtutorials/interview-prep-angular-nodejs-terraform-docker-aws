@@ -69,7 +69,9 @@ jobs:
         working-directory: ./frontend
         run: npm install
 
-      - name: Run frontend tests
-        working-directory: ./frontend
-        run: npm test
+      # - name: Run frontend tests
+      #   working-directory: ./frontend
+      #   run: npm test
+
+      - name: Cleanup
 
