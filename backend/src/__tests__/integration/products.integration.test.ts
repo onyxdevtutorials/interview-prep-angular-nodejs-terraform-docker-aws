@@ -34,41 +34,6 @@ afterEach(async () => {
   await db.raw('ROLLBACK')
 });
 
-// describe('GET /products', () => {
-//   it('should return a list of products', async () => {
-//     const response = await request(app).get('/products');
-//     expect(response.status).toBe(200);
-//     expect(response.body.length).toBeGreaterThan(0);
-//   });
-// });
-
-// describe('GET /products/:id', () => {
-//   it('should return a single product', async () => {
-//     const response = await request(app).get('/products/1');
-//     expect(response.status).toBe(200);
-//     expect(response.body.id).toBe(1);
-//   });
-// });
-
-// describe('POST /products', () => {
-//   it('should create a new product', async () => {
-//     const newProduct: Omit<Product, 'id'> = {
-//       name: 'New Product',
-//       price: 100,
-//       description: 'New product description',
-//       status: ProductStatus.AVAILABLE,
-//     };
-
-//     const response = await request(app).post('/products').send(newProduct);
-
-//     expect(response.status).toBe(201);
-//     expect(response.body.name).toBe(newProduct.name);
-//     expect(response.body.price).toBe(newProduct.price);
-//     expect(response.body.status).toBe(newProduct.status);
-//   });
-// });
-
-
 describe('GET /products', () => {
   it('should return a list of products', async () => {
     const response = await request(app).get('/products');
