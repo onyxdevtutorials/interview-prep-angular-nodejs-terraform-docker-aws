@@ -63,7 +63,4 @@ Thumbs.db
 
 !.env.example
 
-# Flyway
-flyway.conf
-
 notes.md
