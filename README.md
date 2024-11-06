@@ -1,8 +1,40 @@
 # InterviewPrep
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.4.
+This project grew out of wanting to prepare for an interview for a job that would have focused on Angular. As I had been using React exclusively for several months, I needed to refresh my Angular skills. Then I began to add more things to make up for my focus on AWS Amplify. The result is in some ways the opposite of what I have in my previous videos:
 
-## Development
+* Angular instead of React/NextJS
+* Angular Material instead of AWS Amplify's UI library. (I do, however, use Tailwind CSS in both.)
+* Postgres instead of DynamoDB (Sql vs NoSQL)
+* REST (using a NodeJS/Express backend) vs GraphQL (using Amplify and AppSync)
+* This project has nothing in regard to authentication (yet), while the Amplify project implemented authentication right at the beginning.
+
+Also, in the Amplify project I haven't yet implemented any automated testing but in this project I have unit and integration tests. I set up a GitHub Workflow with GitHub Actions to run the tests when there is a push to or a pull request on specified branches.
+
+This project is Dockerized, and I developed it in a devcontainer. 
+
+You'll see some Terraform files in the project but I'll get to that in the next video.
+
+## Devcontainer
+
+I'm using the [Node.js & TypeScript (typescript-node)](https://github.com/devcontainers/templates/tree/main/src/typescript-node) devcontainer. The features I added are
+
+* [sshpass](https://github.com/hspaans/devcontainer-features/tree/master/src/sshpass): installs the GitHub CLI
+* [Angular CLI](https://github.com/devcontainers-extra/features/tree/main/src/angular-cli)
+* [docker-outside-of-docker](https://github.com/devcontainers/features/tree/main/src/docker-outside-of-docker): "Re-use the host docker socket, adding the Docker CLI to a container. Feature invokes a script to enable using a forwarded Docker socket within a container to run Docker commands."
+* [Prettier](https://github.com/devcontainers-community/npm-features/tree/main/src/prettier)
+* [AWS CLI](https://github.com/devcontainers/features/tree/main/src/aws-cli)
+* [Terraform](https://github.com/devcontainers/features/tree/main/src/terraform)
+* [PostgreSQL Client](https://github.com/robbert229/devcontainer-features/blob/main/src/postgresql-client/README.md)
+
+In devcontainer.json you'll see that I'm specifying a network. That's so the devcontainer and the Docker services can communicate with one another. For instance, from a shell within the devcontainer I can connect to the service running the Postgres test database.
+
+I also have some mounts so that
+
+* git can authenticate with GitHub using the SSH agent on my laptop (the host machine)
+* devcontainer can communicate with the host's Docker daemon
+* the AWS credentials and configuration are available within the devcontainer.
+
+
 
 ### Frontend
 
@@ -50,21 +82,17 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
   `ssh -f -i <PATH TO KEY-PAIR PEM> -L 5433:interviewprepdbinstance.c92egeoumrf1.us-east-1.rds.amazonaws.com:5432 ec2-user@107.22.66.121 -N`
 - To keep SSH tunnel alive: `ssh -f -i <PATH TO KEY-PAIR PEM> -L 5433:interviewprepdbinstance.c92egeoumrf1.us-east-1.rds.amazonaws.com:5432 ec2-user@107.22.66.121 -N -o ServerAliveInterval=60 -o ServerAliveCountMax=3`
 
-## Flyway and Migrations
+## Migrations
 
 DB credentials and URLs are in `.env.local` and `.env.development`. Set the environment to be used: `export NODE_ENV=local` or `export NODE_ENV=production`.
 
-The migrations are run (if necessary) after the db container comes up.
-
 Maybe obsolete:
 
-You need an SSH tunnel to be able to run the Flyway migrations on the db in AWS. Check for a tunnel by using `ps aux | grep ssh`. It will look something like
+You need an SSH tunnel to be able to run the migrations on the db in AWS. Check for a tunnel by using `ps aux | grep ssh`. It will look something like
 
 ```
 davidsilva       69319   0.0  0.0 410379280   1904   ??  Ss   12:34PM   0:00.01 ssh -f -i /Users/davidsilva/Downloads/OnyxKeyPair.pem -L 5433:interviewprepdbinstance.c92egeoumrf1.us-east-1.rds.amazonaws.com:5432 ec2-user@107.22.66.121 -N
 ```
-
-To run migrations, run `./run-flyway.sh`.
 
 # SSH into Bastion Host
 
@@ -201,3 +229,14 @@ Could run in the background or in separate shell to have HTML reports loaded (an
 
 Everything except the tests will run because frontend is dependent upon backend, which is dependent upon db.
 `docker-compose --env-file .env.local up --build frontend`
+
+# Database
+
+With `interview-prep-db-1` up and running, you can access the db via psql using...
+
+`docker exec -it interview-prep-db-1 psql -U interviewprep_admin -d interviewprepdbinstance`
+
+## Run Migrations
+
+`docker-compose --env-file .env.local up migrate`
+

@@ -4,6 +4,7 @@
   "name": "Node.js & TypeScript",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
     "ghcr.io/devcontainers-extra/features/angular-cli:2": {},
     "ghcr.io/hspaans/devcontainer-features/sshpass:1": {},
@@ -13,16 +14,20 @@
     "ghcr.io/devcontainers/features/aws-cli:1": {},
     "ghcr.io/robbert229/devcontainer-features/postgresql-client:1": {}
   },
+  // Specify a network that the app's Docker containers and services can share.
+  // This allows the containers to communicate with each other using their service names,
+  // which is useful for setting up a consistent development environment where services
+  // like databases, APIs, and front-end applications can interact seamlessly.
   "runArgs": ["--init", "--privileged", "--network=interview-prep_devnetwork"],
   "remoteUser": "root",
   "mounts": [
+    // Allow authenticating with GitHub using the same SSH agent
     "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached",
+    // Allow devcontainer to communicate with the host's Docker daemon
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
+    // Allow devcontainer to use the host's AWS credentials and configuration
     "source=${localEnv:HOME}/.aws,target=/root/.aws,type=bind,consistency=cached"
   ]
-
-  // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
