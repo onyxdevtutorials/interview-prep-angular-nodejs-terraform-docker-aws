@@ -1,15 +1,37 @@
 import { Knex } from 'knex';
 import dotenv from 'dotenv';
+import path from 'path';
 
-const envFile =
-  process.env['NODE_ENV'] === 'production'
-    ? '../.env.production'
-    : process.env['NODE_ENV'] === 'test'
-    ? '../.env.test'
-    : '../.env.local';
+let envFile: string;
+
+switch (process.env['NODE_ENV']) {
+  case 'production':
+    envFile = '../.env.production';
+    break;
+  case 'development':
+    envFile = '../.env.development';
+    break;
+  case 'test':
+    envFile = '../.env.test';
+    break;
+  default:
+    envFile = '../.env.local';
+}
+
 dotenv.config({ path: envFile });
 
 const config: { [key: string]: Knex.Config } = {
+  local: {
+    client: 'pg',
+    connection: process.env['DATABASE_URL'],
+    migrations: {
+      directory: path.join(__dirname, '../migrations'),
+    },
+    seeds: {
+      directory: path.join(__dirname, '../seeds'),
+    },
+    debug: true,
+  },
   development: {
     client: 'pg',
     connection: process.env['DATABASE_URL'],
@@ -24,10 +46,10 @@ const config: { [key: string]: Knex.Config } = {
     client: 'pg',
     connection: process.env['DATABASE_URL'],
     migrations: {
-      directory: './migrations',
+      directory: path.join(__dirname, '../migrations'),
     },
     seeds: {
-      directory: './seeds',
+      directory: path.join(__dirname, '../seeds'),
     },
   },
   production: {
