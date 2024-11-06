@@ -13,6 +13,8 @@ services:
     command: npm run start
     depends_on:
       - backend
+    networks:
+      - devnetwork
 
   backend:
     build:
@@ -26,6 +28,8 @@ services:
     command: npm run dev
     depends_on:
       - db
+    networks:
+      - devnetwork
 
   db:
     image: postgres:latest
@@ -53,13 +57,19 @@ services:
     networks:
       - devnetwork
 
-  flyway:
-    image: flyway/flyway:latest
-    command: -url=jdbc:postgresql://db:5432/interviewprepdbinstance -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} migrate
+  migrate:
+    image: node:20
+    working_dir: /app/backend
     volumes:
-      - ./migrations:/flyway/migrations
+      - /Users/davidsilva/Dev/interview-prep:/app
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - DATABASE_URL=${DATABASE_URL}
+    command: sh -c "npm install && npx knex migrate:latest --knexfile=./src/knexFile.ts --env $NODE_ENV"
     depends_on:
       - db
+    networks:
+      - devnetwork
 
   frontend-tests:
     build:
