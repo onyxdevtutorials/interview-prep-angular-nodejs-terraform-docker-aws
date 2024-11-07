@@ -72,7 +72,42 @@ TO COME.
 
 ## Building the App
 
-From the project root in the devcontainer, 
+Prerequisites:
+
+* [Docker desktop app](https://www.docker.com/) installed and running.
+* [VSCode](https://code.visualstudio.com/) with the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+
+1. Command-P and choose Dev Containers: Clone Repository in Container Volume...
+1. Specify this repo and choose the Development branch.
+1. Create `.env.local` and `.env.test` files based on `.env.example` and customize the values as necessary.
+1. Open a terminal and run `docker-compose --env-file .env.local build`.
+1. Run migrations to set up the database tables: `docker-compose --env-file .env.local up migrate`
+
+## Run the App
+
+1. `docker-compose --env-file .env.local up frontend` (The dependent services should come up automatically.)
+1. Load `http://localhost:4200/` in a web browser. You should be able to add new users and products, edit them, and list them.
+
+## Running Tests
+
+### Backend
+
+1. `docker-compose --env-file .env.test up backend-tests`
+
+Other options for running backend tests:
+
+1. Bring up the backend with `docker-compose --env-file .env.test up backend`
+1. In a separate terminal window, `cd` into `backend`.
+1. `npm run test:coverage`. That will run all the tests and a coverage report.
+1. `npm run serve:report`. This will bring up a pretty web page at `http://localhost:8080/` where you should be able to look at test and coverage reports.
+
+Note: I thought it would be nice to a live web display of test results and coverage but that's problematic. Practically speaking it's probably best or easiest just to run `npm run test:watch` as you make code changes; that will present the familiar terminal based interface to give you feedback on particular code you change and tests you write. 
+
+### Frontend
+
+1. `docker-compose --env-file .env.test up frontend-tests` (At the moment I don't have any pretty web reports set up.)
+
+
 
 How to run the frontend app:
 

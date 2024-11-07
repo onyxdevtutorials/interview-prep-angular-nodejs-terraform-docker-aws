@@ -7,12 +7,14 @@ on:
       - development
       - stage
       - production
+      - workflow-test-branch
   pull_request:
     branches:
       - main
       - development
       - stage
       - production
+      - workflow-test-branch
 
 jobs:
   test:
@@ -41,21 +43,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Load .env.test
+        run: |
+          echo "Loading environment variables from .env.test" &&
+          cat .env.test | grep -v '^#' | while read line; do echo "$lie" >> $GITHUB_ENV; done
+
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '22'
 
-      - name: Create .pgpass file
-        run: |
-          echo "localhost:5432:postgres:postgres:postgres" > ~/.pgpass &&
-          echo "localhost:5432:testdb:postgres:postgres:postgres" >> ~/.pgpass &&
-          chmod 0600 ~/.pgpass
+      # - name: Create .pgpass file
+      #   run: |
+      #     echo "localhost:5432:postgres:postgres:postgres" > ~/.pgpass &&
+      #     echo "localhost:5432:testdb:postgres:postgres:postgres" >> ~/.pgpass &&
+      #     chmod 0600 ~/.pgpass
 
-      - name: Create test database
+      # - name: Create test database
+      #   run: |
+      #     sudo apt-get install -y postgresql-client && 
+      #     psql -h localhost -U postgres -c "CREATE DATABASE testdb;"
+
+      - name: Start PostgreSQL service
         run: |
-          sudo apt-get install -y postgresql-client && 
-          psql -h localhost -U postgres -c "CREATE DATABASE testdb;"
+          docker run --name postgres -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -e POSTGRES_DB=$POSTGRES_DB -p 5432:5432 -d postgres:latest
+        env: 
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until docker exec postgres pg_isready -U $POSTGRES_USER; do echo "Waiting for PostgreSQL to be ready..."; sleep 2; done
 
       - name: Install dependencies for backend
         working-directory: ./backend
@@ -72,4 +91,7 @@ jobs:
       - name: Run frontend tests
         working-directory: ./frontend
         run: npm test
+
+      - name: Stop PostgreSQL service
+        run: docker stop postgres
 
