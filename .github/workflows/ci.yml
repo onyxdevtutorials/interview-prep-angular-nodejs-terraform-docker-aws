@@ -24,7 +24,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: testdb
+          POSTGRES_DB: postgres
         ports:
           - 5432:5432
         options: >-
@@ -40,11 +40,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Load .env.test
-        run: |
-          echo "Loading environment variables from .env.test" &&
-          cat .env.test | grep -v '^#' | while read line; do echo "$lie" >> $GITHUB_ENV; done
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
