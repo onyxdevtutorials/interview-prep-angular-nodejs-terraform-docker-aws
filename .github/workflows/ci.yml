@@ -7,14 +7,12 @@ on:
       - development
       - stage
       - production
-      - workflow-test-branch
   pull_request:
     branches:
       - main
       - development
       - stage
       - production
-      - workflow-test-branch
 
 jobs:
   test:
@@ -24,20 +22,20 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U ${{ secrets.POSTGRES_USER }}"
+          --health-cmd "pg_isready -U postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
-    # env:
-    #   DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
-    #   PGPASSFILE: /home/runner/.pgpass
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+      PGPASSFILE: /home/runner/.pgpass
 
     steps:
       - name: Checkout code
@@ -53,23 +51,16 @@ jobs:
         with:
           node-version: '22'
       
-      - name: Install dependencies
-        run: npm install
-
-      # - name: Create .pgpass file
-      #   run: |
-      #     echo "localhost:5432:postgres:postgres:postgres" > ~/.pgpass &&
-      #     echo "localhost:5432:testdb:postgres:postgres:postgres" >> ~/.pgpass &&
-      #     chmod 0600 ~/.pgpass
-
-      # - name: Create test database
-      #   run: |
-      #     sudo apt-get install -y postgresql-client && 
-      #     psql -h localhost -U postgres -c "CREATE DATABASE testdb;"
-
-      - name: Wait for PostgreSQL to be ready
+      - name: Create .pgpass file
         run: |
-          until docker exec postgres pg_isready -U $POSTGRES_USER; do echo "Waiting for PostgreSQL to be ready..."; sleep 2; done
+          echo "localhost:5432:postgres:postgres:postgres" > ~/.pgpass &&
+          echo "localhost:5432:testdb:postgres:postgres:postgres" >> ~/.pgpass &&
+          chmod 0600 ~/.pgpass
+
+      - name: Create test database
+        run: |
+          sudo apt-get install -y postgresql-client && 
+          psql -h localhost -U postgres -c "CREATE DATABASE testdb;"
 
       - name: Install dependencies for backend
         working-directory: ./backend
