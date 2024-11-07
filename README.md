@@ -26,7 +26,7 @@ I'm using the [Node.js & TypeScript (typescript-node)](https://github.com/devcon
 * [Terraform](https://github.com/devcontainers/features/tree/main/src/terraform)
 * [PostgreSQL Client](https://github.com/robbert229/devcontainer-features/blob/main/src/postgresql-client/README.md)
 
-In devcontainer.json you'll see that I'm specifying a network. That's so the devcontainer and the Docker services can communicate with one another. For instance, from a shell within the devcontainer I can connect to the service running the Postgres test database.
+In `devcontainer.json` you'll see that I'm specifying a network. That's so the devcontainer and the Docker services can communicate with one another. For instance, from a shell within the devcontainer I can connect to the service running the Postgres test database.
 
 I also have some mounts so that
 
@@ -34,9 +34,45 @@ I also have some mounts so that
 * devcontainer can communicate with the host's Docker daemon
 * the AWS credentials and configuration are available within the devcontainer.
 
+## Frontend
 
+The frontend app, which uses Angular 18, is pretty simple: featurewise, it allows listing, creating and editing users and products.
 
-### Frontend
+What are some technical aspects of Angular, Angular Material and RxJS that it demonstrates?
+
+* [Built-in flow control](https://blog.angular.dev/introducing-angular-v17-4d7033312e4b), e.g., @if vs *ngIf. It's more readable and supposed to be more performant. New in Angular 17.
+* [Angular Material 3](https://material.angular.io/guides) components.
+* [Standalone components](https://angular.dev/guide/components/importing#standalone-components).
+* [Dependency injection using `inject()`](https://angular.dev/tutorials/learn-angular/20-inject-based-di). (Introduced in Angular 14.)
+* [Reactive forms](https://angular.dev/guide/forms/reactive-forms) and form validation.
+* [Signal inputs](https://angular.dev/guide/signals/inputs). (In developer preview as of 2024-11-06.)
+* [Observables](https://rxjs.dev/guide/overview).
+* [Custom pipes](https://angular.dev/tutorials/learn-angular/24-create-a-pipe).
+* An implementation of an Angular Material's [ErrorStateMatcher](https://material.angular.io/components/core/api#ErrorStateMatcher).
+* [Injectable services](https://angular.dev/guide/di).
+* [Routing](https://angular.dev/guide/routing).
+
+Jasmine and Karma are used for testing.
+
+## Backend
+
+The backend app uses NodeJS and Express to provide a REST API for getting, creating, updating and deleting products and users in a Postgres database. It uses Joi for validation. I added some middleware for handling errors and logging.
+
+The PostgreSQL database is created using the official PostgreSQL Docker image. Environment variables can be provided from `.env.local` following the example of `.env.example`.
+
+Jest is used for testing.
+
+## Shared
+
+Both the frontend and backend apps use an NPM package `@onyxdevtutorials/interview-prep-shared` that defines TypeScript interfaces for `product` and `user`. The source code for the package is in `shared`.
+
+## Workflow and Continuous Integration (CI)
+
+TO COME.
+
+## Building the App
+
+From the project root in the devcontainer, 
 
 How to run the frontend app:
 
