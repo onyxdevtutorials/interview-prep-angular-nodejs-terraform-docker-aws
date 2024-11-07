@@ -61,6 +61,7 @@ services:
     image: node:20
     working_dir: /app/backend
     volumes:
+      # I'd *like* to use a `.` here but when I do I get an error saying "The path /workspaces/interview-prep is not shared from the host and is not known to Docker. You can configure shared paths from Docker -> Preferences... -> Resources -> File Sharing." But I can't do that as there is no "workspaces" directory.
       - /Users/davidsilva/Dev/interview-prep:/app
     environment:
       - NODE_ENV=${NODE_ENV}
