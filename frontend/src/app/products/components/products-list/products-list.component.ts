@@ -8,7 +8,7 @@ import { Product } from '@onyxdevtutorials/interview-prep-shared';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProductsService } from '../../services/products.service';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { PricePipe } from '../../../shared/pipes/price.pipe';

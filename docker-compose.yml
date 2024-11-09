@@ -6,6 +6,15 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
+    environment:
+      - CHROME_BIN=/usr/bin/chromium
+    volumes:
+      # The following works but shouldn't be necessary:
+      # - /Users/davidsilva/Dev/interview-prep/frontend:/app/frontend
+      - ${HOST_PROJECT_PATH}/frontend:/app/frontend
+      # The following *should* work, but it doesn't:
+      # - ./frontend:/app/frontend
+      - /app/frontend/node_modules
     image: interview-prep-frontend:latest
     ports:
       - "4200:4200"
@@ -25,6 +34,13 @@ services:
       - "3000:3000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
+    volumes:
+      # The following works but shouldn't be necessary:
+      # - /Users/davidsilva/Dev/interview-prep/backend:/app/backend
+      - ${HOST_PROJECT_PATH}/backend:/app/backend
+      # The following *should* work, but it doesn't:
+      # - ./backend:/app/backend
+      - /app/backend/node_modules
     command: npm run dev
     depends_on:
       - db
@@ -58,10 +74,10 @@ services:
       - devnetwork
 
   migrate:
-    image: node:20
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     working_dir: /app/backend
-    volumes:
-      - /Users/davidsilva/Dev/interview-prep:/app
     environment:
       - NODE_ENV=${NODE_ENV}
       - DATABASE_URL=${DATABASE_URL}
