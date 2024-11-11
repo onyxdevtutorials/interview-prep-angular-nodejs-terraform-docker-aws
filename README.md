@@ -142,10 +142,9 @@ I thought it would be nice to have a *live* web display of test results and cove
 
 Tests can also be run in watch mode so that they will be re-run as you make changes to code and tests:
 
-1. `docker-compose --env-file .env.local up backend` (to bring up the backend app and the db).
+1. `docker-compose --env-file .env.local up frontend`
 1. `cd frontend`
 1. `npm run test:watch`
-1. In another terminal, `cd frontend` and `npm run start` (now tests will be re-run and you can see changes reflected in the web browser as you make changes to code and tests).
 
 ## Version History
 
