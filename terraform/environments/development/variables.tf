@@ -3,6 +3,11 @@ variable "region" {
   default     = "us-east-1"
 }
 
+variable "profile" {
+  description = "The AWS profile to use"
+  default     = "aws-cli-user"
+}
+
 variable "db_username" {
     description = "Username for interview prep postgres db"
     type = string
