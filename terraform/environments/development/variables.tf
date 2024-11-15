@@ -8,17 +8,23 @@ variable "profile" {
   default     = "aws-cli-user"
 }
 
-variable "db_username" {
-    description = "Username for interview prep postgres db"
-    type = string
-    sensitive = true
+variable "environment" {
+  description = "The environment for the resources (e.g., development, staging, production)"
+  type = string
+  default = "development"
 }
 
-variable "db_password" {
-    description = "Password for interview prep postgres db"
-    type = string
-    sensitive = true
-}
+# variable "db_username" {
+#     description = "Username for interview prep postgres db"
+#     type = string
+#     sensitive = true
+# }
+
+# variable "db_password" {
+#     description = "Password for interview prep postgres db"
+#     type = string
+#     sensitive = true
+# }
 
 variable "vpc_cidr" {
     description = "CIDR block for the VPC"
