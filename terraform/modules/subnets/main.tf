@@ -38,14 +38,6 @@ resource "aws_subnet" "db_subnet_b" {
   }
 }
 
-resource "aws_internet_gateway" "igw" {
-  vpc_id = var.vpc_id
-  tags = {
-    Name        = "interview-prep-igw"
-    Environment = var.environment
-  }
-}
-
 resource "aws_nat_gateway" "nat_gw" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.subnet_a.id

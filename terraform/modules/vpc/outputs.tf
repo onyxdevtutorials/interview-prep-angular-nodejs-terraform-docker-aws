@@ -1,11 +1,11 @@
 output "vpc_id" {
     description = "The ID of the VPC"
-    value = aws_vpc.main.id
+    value = aws_vpc.interview_prep_vpc.id
 }
 
 output "vpc_cidr_block" {
     description = "The CIDR block of the VPC"
-    value = aws_vpc.main.cidr_block
+    value = aws_vpc.interview_prep_vpc.cidr_block
 }
 
 output "internet_gateway_id" {

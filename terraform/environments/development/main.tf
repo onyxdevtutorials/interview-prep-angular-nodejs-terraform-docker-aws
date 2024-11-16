@@ -6,7 +6,10 @@ provider "aws" {
 module "vpc" {
     source = "../../modules/vpc"
     vpc_cidr = var.vpc_cidr
-    subnet_id = module.subnets.subnet_a_id
+    public_subnet_a_id = module.subnets.subnet_a_id
+    public_subnet_b_id = module.subnets.subnet_b_id
+    private_subnet_a_id = module.subnets.db_subnet_a_id
+    private_subnet_b_id = module.subnets.db_subnet_b_id
     environment = var.environment
 }
 

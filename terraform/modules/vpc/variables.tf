@@ -8,7 +8,22 @@ variable "vpc_cidr" {
     type = string
 }
 
-variable "subnet_id" {
-    description = "The ID of the subnet for the NAT gateway"
+variable "public_subnet_a_id" {
+    description = "The ID of the public subnet A"
+    type = string
+}
+
+variable "public_subnet_b_id" {
+    description = "The ID of the public subnet B"
+    type = string
+}
+
+variable "private_subnet_a_id" {
+    description = "The ID of the private subnet A"
+    type = string
+}
+
+variable "private_subnet_b_id" {
+    description = "The ID of the private subnet B"
     type = string
 }
