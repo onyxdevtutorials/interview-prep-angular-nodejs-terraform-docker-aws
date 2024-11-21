@@ -11,14 +11,14 @@ import retry from "retry";
 
 dotenv.config({ path: '../../../.env.test' });
 
-const db = knex(knexConfig['test']);
+const db = knex(knexConfig['test_products']);
 
 const waitForDb = async (): Promise<void> => {
     const operation = retry.operation({
-    retries: 5,
+    retries: 10,
     factor: 2,
-    minTimeout: 1000,
-    maxTimeout: 5000,
+    minTimeout: 2000,
+    maxTimeout: 10000,
   });
 
   return new Promise((resolve, reject) => {
@@ -38,7 +38,7 @@ const waitForDb = async (): Promise<void> => {
 
 
 beforeAll(async () => {
-  await waitForDb();
+  // await waitForDb();
   
   await db.migrate.latest();
 
