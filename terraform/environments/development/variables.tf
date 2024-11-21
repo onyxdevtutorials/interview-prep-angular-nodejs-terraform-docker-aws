@@ -67,3 +67,8 @@ variable "availability_zone_b" {
     type = string
     default = "us-east-1b"
 }
+
+variable "vpn_ip" {
+    description = "The IP address and subnet mask of the VPN, e.g., 22.146.171.139/32"
+    type = string
+}

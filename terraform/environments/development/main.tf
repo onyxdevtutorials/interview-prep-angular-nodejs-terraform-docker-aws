@@ -24,3 +24,10 @@ module "subnets" {
     availability_zone_b = var.availability_zone_b
     environment = var.environment
 }
+
+module "security_groups" {
+    source = "../../modules/security_groups"
+    vpc_id = module.vpc.vpc_id
+    environment = var.environment
+    vpn_ip = var.vpn_ip
+}
