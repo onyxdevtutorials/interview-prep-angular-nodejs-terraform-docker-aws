@@ -1,3 +1,4 @@
+# docker-compose --env-file .env.local up
 networks:
   devnetwork:
 
@@ -60,19 +61,6 @@ services:
     networks:
       - devnetwork
 
-  db-test:
-    image: postgres:latest
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres-test-data:/var/lib/postgresql/data # Persist data even after container is removed
-    networks:
-      - devnetwork
-
   migrate:
     build:
       context: .
@@ -87,32 +75,5 @@ services:
     networks:
       - devnetwork
 
-  frontend-tests:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
-    image: interview-prep-frontend-tests:latest
-    working_dir: /app/frontend
-    command: npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox
-    networks:
-      - devnetwork
-
-  backend-tests:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    environment:
-      - NODE_ENV=test
-      - DATABASE_URL=${DATABASE_URL}
-    image: interview-prep-backend-tests:latest
-    working_dir: /app/backend
-    depends_on:
-      - db-test
-    command: sh -c "npx jest --clearCache && npm run test -- --verbose"
-    # command: tail -f /dev/null
-    networks:
-      - devnetwork
-
 volumes:
   postgres-dev-data:
-  postgres-test-data:
