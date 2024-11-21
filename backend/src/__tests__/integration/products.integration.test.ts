@@ -7,12 +7,39 @@ import {
   Product,
   ProductStatus,
 } from '@onyxdevtutorials/interview-prep-shared';
+import retry from "retry";
 
 dotenv.config({ path: '../../../.env.test' });
 
 const db = knex(knexConfig['test']);
 
+const waitForDb = async (): Promise<void> => {
+    const operation = retry.operation({
+    retries: 5,
+    factor: 2,
+    minTimeout: 1000,
+    maxTimeout: 5000,
+  });
+
+  return new Promise((resolve, reject) => {
+    operation.attempt(async (currentAttempt) => {
+      try {
+        await db.raw('SELECT 1');
+        resolve();
+      } catch (error) {
+        if (operation.retry(error as Error)) {
+          return;
+        }
+        reject(error);
+      }
+    });
+  });
+};
+
+
 beforeAll(async () => {
+  await waitForDb();
+  
   await db.migrate.latest();
 
   await db.seed.run();
