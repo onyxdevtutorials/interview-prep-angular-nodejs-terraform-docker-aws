@@ -31,3 +31,14 @@ module "security_groups" {
     environment = var.environment
     vpn_ip = var.vpn_ip
 }
+
+module "rds" {
+  source      = "../../modules/rds"
+  vpc_id      = module.vpc.vpc_id
+  db_subnet_ids = [module.subnets.db_subnet_a_id, module.subnets.db_subnet_b_id]
+  db_username = var.db_username
+  db_password = var.db_password
+  db_sg_id    = module.security_groups.db_sg_id
+  environment = var.environment
+}
+
