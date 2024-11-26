@@ -42,3 +42,19 @@ module "rds" {
   environment = var.environment
 }
 
+module "ecs" {
+  source                    = "../../modules/ecs"
+  environment               = var.environment
+  frontend_image = "interview-prep-frontend"
+  backend_image = "interview-prep-backend"
+  database_url = module.rds.db_instance_endpoint
+  subnet_ids                = [module.subnets.subnet_a_id, module.subnets.db_subnet_b_id]
+  frontend_sg_id            = module.security_groups.frontend_sg_id
+  backend_sg_id             = module.security_groups.backend_sg_id
+  ecs_task_execution_role   = module.iam.ecs_task_execution_role_arn
+}
+
+module "iam" {
+  source      = "../../modules/iam"
+  environment = var.environment
+}
