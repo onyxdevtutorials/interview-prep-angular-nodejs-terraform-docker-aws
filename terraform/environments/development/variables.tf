@@ -3,6 +3,17 @@ variable "region" {
   default     = "us-east-1"
 }
 
+variable "profile" {
+  description = "The AWS profile to use"
+  default     = "aws-cli-user"
+}
+
+variable "environment" {
+  description = "The environment for the resources (e.g., development, staging, production)"
+  type = string
+  default = "development"
+}
+
 variable "db_username" {
     description = "Username for interview prep postgres db"
     type = string
@@ -55,4 +66,9 @@ variable "availability_zone_b" {
     description = "Availability zone for subnet B"
     type = string
     default = "us-east-1b"
+}
+
+variable "vpn_ip" {
+    description = "The IP address and subnet mask of the VPN, e.g., 22.146.171.139/32"
+    type = string
 }

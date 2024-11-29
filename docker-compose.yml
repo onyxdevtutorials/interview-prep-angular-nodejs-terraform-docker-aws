@@ -1,3 +1,4 @@
+# docker-compose --env-file .env.local up
 networks:
   devnetwork:
 
@@ -6,6 +7,15 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
+    environment:
+      - CHROME_BIN=/usr/bin/chromium
+    volumes:
+      # The following works but shouldn't be necessary:
+      # - /Users/davidsilva/Dev/interview-prep/frontend:/app/frontend
+      - ${HOST_PROJECT_PATH}/frontend:/app/frontend
+      # The following *should* work, but it doesn't:
+      # - ./frontend:/app/frontend
+      - /app/frontend/node_modules
     image: interview-prep-frontend:latest
     ports:
       - "4200:4200"
@@ -25,6 +35,13 @@ services:
       - "3000:3000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
+    volumes:
+      # The following works but shouldn't be necessary:
+      # - /Users/davidsilva/Dev/interview-prep/backend:/app/backend
+      - ${HOST_PROJECT_PATH}/backend:/app/backend
+      # The following *should* work, but it doesn't:
+      # - ./backend:/app/backend
+      - /app/backend/node_modules
     command: npm run dev
     depends_on:
       - db
@@ -44,24 +61,11 @@ services:
     networks:
       - devnetwork
 
-  db-test:
-    image: postgres:latest
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres-test-data:/var/lib/postgresql/data # Persist data even after container is removed
-    networks:
-      - devnetwork
-
   migrate:
-    image: node:20
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     working_dir: /app/backend
-    volumes:
-      - /Users/davidsilva/Dev/interview-prep:/app
     environment:
       - NODE_ENV=${NODE_ENV}
       - DATABASE_URL=${DATABASE_URL}
@@ -71,32 +75,5 @@ services:
     networks:
       - devnetwork
 
-  frontend-tests:
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
-    image: interview-prep-frontend-tests:latest
-    working_dir: /app/frontend
-    command: npm run test -- --watch=false --browsers=ChromeHeadlessNoSandbox
-    networks:
-      - devnetwork
-
-  backend-tests:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    environment:
-      - NODE_ENV=test
-      - DATABASE_URL=${DATABASE_URL}
-    image: interview-prep-backend-tests:latest
-    working_dir: /app/backend
-    depends_on:
-      - db-test
-    command: sh -c "npx jest --clearCache && npm run test -- --verbose"
-    # command: tail -f /dev/null
-    networks:
-      - devnetwork
-
 volumes:
   postgres-dev-data:
-  postgres-test-data:

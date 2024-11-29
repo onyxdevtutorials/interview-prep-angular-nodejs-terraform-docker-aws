@@ -52,6 +52,26 @@ const config: { [key: string]: Knex.Config } = {
       directory: path.join(__dirname, '../seeds'),
     },
   },
+  test_users: {
+    client: 'pg',
+    connection: process.env['DATABASE_URL'],
+    migrations: {
+      directory: path.join(__dirname, '../migrations'),
+    },
+    seeds: {
+      directory: path.join(__dirname, '../seeds'),
+    },
+  },
+  test_products: {
+    client: 'pg',
+    connection: process.env['DATABASE_URL'],
+    migrations: {
+      directory: path.join(__dirname, '../migrations'),
+    },
+    seeds: {
+      directory: path.join(__dirname, '../seeds'),
+    },
+  },
   production: {
     client: 'pg',
     connection: process.env['DATABASE_URL'],

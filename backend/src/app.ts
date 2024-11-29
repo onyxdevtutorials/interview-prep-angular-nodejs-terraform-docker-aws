@@ -34,7 +34,6 @@ app.use(
   '/users',
   (req: Request, res: Response, next: NextFunction) => {
     req.db = app.get('db');
-    // console.log('Database connection set in middleware:', req.db.client.config);
     next();
   },
   usersRouter
@@ -45,14 +44,6 @@ app.use(
   async (req: Request, res: Response, next: NextFunction) => {
     const db = app.get('db');
     req.db = db;
-    // console.log('Database connection set in middleware:', req.db.client.config);
-
-    // const tables = await req.db.raw(
-    //   "SELECT name FROM sqlite_master WHERE type='table'"
-    // );
-    // console.log('Tables in database from middleware:', tables);
-
-    // console.log('Request object in middleware:', req);
     next();
   },
   productsRouter
