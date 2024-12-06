@@ -109,10 +109,10 @@ jobs:
           docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/interview-prep-frontend:latest -f frontend/Dockerfile .
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/interview-prep-frontend:latest
 
-      - name: Update ECS service for backend
-        run: |
-          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.BACKEND_SERVICE_NAME }} --force-new-deployment
+      # - name: Update ECS service for backend
+      #   run: |
+      #     aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.BACKEND_SERVICE_NAME }} --force-new-deployment
 
-      - name: Update ECS service for frontend
-        run: |
-          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.FRONTEND_SERVICE_NAME }} --force-new-deployment
+      # - name: Update ECS service for frontend
+      #   run: |
+      #     aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.FRONTEND_SERVICE_NAME }} --force-new-deployment
