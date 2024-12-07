@@ -1,25 +1,25 @@
 resource "aws_ecr_repository" "frontend" {
-  name = "${var.environment}-frontend"
+  name = "interview-prep-frontend"
   image_tag_mutability = "MUTABLE"
   image_scanning_configuration {
     scan_on_push = true
   }
 
     tags = {
-        Name = "${var.environment}-frontend"
+        Name = "interview-prep-frontend"
         Environment = var.environment
     }
 }
 
 resource "aws_ecr_repository" "backend" {
-  name = "${var.environment}-backend"
+  name = "interview-prep-backend"
   image_tag_mutability = "MUTABLE"
   image_scanning_configuration {
     scan_on_push = true
   }
 
     tags = {
-        Name = "${var.environment}-backend"
+        Name = "interview-prep-backend"
         Environment = var.environment
     }
 }
