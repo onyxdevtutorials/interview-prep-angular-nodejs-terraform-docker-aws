@@ -38,7 +38,7 @@ const waitForDb = async (): Promise<void> => {
 
 
 beforeAll(async () => {
-  // await waitForDb();
+  await waitForDb();
   
   await db.migrate.latest();
 
