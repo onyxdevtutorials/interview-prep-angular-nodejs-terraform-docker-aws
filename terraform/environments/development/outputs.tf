@@ -46,11 +46,11 @@ output "backend_repository_url" {
 }
 
 output "frontend_image" {
-    description = "The frontend image"
+    description = "The frontend image name"
     value = module.ecs.frontend_image
 }
 
 output "backend_image" {
-    description = "The backend image"
+    description = "The backend image name"
     value = module.ecs.backend_image
 }
