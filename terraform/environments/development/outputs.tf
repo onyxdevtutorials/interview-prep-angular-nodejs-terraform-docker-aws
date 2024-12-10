@@ -29,3 +29,28 @@ output "ecs_task_execution_role_arn" {
   description = "The ARN of the ECS task execution role"
   value       = module.iam.ecs_task_execution_role_arn
 }
+
+output "bastion_public_ip" {
+  description = "The public IP address of the bastion host"
+  value       = module.bastion.bastion_public_ip
+}
+
+output "frontend_repository_url" {
+    description = "The URL of the frontend ECR repository"
+    value = module.ecr.frontend_repository_url
+}
+
+output "backend_repository_url" {
+    description = "The URL of the backend ECR repository"
+    value = module.ecr.backend_repository_url
+}
+
+output "frontend_image" {
+    description = "The frontend image"
+    value = module.ecs.frontend_image
+}
+
+output "backend_image" {
+    description = "The backend image"
+    value = module.ecs.backend_image
+}

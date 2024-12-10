@@ -37,3 +37,13 @@ variable "ecs_task_execution_role" {
     description = "The ARN of the ECS task execution role"
     type        = string
 }
+
+variable "frontend_repository_url" {
+    description = "The URL of the ECR repository for the frontend image"
+    type        = string
+}
+
+variable "backend_repository_url" {
+    description = "The URL of the ECR repository for the backend image"
+    type        = string
+}

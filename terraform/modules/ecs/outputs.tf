@@ -22,3 +22,13 @@ output "backend_service_name" {
     description = "The name of the backend ECS service"
     value = aws_ecs_service.backend.name
 }
+
+output "frontend_image" {
+    description = "The frontend image"
+    value = var.frontend_image
+}
+
+output "backend_image" {
+    description = "The backend image"
+    value = var.backend_image
+}

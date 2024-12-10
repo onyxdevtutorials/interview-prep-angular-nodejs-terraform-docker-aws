@@ -8,12 +8,12 @@ resource "aws_ecs_task_definition" "frontend" {
     requires_compatibilities = ["FARGATE"]
     cpu                      = "256"
     memory                   = "512"
-    execution_role_arn = var.ecs_task_execution_role
+    execution_role_arn = var.ecs_task_execution_role # aws_iam_role.ecs_task_execution_role.arn
 
     container_definitions = jsonencode([
         {
             name = "frontend"
-            image = "${var.frontend_image}" # previously was "${aws_ecr_repository.frontend.repository_url}:latest"
+            image = "${var.frontend_repository_url}:latest"
             essential = true
             portMappings = [
                 {
@@ -32,12 +32,12 @@ resource "aws_ecs_task_definition" "backend" {
     requires_compatibilities = ["FARGATE"]
     cpu                      = "256"
     memory                   = "512"
-    execution_role_arn = var.ecs_task_execution_role
+    execution_role_arn = var.ecs_task_execution_role # aws_iam_role.ecs_task_execution_role.arn
 
     container_definitions = jsonencode([
         {
             name = "backend"
-            image = "${var.backend_image}" # previously was "${aws_ecr_repository.backend.repository_url}:latest"
+            image = "${var.backend_repository_url}" # previously was "${aws_ecr_repository.backend.repository_url}:latest"
             essential = true
             portMappings = [
                 {

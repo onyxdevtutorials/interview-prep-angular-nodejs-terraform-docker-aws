@@ -46,7 +46,9 @@ module "ecs" {
   source                    = "../../modules/ecs"
   environment               = var.environment
   frontend_image = "interview-prep-frontend"
+  frontend_repository_url = module.ecr.frontend_repository_url
   backend_image = "interview-prep-backend"
+  backend_repository_url = module.ecr.backend_repository_url
   database_url = module.rds.db_instance_endpoint
   subnet_ids                = [module.subnets.subnet_a_id, module.subnets.db_subnet_b_id]
   frontend_sg_id            = module.security_groups.frontend_sg_id
