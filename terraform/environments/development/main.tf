@@ -63,3 +63,14 @@ module "ecr" {
   source      = "../../modules/ecr"
   environment = var.environment
 }
+
+module "bastion" {
+  source = "../../modules/bastion"
+  vpc_id = module.vpc.vpc_id
+  public_subnet_id = module.subnets.subnet_a_id
+  bastion_sg_id = module.security_groups.bastion_sg_id
+  ami = var.bastion_ami
+  instance_type = var.bastion_instance_type
+  key_name = var.key_name
+  environment = var.environment
+}

@@ -72,3 +72,19 @@ variable "vpn_ip" {
     description = "The IP address and subnet mask of the VPN, e.g., 22.146.171.139/32"
     type = string
 }
+
+variable "bastion_ami" {
+    description = "The AMI ID for the bastion host"
+    type = string
+    default = "" # Update with the latest Amazon Linux 2 AMI ID
+}
+
+variable "bastion_instance_type" {
+    description = "The instance type for the bastion host"
+    type = string
+}
+
+variable "key_name" {
+    description = "The name of the key pair to use for the bastion host"
+    type = string
+}
