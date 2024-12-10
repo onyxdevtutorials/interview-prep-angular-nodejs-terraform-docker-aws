@@ -20,6 +20,26 @@ output "ecs_cluster_id" {
   value       = module.ecs.ecs_cluster_id
 }
 
+output "ecs_cluster_name" {
+  description = "The name of the ECS cluster"
+  value       = module.ecs.ecs_cluster_name
+}
+
+output "ecs_cluster_arn" {
+  description = "The ARN of the ECS cluster"
+  value       = module.ecs.ecs_cluster_arn
+}
+
+output "frontend_service_name" {
+  description = "The name of the frontend ECS service"
+  value       = module.ecs.frontend_service_name
+}
+
+output "backend_service_name" {
+  description = "The name of the backend ECS service"
+  value       = module.ecs.backend_service_name
+}
+
 output "rds_instance_endpoint" {
   description = "The endpoint of the RDS instance"
   value       = module.rds.db_instance_endpoint
