@@ -64,7 +64,7 @@ resource "aws_ecs_task_definition" "backend" {
                 options = {
                     "awslogs-group" = "/ecs/${var.environment}-ecs-log-group"
                     "awslogs-region" = var.region
-                    "awslogs-stream-prefix" = "frontend"
+                    "awslogs-stream-prefix" = "backend"
                 }
             }
         }
