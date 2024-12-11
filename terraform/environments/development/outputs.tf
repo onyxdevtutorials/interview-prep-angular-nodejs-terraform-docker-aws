@@ -74,3 +74,13 @@ output "backend_image" {
     description = "The backend image name"
     value = module.ecs.backend_image
 }
+
+output "frontend_sg_id" {
+    description = "The ID of the frontend security group"
+    value = module.security_groups.frontend_sg_id
+}
+
+output "backend_sg_id" {
+    description = "The ID of the backend security group"
+    value = module.security_groups.backend_sg_id
+}

@@ -3,6 +3,11 @@ variable "environment" {
     type        = string
 }
 
+variable "region" {
+    description = "The AWS region to deploy to"
+    type        = string
+}
+
 variable "frontend_image" {
     description = "The image to use for the frontend container"
     type        = string

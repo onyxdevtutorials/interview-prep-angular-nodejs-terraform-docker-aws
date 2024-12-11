@@ -21,7 +21,15 @@ resource "aws_ecs_task_definition" "frontend" {
                     hostPort      = 80
                     protocol      = "tcp"
                 }
-            ]
+            ],
+            logConfiguration = {
+                logDriver = "awslogs"
+                options = {
+                    "awslogs-group" = "/ecs/${var.environment}-ecs-log-group"
+                    "awslogs-region" = var.region
+                    "awslogs-stream-prefix" = "frontend"
+                }
+            }
         }
     ])
 }
@@ -51,6 +59,14 @@ resource "aws_ecs_task_definition" "backend" {
                     value = "${var.database_url}" # previously was "postgres://$${DB_USERNAME}:$${DB_PASSWORD}@interviewprepdbinstance:5432/interviewprepdb"
                 }
             ]
+            logConfiguration = {
+                logDriver = "awslogs"
+                options = {
+                    "awslogs-group" = "/ecs/${var.environment}-ecs-log-group"
+                    "awslogs-region" = var.region
+                    "awslogs-stream-prefix" = "frontend"
+                }
+            }
         }
     ])
 }
@@ -80,5 +96,15 @@ resource "aws_ecs_service" "backend" {
         subnets         = var.subnet_ids
         security_groups = [var.backend_sg_id]
         assign_public_ip = false
+    }
+}
+
+resource "aws_cloudwatch_log_group" "ecs_log_group" {
+    name = "/ecs/${var.environment}-ecs-log-group"
+    retention_in_days = 7
+
+    tags = {
+        Name = "${var.environment}-ecs-log-group"
+        Environment = var.environment
     }
 }

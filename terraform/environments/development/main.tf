@@ -45,6 +45,7 @@ module "rds" {
 module "ecs" {
   source                    = "../../modules/ecs"
   environment               = var.environment
+  region                    = var.region
   frontend_image = "interview-prep-frontend"
   frontend_repository_url = module.ecr.frontend_repository_url
   backend_image = "interview-prep-backend"
