@@ -1,0 +1,4 @@
+export const environment = {
+    production: true,
+    apiBaseUrl: 'http://backend:3000/api/v0',
+    };

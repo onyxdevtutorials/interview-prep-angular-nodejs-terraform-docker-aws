@@ -31,7 +31,7 @@ if (!app.get('db')) {
 }
 
 app.use(
-  '/users',
+  '/api/v0/users',
   (req: Request, res: Response, next: NextFunction) => {
     req.db = app.get('db');
     next();
@@ -40,7 +40,7 @@ app.use(
 );
 
 app.use(
-  '/products',
+  '/api/v0/products',
   async (req: Request, res: Response, next: NextFunction) => {
     const db = app.get('db');
     req.db = db;
