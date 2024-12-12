@@ -52,3 +52,13 @@ variable "backend_repository_url" {
     description = "The URL of the ECR repository for the backend image"
     type        = string
 }
+
+variable "service_discovery_namespace_id" {
+    description = "The ID of the service discovery namespace"
+    type        = string
+}
+
+variable "backend_service_arn" {
+    description = "The ARN of the backend service in service discovery"
+    type        = string
+}

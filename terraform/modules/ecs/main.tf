@@ -97,6 +97,10 @@ resource "aws_ecs_service" "backend" {
         security_groups = [var.backend_sg_id]
         assign_public_ip = false
     }
+
+    service_registries {
+        registry_arn = var.backend_service_arn
+    }
 }
 
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
