@@ -13,6 +13,8 @@ dotenv.config({ path: '../../../.env.test' });
 
 const db = knex(knexConfig['test_products']);
 
+const productsPath = '/api/v0/products';
+
 const waitForDb = async (): Promise<void> => {
     const operation = retry.operation({
     retries: 10,
@@ -61,9 +63,9 @@ afterEach(async () => {
   await db.raw('ROLLBACK')
 });
 
-describe('GET /products', () => {
+describe('GET /api/v0/products', () => {
   it('should return a list of products', async () => {
-    const response = await request(app).get('/products');
+    const response = await request(app).get(productsPath);
     expect(response.status).toBe(200);
     expect(response.body.length).toBeGreaterThan(0);
   });
@@ -73,28 +75,28 @@ describe('GET /products', () => {
       throw new Error('Database error');
     });
 
-    const response = await request(app).get('/products');
+    const response = await request(app).get(productsPath);
     expect(response.status).toBe(500);
     expect(response.body).toEqual({ error: 'Database error' });
   });
 });
 
-describe('GET /products/:id', () => {
+describe('GET /api/v0/products/:id', () => {
   it('should return a single product', async () => {
-    const response = await request(app).get('/products/1');
+    const response = await request(app).get(`${productsPath}/1`);
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(1);
   });
 
   it('should return a 404 for a non-existent product', async () => {
-    const response = await request(app).get('/products/999');
+    const response = await request(app).get(`${productsPath}/999`);
     expect(response.status).toBe(404);
   });
 
   it.todo('should handle non-404 errors');
 });
 
-describe('POST /products', () => {
+describe('POST /api/v0/products', () => {
   it('should create a new product', async () => {
     const newProduct: Omit<Product, 'id'> = {
       name: 'New Product',
@@ -103,7 +105,7 @@ describe('POST /products', () => {
       status: ProductStatus.AVAILABLE,
     };
 
-    const response = await request(app).post('/products').send(newProduct);
+    const response = await request(app).post(productsPath).send(newProduct);
 
     expect(response.status).toBe(201);
     expect(response.body.name).toBe(newProduct.name);
@@ -118,7 +120,7 @@ describe('POST /products', () => {
       status: ProductStatus.AVAILABLE,
     };
 
-    const response = await request(app).post('/products').send(newProduct);
+    const response = await request(app).post(productsPath).send(newProduct);
 
     expect(response.status).toBe(400);
   });
@@ -126,7 +128,7 @@ describe('POST /products', () => {
   it.todo('should handle non-400 (non-validation) errors');
 });
 
-describe('PUT /products/:id', () => {
+describe('PUT /api/v0/products/:id', () => {
   it('should update an existing product', async () => {
     const updatedProduct: Omit<Product, 'id'> = {
       name: 'Updated Product',
@@ -135,7 +137,7 @@ describe('PUT /products/:id', () => {
       status: ProductStatus.AVAILABLE,
     };
 
-    const response = await request(app).put('/products/1').send(updatedProduct);
+    const response = await request(app).put(`${productsPath}/1`).send(updatedProduct);
 
     expect(response.status).toBe(200);
     expect(response.body.name).toBe(updatedProduct.name);
@@ -151,7 +153,7 @@ describe('PUT /products/:id', () => {
       status: ProductStatus.AVAILABLE,
     };
 
-    const response = await request(app).put('/products/1').send(updatedProduct);
+    const response = await request(app).put(`${productsPath}/1`).send(updatedProduct);
 
     expect(response.status).toBe(400);
   });
@@ -165,7 +167,7 @@ describe('PUT /products/:id', () => {
     };
 
     const response = await request(app)
-      .put('/products/999')
+      .put(`${productsPath}/999`)
       .send(updatedProduct);
 
     expect(response.status).toBe(404);
@@ -174,14 +176,14 @@ describe('PUT /products/:id', () => {
   it.todo('should handle other errors');
 });
 
-describe('PATCH /products/:id', () => {
+describe('PATCH /api/v0/products/:id', () => {
   it('should update an existing product', async () => {
     const updatedProduct: Partial<Product> = {
       name: 'Updated Product',
     };
 
     const response = await request(app)
-      .patch('/products/1')
+      .patch(`${productsPath}/1`)
       .send(updatedProduct);
 
     expect(response.status).toBe(200);
@@ -195,7 +197,7 @@ describe('PATCH /products/:id', () => {
     };
 
     const response = await request(app)
-      .patch('/products/1')
+      .patch(`${productsPath}/1`)
       .send(updatedProduct);
 
     expect(response.status).toBe(200);
@@ -207,7 +209,7 @@ describe('PATCH /products/:id', () => {
     };
 
     const response = await request(app)
-      .patch('/products/999')
+      .patch(`${productsPath}/999`)
       .send(updatedProduct);
 
     expect(response.status).toBe(404);
@@ -218,14 +220,14 @@ describe('PATCH /products/:id', () => {
   it.todo('should handle other errors');
 });
 
-describe('DELETE /products/:id', () => {
+describe('DELETE /api/v0/products/:id', () => {
   it('should delete an existing product', async () => {
-    const response = await request(app).delete('/products/1');
+    const response = await request(app).delete(`${productsPath}/1`);
     expect(response.status).toBe(204);
   });
 
   it('should return a 404 for a non-existent product', async () => {
-    const response = await request(app).delete('/products/999');
+    const response = await request(app).delete(`${productsPath}/999`);
     expect(response.status).toBe(404);
   });
 
