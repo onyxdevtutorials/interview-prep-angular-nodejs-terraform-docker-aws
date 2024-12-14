@@ -18,7 +18,12 @@ FROM node:20-alpine
 
 WORKDIR /app/backend
 
-COPY --from=build /app/backend /app/backend
+COPY --from=build /app/backend/dist /app/backend/dist
+COPY --from=build /app/backend/package.json /app/backend/package.json
+
+RUN npm install --only=production
+
+ENV DEBUG=* NPM_CONFIG_LOGLEVEL=verbose
 
 EXPOSE 3000
 
