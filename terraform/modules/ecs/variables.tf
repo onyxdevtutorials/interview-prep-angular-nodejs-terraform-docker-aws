@@ -72,3 +72,13 @@ variable "ecs_task_role_arn" {
     description = "The ARN of the ECS task role"
     type        = string
 }
+
+variable "db_username" {
+    description = "The username to use when connecting to the database"
+    type        = string
+}
+
+variable "db_password" {
+    description = "The password to use when connecting to the database"
+    type        = string
+}

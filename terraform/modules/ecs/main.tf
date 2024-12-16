@@ -67,7 +67,7 @@ resource "aws_ecs_task_definition" "backend" {
             environment = [
                 {
                     name = "DATABASE_URL"
-                    value = "${var.database_url}" # previously was "postgres://$${DB_USERNAME}:$${DB_PASSWORD}@interviewprepdbinstance:5432/interviewprepdb"
+                    value = "postgres://${var.db_username}:${var.db_password}@${var.database_url}/${var.environment}-interview-prep-db" # previously was "postgres://$${DB_USERNAME}:$${DB_PASSWORD}@interviewprepdbinstance:5432/interviewprepdb"
                 },
                 {
                     name = "NODE_ENV"

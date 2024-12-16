@@ -65,6 +65,8 @@ module "ecs" {
   ecs_task_role_arn = module.iam.ecs_task_role_arn
   service_discovery_namespace_id = module.service_discovery.namespace_id
   backend_service_arn = module.service_discovery.backend_service_arn
+  db_username = var.db_username
+  db_password = var.db_password
 }
 
 module "iam" {

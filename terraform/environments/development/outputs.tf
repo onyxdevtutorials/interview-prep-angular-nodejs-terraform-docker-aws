@@ -89,3 +89,8 @@ output "backend_service_arn" {
     description = "The ARN of the backend service in service discovery"
     value = module.ecs.backend_service_arn
 }
+
+output "db_instance_endpoint" {
+    description = "The endpoint of the RDS instance"
+    value = module.rds.db_instance_endpoint
+}
