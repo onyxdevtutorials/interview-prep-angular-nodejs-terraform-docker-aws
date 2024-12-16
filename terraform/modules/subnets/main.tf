@@ -13,6 +13,7 @@ resource "aws_subnet" "subnet_b" {
   vpc_id            = var.vpc_id
   cidr_block        = var.subnet_b_cidr
   availability_zone = var.availability_zone_b
+  map_public_ip_on_launch = true
   tags = {
     Name        = "interview-prep-subnet-b"
     Environment = var.environment

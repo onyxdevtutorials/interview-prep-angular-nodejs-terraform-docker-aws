@@ -57,7 +57,8 @@ module "ecs" {
   backend_image = "interview-prep-backend"
   backend_repository_url = module.ecr.backend_repository_url
   database_url = module.rds.db_instance_endpoint
-  subnet_ids                = [module.subnets.subnet_a_id, module.subnets.db_subnet_b_id]
+  public_subnet_ids                = [module.subnets.subnet_a_id, module.subnets.subnet_b_id]
+  private_subnet_ids = [module.subnets.db_subnet_a_id, module.subnets.db_subnet_b_id]
   frontend_sg_id            = module.security_groups.frontend_sg_id
   backend_sg_id             = module.security_groups.backend_sg_id
   ecs_task_execution_role   = module.iam.ecs_task_execution_role_arn

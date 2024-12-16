@@ -88,3 +88,13 @@ variable "key_name" {
     description = "The name of the key pair to use for the bastion host"
     type = string
 }
+
+# variable "public_subnet_ids" {
+#     description = "The IDs of the public subnets"
+#     type = list(string)
+# }
+
+# variable "private_subnet_ids" {
+#     description = "The IDs of the private subnets"
+#     type = list(string)
+# }

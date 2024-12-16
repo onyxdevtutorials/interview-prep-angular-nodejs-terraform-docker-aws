@@ -87,7 +87,7 @@ resource "aws_ecs_service" "frontend" {
     launch_type = "FARGATE"
 
     network_configuration {
-        subnets          = var.subnet_ids
+        subnets          = var.public_subnet_ids
         security_groups  = [var.frontend_sg_id]
         assign_public_ip = true
     }
@@ -101,7 +101,7 @@ resource "aws_ecs_service" "backend" {
     launch_type = "FARGATE"
 
     network_configuration {
-        subnets         = var.subnet_ids
+        subnets         = var.private_subnet_ids
         security_groups = [var.backend_sg_id]
         assign_public_ip = false
     }

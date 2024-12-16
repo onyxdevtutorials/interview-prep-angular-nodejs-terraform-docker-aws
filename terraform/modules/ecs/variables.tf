@@ -23,8 +23,13 @@ variable "database_url" {
     type        = string
 }
 
-variable "subnet_ids" {
-    description = "The IDs of the subnets in which to place the ECS tasks"
+variable "public_subnet_ids" {
+    description = "The IDs of the public subnets in which to place the ECS tasks"
+    type        = list(string)
+}
+
+variable "private_subnet_ids" {
+    description = "The IDs of the private subnets in which to place the ECS tasks"
     type        = list(string)
 }
 
