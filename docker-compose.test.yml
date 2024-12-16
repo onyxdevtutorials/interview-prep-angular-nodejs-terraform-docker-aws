@@ -27,13 +27,13 @@ services:
 
   backend-tests:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     environment:
       - NODE_ENV=test
       - DATABASE_URL=${DATABASE_URL}
     image: interview-prep-backend-tests:latest
-    working_dir: /app/backend
+    working_dir: /app
     depends_on:
       - db-test
     command: sh -c "npx jest --clearCache && npm run test -- --watch=false --verbose"
