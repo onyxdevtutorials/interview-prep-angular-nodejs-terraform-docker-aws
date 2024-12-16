@@ -3,23 +3,23 @@ FROM node:20 AS build
 
 WORKDIR /app
 
-COPY backend/package.json ./
+COPY package.json ./
 
 RUN npm install
 
-COPY backend /app/backend
+COPY . .
 
-WORKDIR /app/backend
+# WORKDIR /app/backend
 
 RUN npm run build
 
 # Stage 2: Prepare to serve the application
 FROM node:20-alpine
 
-WORKDIR /app/backend
+WORKDIR /app
 
-COPY --from=build /app/backend/dist /app/backend/dist
-COPY --from=build /app/backend/package.json /app/backend/package.json
+COPY --from=build /app/dist /app/dist
+COPY --from=build /app/package.json /app/package.json
 
 RUN npm install --only=production
 
