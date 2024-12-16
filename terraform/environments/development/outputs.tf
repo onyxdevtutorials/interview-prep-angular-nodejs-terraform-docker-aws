@@ -84,3 +84,8 @@ output "backend_sg_id" {
     description = "The ID of the backend security group"
     value = module.security_groups.backend_sg_id
 }
+
+output "backend_service_arn" {
+    description = "The ARN of the backend service in service discovery"
+    value = module.ecs.backend_service_arn
+}

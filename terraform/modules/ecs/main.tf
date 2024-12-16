@@ -41,6 +41,7 @@ resource "aws_ecs_task_definition" "backend" {
     cpu                      = "256"
     memory                   = "512"
     execution_role_arn = var.ecs_task_execution_role # aws_iam_role.ecs_task_execution_role.arn
+    task_role_arn = var.ecs_task_role_arn
 
     container_definitions = jsonencode([
         {
@@ -57,6 +58,10 @@ resource "aws_ecs_task_definition" "backend" {
                 {
                     name = "DATABASE_URL"
                     value = "${var.database_url}" # previously was "postgres://$${DB_USERNAME}:$${DB_PASSWORD}@interviewprepdbinstance:5432/interviewprepdb"
+                },
+                {
+                    name = "NODE_ENV"
+                    value = "production"
                 }
             ]
             logConfiguration = {
@@ -66,6 +71,9 @@ resource "aws_ecs_task_definition" "backend" {
                     "awslogs-region" = var.region
                     "awslogs-stream-prefix" = "backend"
                 }
+            },
+            linuxParameters = {
+                initProcessEnabled = true
             }
         }
     ])
@@ -101,6 +109,8 @@ resource "aws_ecs_service" "backend" {
     service_registries {
         registry_arn = var.backend_service_arn
     }
+
+    enable_execute_command = true
 }
 
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
