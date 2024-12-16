@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "frontend" {
             environment = [
                 {
                     name = "NODE_ENV"
-                    value = "production"
+                    value = "development"
                 }
             ],
             linuxParameters = {
@@ -71,7 +71,7 @@ resource "aws_ecs_task_definition" "backend" {
                 },
                 {
                     name = "NODE_ENV"
-                    value = "production"
+                    value = "development"
                 }
             ]
             logConfiguration = {
