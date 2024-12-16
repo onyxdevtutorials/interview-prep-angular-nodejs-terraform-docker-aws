@@ -101,6 +101,8 @@ resource "aws_ecs_service" "frontend" {
         security_groups  = [var.frontend_sg_id]
         assign_public_ip = true
     }
+
+    enable_execute_command = true
 }
 
 resource "aws_ecs_service" "backend" {
