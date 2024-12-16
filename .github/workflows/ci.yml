@@ -100,7 +100,7 @@ jobs:
       # One obvious problem: I'm pushing to interview-prep-backend but trying to pull from development-backend
       # *This* build is successful but the the frontend one fails.
       - name: Build and push backend Docker image
-        working-directory: .
+        working-directory: ./backend
         run: |
           docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/interview-prep-backend:latest -f backend/Dockerfile .
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/interview-prep-backend:latest
