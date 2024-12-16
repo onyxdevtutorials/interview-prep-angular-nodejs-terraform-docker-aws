@@ -9,6 +9,7 @@ resource "aws_ecs_task_definition" "frontend" {
     cpu                      = "256"
     memory                   = "512"
     execution_role_arn = var.ecs_task_execution_role # aws_iam_role.ecs_task_execution_role.arn
+    task_role_arn = var.ecs_task_role_arn
 
     container_definitions = jsonencode([
         {
@@ -29,6 +30,15 @@ resource "aws_ecs_task_definition" "frontend" {
                     "awslogs-region" = var.region
                     "awslogs-stream-prefix" = "frontend"
                 }
+            },
+            environment = [
+                {
+                    name = "NODE_ENV"
+                    value = "production"
+                }
+            ],
+            linuxParameters = {
+                initProcessEnabled = true
             }
         }
     ])
