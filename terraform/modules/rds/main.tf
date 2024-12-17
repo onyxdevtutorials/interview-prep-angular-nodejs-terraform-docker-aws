@@ -24,4 +24,6 @@ resource "aws_db_instance" "postgres" {
         Name        = "${var.environment}-interview-prep-db"
         Environment = var.environment
     }
+
+    enabled_cloudwatch_logs_exports = ["postgresql"]
 }
