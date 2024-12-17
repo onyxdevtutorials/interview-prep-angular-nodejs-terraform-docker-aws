@@ -97,7 +97,7 @@ jobs:
 
       - name: Create database if it doesn't exist
         run: |
-          psql "postgres://${ secrets.DB_USERNAME }:${ secrets.DB_PASSWORD }@${ secrets.DB_HOST }:${ secrets.DB_PORT }/postgres" -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${ secrets.DB_NAME }') THEN CREATE DATABASE ${ secrets.DB_NAME }; END IF; END \$\$;"
+          psql "postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/postgres" -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ secrets.DB_NAME }}') THEN CREATE DATABASE ${{ secrets.DB_NAME }}; END IF; END \$\$;"
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
 
