@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "description": "Copy, build and package migration files",
-  "main": "dist/migrate.js",
+  "main": "dist/index.mjs",
   "scripts": {
     "build": "tsc",
     "migrate": "ts-node src/migrate.ts"
@@ -12,9 +12,13 @@
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.714.0",
+    "aws-lambda": "^1.0.7",
     "knex": "^3.1.0",
     "pg": "^8.13.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.146"
   }
 }

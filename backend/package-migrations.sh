@@ -2,15 +2,23 @@
 
 cd "$(dirname "$0")"
 
-mkdir -p migrate-lambda/src
-
 cp -r migrations migrate-lambda/src/
-cp src/knexFile.ts migrate-lambda/src/
 
 cd migrate-lambda
 
+rm -f migrate-package.zip
+
 npm install
+
+rm -rf dist
 
 npm run build
 
-zip -r migrate-package.zip dist/ node_modules/ package.json
+# node ./rename-to-mjs.js
+mv dist/index.js dist/index.mjs
+
+cd dist
+zip -r ../migrate-package.zip ./*
+cd ..
+
+zip -r migrate-package.zip node_modules/ package.json

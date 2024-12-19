@@ -1,5 +1,5 @@
 import knex from 'knex';
-import knexConfig from './knexFile';
+import knexConfig from './knexFile.js';
 import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm';
 
 const ssmClient = new SSMClient({ region: 'us-east-1' });
@@ -10,7 +10,7 @@ const getSSMParameter = async (name: string): Promise<string> => {
   return response.Parameter?.Value || '';
 };
 
-const runMigrations = async () => {
+export const runMigrations = async () => {
     const env = process.env.NODE_ENV || 'development';
     const config = knexConfig[env];
   
@@ -34,5 +34,3 @@ const runMigrations = async () => {
             process.exit(1);
         });
 };
-
-runMigrations();
