@@ -2,6 +2,15 @@
 
 cd "$(dirname "$0")"
 
-# Relying on install already being run in a previous step of the workflow.
+mkdir -p migrate-lambda/src
 
-zip -r migrate-package.zip src/knexFile.ts migrate.ts migrations/ node_modules/ package.json
+cp -r migrations migrate-lambda/src/
+cp src/knexFile.ts migrate-lambda/src/
+
+cd migrate-lambda
+
+npm install
+
+npm run build
+
+zip -r migrate-package.zip dist/ node_modules/ package.json
