@@ -8,8 +8,18 @@ variable "subnet_a_cidr" {
   type = string
 }
 
+variable "public_subnet_a_cidr" {
+  description = "CIDR block for public subnet A"
+  type = string
+}
+
 variable "subnet_b_cidr" {
   description = "CIDR block for subnet B"
+  type = string
+}
+
+variable "public_subnet_b_cidr" {
+  description = "CIDR block for public subnet B"
   type = string
 }
 
@@ -18,8 +28,18 @@ variable "db_subnet_a_cidr" {
   type = string
 }
 
+variable "private_subnet_a_cidr" {
+  description = "CIDR block for private subnet A"
+  type = string
+}
+
 variable "db_subnet_b_cidr" {
   description = "CIDR block for DB subnet B"
+  type = string
+}
+
+variable "private_subnet_b_cidr" {
+  description = "CIDR block for private subnet B"
   type = string
 }
 

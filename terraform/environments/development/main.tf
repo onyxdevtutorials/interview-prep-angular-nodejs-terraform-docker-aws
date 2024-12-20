@@ -17,9 +17,13 @@ module "subnets" {
     source = "../../modules/subnets"
     vpc_id = module.vpc.vpc_id
     subnet_a_cidr = var.subnet_a_cidr
+    public_subnet_a_cidr = var.public_subnet_a_cidr
     subnet_b_cidr = var.subnet_b_cidr
+    public_subnet_b_cidr = var.public_subnet_b_cidr
     db_subnet_a_cidr = var.db_subnet_a_cidr
+    private_subnet_a_cidr = var.private_subnet_a_cidr
     db_subnet_b_cidr = var.db_subnet_b_cidr
+    private_subnet_b_cidr = var.private_subnet_b_cidr
     availability_zone_a = var.availability_zone_a
     availability_zone_b = var.availability_zone_b
     environment = var.environment
@@ -89,3 +93,22 @@ module "bastion" {
   key_name = var.key_name
   environment = var.environment
 }
+
+# module "ssm_parameters" {
+#   source = "../../modules/ssm"
+#   environment = var.environment
+#   db_host = module.rds.db_instance_endpoint
+#   db_port = module.rds.db_instance_port
+#   db_name = module.rds.db_instance_name
+#   db_user = var.db_username
+#   db_pass = var.db_password
+# }
+
+# module "lambda_migrate" {
+#   source = "../../modules/lambda"
+#   function_name = "${var.environment}-interview-prep-migrate"
+#   handler = "index.handler"
+#   runtime = "nodejs22.x"
+#   lambda_package = var.lambda_package_migrate
+#   lambda_subnet_ids = [module.subnets.subnet_a_id, module.subnets.subnet_b_id]
+# }
