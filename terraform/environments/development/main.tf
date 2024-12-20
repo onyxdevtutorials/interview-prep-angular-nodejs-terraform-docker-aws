@@ -6,10 +6,10 @@ provider "aws" {
 module "vpc" {
     source = "../../modules/vpc"
     vpc_cidr = var.vpc_cidr
-    public_subnet_a_id = module.subnets.subnet_a_id
-    public_subnet_b_id = module.subnets.subnet_b_id
-    private_subnet_a_id = module.subnets.db_subnet_a_id
-    private_subnet_b_id = module.subnets.db_subnet_b_id
+    public_subnet_a_id = module.subnets.public_subnet_a_id
+    public_subnet_b_id = module.subnets.public_subnet_b_id
+    private_subnet_a_id = module.subnets.private_subnet_a_id
+    private_subnet_b_id = module.subnets.private_subnet_b_id
     environment = var.environment
 }
 
@@ -39,7 +39,7 @@ module "security_groups" {
 module "rds" {
   source      = "../../modules/rds"
   vpc_id      = module.vpc.vpc_id
-  db_subnet_ids = [module.subnets.db_subnet_a_id, module.subnets.db_subnet_b_id]
+  db_subnet_ids = [module.subnets.db_subnet_a_id, module.subnets.db_subnet_b_id, module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
   db_username = var.db_username
   db_password = var.db_password
   db_sg_id    = module.security_groups.db_sg_id
@@ -62,7 +62,7 @@ module "ecs" {
   backend_repository_url = module.ecr.backend_repository_url
   database_url = module.rds.db_instance_endpoint
   public_subnet_ids                = [module.subnets.subnet_a_id, module.subnets.subnet_b_id]
-  private_subnet_ids = [module.subnets.db_subnet_a_id, module.subnets.db_subnet_b_id]
+  private_subnet_ids = [module.subnets.db_subnet_a_id, module.subnets.db_subnet_b_id, module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
   frontend_sg_id            = module.security_groups.frontend_sg_id
   backend_sg_id             = module.security_groups.backend_sg_id
   ecs_task_execution_role   = module.iam.ecs_task_execution_role_arn
@@ -86,7 +86,7 @@ module "ecr" {
 module "bastion" {
   source = "../../modules/bastion"
   vpc_id = module.vpc.vpc_id
-  public_subnet_id = module.subnets.subnet_a_id
+  public_subnet_id = module.subnets.public_subnet_a_id
   bastion_sg_id = module.security_groups.bastion_sg_id
   ami = var.bastion_ami
   instance_type = var.bastion_instance_type
