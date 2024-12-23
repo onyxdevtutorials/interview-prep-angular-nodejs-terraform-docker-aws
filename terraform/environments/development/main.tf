@@ -16,13 +16,9 @@ module "vpc" {
 module "subnets" {
     source = "../../modules/subnets"
     vpc_id = module.vpc.vpc_id
-    subnet_a_cidr = var.subnet_a_cidr
     public_subnet_a_cidr = var.public_subnet_a_cidr
-    subnet_b_cidr = var.subnet_b_cidr
     public_subnet_b_cidr = var.public_subnet_b_cidr
-    db_subnet_a_cidr = var.db_subnet_a_cidr
     private_subnet_a_cidr = var.private_subnet_a_cidr
-    db_subnet_b_cidr = var.db_subnet_b_cidr
     private_subnet_b_cidr = var.private_subnet_b_cidr
     availability_zone_a = var.availability_zone_a
     availability_zone_b = var.availability_zone_b
@@ -39,7 +35,7 @@ module "security_groups" {
 module "rds" {
   source      = "../../modules/rds"
   vpc_id      = module.vpc.vpc_id
-  db_subnet_ids = [module.subnets.db_subnet_a_id, module.subnets.db_subnet_b_id, module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
+  private_subnet_ids = [module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
   db_username = var.db_username
   db_password = var.db_password
   db_sg_id    = module.security_groups.db_sg_id
@@ -61,8 +57,8 @@ module "ecs" {
   backend_image = "interview-prep-backend"
   backend_repository_url = module.ecr.backend_repository_url
   database_url = module.rds.db_instance_endpoint
-  public_subnet_ids                = [module.subnets.subnet_a_id, module.subnets.subnet_b_id]
-  private_subnet_ids = [module.subnets.db_subnet_a_id, module.subnets.db_subnet_b_id, module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
+  public_subnet_ids         = [module.subnets.public_subnet_a_id, module.subnets.public_subnet_b_id]
+  private_subnet_ids = [module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
   frontend_sg_id            = module.security_groups.frontend_sg_id
   backend_sg_id             = module.security_groups.backend_sg_id
   ecs_task_execution_role   = module.iam.ecs_task_execution_role_arn

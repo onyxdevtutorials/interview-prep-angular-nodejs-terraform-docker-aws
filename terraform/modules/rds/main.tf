@@ -1,7 +1,7 @@
 resource "aws_db_subnet_group" "postgres" {
     name       = "interview-prep-db-subnet-group"
     description = "Managed by Terraform"
-    subnet_ids = var.db_subnet_ids
+    subnet_ids = var.private_subnet_ids
     tags = {
         Name        = "interview-prep-db-subnet-group"
         Environment = var.environment
