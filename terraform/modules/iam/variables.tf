@@ -3,3 +3,13 @@ variable "environment" {
     type        = string
   
 }
+
+variable "region" {
+    description = "The AWS region to deploy to"
+    default     = "us-east-1"
+}
+
+variable "account_id" {
+    description = "The AWS account ID"
+    type        = string
+}

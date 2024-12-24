@@ -1,3 +1,8 @@
+variable "account_id" {
+    description = "The AWS account ID"
+    type = string
+}
+
 variable "region" {
   description = "The AWS region to deploy to"
   default     = "us-east-1"
@@ -99,7 +104,7 @@ variable "key_name" {
 #     type = list(string)
 # }
 
-# variable "lambda_package_migrate" {
-#     description = "The path to the ZIP file containing the Lambda function code"
-#     type = string
-# }
+variable "lambda_package_migrate" {
+    description = "The path to the ZIP file containing the Lambda function code"
+    type = string
+}

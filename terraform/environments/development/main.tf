@@ -72,6 +72,7 @@ module "ecs" {
 module "iam" {
   source      = "../../modules/iam"
   environment = var.environment
+  account_id = var.account_id
 }
 
 module "ecr" {
@@ -90,21 +91,29 @@ module "bastion" {
   environment = var.environment
 }
 
-# module "ssm_parameters" {
-#   source = "../../modules/ssm"
-#   environment = var.environment
-#   db_host = module.rds.db_instance_endpoint
-#   db_port = module.rds.db_instance_port
-#   db_name = module.rds.db_instance_name
-#   db_user = var.db_username
-#   db_pass = var.db_password
-# }
+module "ssm_parameters" {
+  source = "../../modules/ssm"
+  environment = var.environment
+  db_host = module.rds.db_instance_endpoint
+  db_port = module.rds.db_instance_port
+  db_name = module.rds.db_instance_name
+  db_user = var.db_username
+  db_pass = var.db_password
+}
 
-# module "lambda_migrate" {
-#   source = "../../modules/lambda"
-#   function_name = "${var.environment}-interview-prep-migrate"
-#   handler = "index.handler"
-#   runtime = "nodejs22.x"
-#   lambda_package = var.lambda_package_migrate
-#   lambda_subnet_ids = [module.subnets.subnet_a_id, module.subnets.subnet_b_id]
-# }
+module "lambda_migrate" {
+  source = "../../modules/lambda"
+  environment = var.environment
+  function_name = "${var.environment}-interview-prep-migrate"
+  handler = "index.handler"
+  runtime = "nodejs20.x"
+  lambda_package = var.lambda_package_migrate
+  lambda_subnet_ids = [module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
+  lambda_sg_id = module.security_groups.lambda_sg_id
+  db_host_param = module.ssm_parameters.db_host_param
+  db_port_param = module.ssm_parameters.db_port_param
+  db_name_param = module.ssm_parameters.db_name_param
+  db_user_param = module.ssm_parameters.db_user_param
+  db_pass_param = module.ssm_parameters.db_pass_param
+  lambda_exec_role_arn = module.iam.lambda_exec_role_arn
+}
