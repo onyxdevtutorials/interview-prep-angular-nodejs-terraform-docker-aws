@@ -111,23 +111,11 @@ jobs:
         working-directory: ./backend
         run: ./package-migrations.sh
 
-      # We *could* create the function here if it doesn't exist, but we'll assume it does for now
-      # - name: Create or update Lambda function
-      #   run: |
-      #     aws lambda get-function --function-name run-migrations --region ${{ env.AWS_REGION }} || \
-      #     aws lambda create-function \
-      #       --function-name run-migrations \
-      #       --handler index.handler \
-      #       --runtime nodejs22.x \
-      #       --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.LAMBDA_ROLE_NAME }} \
-      #       --zip-file fileb://backend/migrate-package.zip \
-      #       --region ${{ env.AWS_REGION }}
-
       - name: Update Lambda migration function
         run: |
           aws lambda update-function-code \
             --function-name run-migrations \
-            --zip-file fileb://backend/migrate-package.zip \
+            --zip-file fileb://backend/migrate-lambda/migrate-package.zip \
             --region ${{ env.AWS_REGION }}
 
       - name: Invoke Lambda function for migrations
