@@ -97,9 +97,48 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE_NAME }}
+          aws-region: ${{ env.AWS_REGION }}
+
       - name: Install dependencies for backend
         working-directory: ./backend
         run: npm install
+
+      - name: Package migration files
+        working-directory: ./backend
+        run: ./package-migrations.sh
+
+      # We *could* create the function here if it doesn't exist, but we'll assume it does for now
+      # - name: Create or update Lambda function
+      #   run: |
+      #     aws lambda get-function --function-name run-migrations --region ${{ env.AWS_REGION }} || \
+      #     aws lambda create-function \
+      #       --function-name run-migrations \
+      #       --handler index.handler \
+      #       --runtime nodejs22.x \
+      #       --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.LAMBDA_ROLE_NAME }} \
+      #       --zip-file fileb://backend/migrate-package.zip \
+      #       --region ${{ env.AWS_REGION }}
+
+      - name: Update Lambda migration function
+        run: |
+          aws lambda update-function-code \
+            --function-name run-migrations \
+            --zip-file fileb://backend/migrate-package.zip \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Invoke Lambda function for migrations
+        run: |
+          aws lambda invoke \
+            --function-name run-migrations \
+            --region ${{ env.AWS_REGION }} \
+            outputfile.txt
+        env:
+          NODE_ENV: development
+          DATABASE_URL: postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
 
       - name: Run migrations
         working-directory: ./backend
@@ -110,12 +149,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE_NAME }}
-          aws-region: ${{ env.AWS_REGION }}
 
       - name: Log in to Amazon ECR
         id: login-ecr
