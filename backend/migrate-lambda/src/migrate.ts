@@ -1,24 +1,16 @@
 import knex from 'knex';
 import knexConfig from './knexFile.js';
 import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm';
-import { KMSClient, DecryptCommand } from '@aws-sdk/client-kms';
+import os from 'os';
+import { Client } from 'pg';
 
 const ssmClient = new SSMClient({ region: 'us-east-1' });
-const kmsClient = new KMSClient({ region: 'us-east-1' });
 
 const getSSMParameter = async (name: string): Promise<string> => {
   const command = new GetParameterCommand({ Name: name, WithDecryption: true });
   const response = await ssmClient.send(command);
   return response.Parameter?.Value || '';
 };
-
-// const decryptPassword = async (password: string): Promise<string> => {
-//     const command = new DecryptCommand({
-//         CiphertextBlob: Buffer.from(password, 'base64')
-//     });
-//     const response = await kmsClient.send(command);
-//     return Buffer.from(response.Plaintext as Uint8Array).toString('utf-8');
-// };
 
 export const runMigrations = async () => {
     try {
@@ -35,6 +27,9 @@ export const runMigrations = async () => {
         };
 
         console.log('Database configuration:', config);
+
+        const networkInterfaces = os.networkInterfaces();
+        console.log('Network interfaces:', networkInterfaces);
 
         const db = knex(config);
 

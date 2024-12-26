@@ -11,8 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-kms": "^3.716.0",
     "@aws-sdk/client-ssm": "^3.714.0",
+    "@onyxdevtutorials/interview-prep-shared": "^1.0.3",
     "aws-lambda": "^1.0.7",
     "knex": "^3.1.0",
     "pg": "^8.13.1",
