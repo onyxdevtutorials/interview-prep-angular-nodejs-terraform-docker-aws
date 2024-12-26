@@ -25,6 +25,11 @@ variable "db_sg_id" {
     type = string
 }
 
+variable "lambda_sg_id" {
+    description = "The ID of the security group for the Lambda function"
+    type = string  
+}
+
 variable "environment" {
     description = "The environment for the resources (e.g., development, staging, production)"
     type = string

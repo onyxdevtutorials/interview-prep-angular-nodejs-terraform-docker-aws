@@ -74,13 +74,6 @@ resource "aws_security_group" "db_sg" {
     description = "Managed by Terraform"
     vpc_id = var.vpc_id
 
-    ingress {
-        from_port = 5432
-        to_port = 5432
-        protocol = "tcp"
-        security_groups = [aws_security_group.backend_sg.id, aws_security_group.bastion_sg.id]
-    }
-
     egress {
         from_port = 0
         to_port = 0
@@ -99,13 +92,6 @@ resource "aws_security_group" "lambda_sg" {
     description = "Managed by Terraform"
     vpc_id = var.vpc_id
 
-    ingress {
-        from_port = 5432
-        to_port = 5432
-        protocol = "tcp"
-        security_groups = [aws_security_group.db_sg.id]
-    }
-
     egress {
         from_port = 0
         to_port = 0
@@ -117,15 +103,6 @@ resource "aws_security_group" "lambda_sg" {
         Name = "${var.environment}-interview-prep-lambda-sg"
         Environment = var.environment
     }
-}
-
-resource "aws_security_group_rule" "allow_lambda_to_db" {
-    type = "ingress"
-    from_port = 5432
-    to_port = 5432
-    protocol = "tcp"
-    source_security_group_id = aws_security_group.lambda_sg.id
-    security_group_id = aws_security_group.db_sg.id
 }
 
 resource "aws_security_group" "bastion_sg" {
@@ -151,4 +128,31 @@ resource "aws_security_group" "bastion_sg" {
         Name = "interview-prep-bastion-sg"
         Environment = var.environment
     }
+}
+
+resource "aws_security_group_rule" "allow_lambda_to_db" {
+    type = "ingress"
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+    source_security_group_id = aws_security_group.lambda_sg.id
+    security_group_id = aws_security_group.db_sg.id
+}
+
+resource "aws_security_group_rule" "allow_db_to_lambda" {
+    type = "ingress"
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+    source_security_group_id = aws_security_group.db_sg.id
+    security_group_id = aws_security_group.lambda_sg.id
+}
+
+resource "aws_security_group_rule" "allow_bastion_to_db" {
+    type = "ingress"
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+    source_security_group_id = aws_security_group.bastion_sg.id
+    security_group_id = aws_security_group.db_sg.id
 }

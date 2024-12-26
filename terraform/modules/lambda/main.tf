@@ -2,6 +2,8 @@ resource "aws_lambda_function" "migrate" {
     function_name = var.function_name
     handler = var.handler
     runtime = var.runtime
+    timeout = var.timeout
+    memory_size = var.memory_size
     role = var.lambda_exec_role_arn
     filename = var.lambda_package
     source_code_hash = filebase64sha256(var.lambda_package)

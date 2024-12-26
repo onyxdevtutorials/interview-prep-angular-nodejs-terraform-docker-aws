@@ -39,6 +39,7 @@ module "rds" {
   db_username = var.db_username
   db_password = var.db_password
   db_sg_id    = module.security_groups.db_sg_id
+  lambda_sg_id = module.security_groups.lambda_sg_id
   environment = var.environment
 }
 
@@ -73,6 +74,7 @@ module "iam" {
   source      = "../../modules/iam"
   environment = var.environment
   account_id = var.account_id
+  region     = var.region
 }
 
 module "ecr" {
@@ -107,6 +109,8 @@ module "lambda_migrate" {
   function_name = "${var.environment}-interview-prep-migrate"
   handler = "index.handler"
   runtime = "nodejs20.x"
+  timeout = 30
+  memory_size = 128
   lambda_package = var.lambda_package_migrate
   lambda_subnet_ids = [module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
   lambda_sg_id = module.security_groups.lambda_sg_id
@@ -116,4 +120,27 @@ module "lambda_migrate" {
   db_user_param = module.ssm_parameters.db_user_param
   db_pass_param = module.ssm_parameters.db_pass_param
   lambda_exec_role_arn = module.iam.lambda_exec_role_arn
+}
+
+resource "aws_cloudwatch_log_group" "vpc_flow_log" {
+  name = "/aws/vpc/flow-log"
+  retention_in_days = 7
+
+  tags = {
+    Name = "interview-prep-vpc-flow-log"
+    environment = var.environment
+  }
+}
+
+resource "aws_flow_log" "vpc_flow_log" {
+  vpc_id = module.vpc.vpc_id
+  log_destination = aws_cloudwatch_log_group.vpc_flow_log.arn
+  traffic_type = "ALL"
+  log_destination_type = "cloud-watch-logs"
+  iam_role_arn = module.iam.vpc_flow_log_role_arn
+
+  tags = {
+    Name = "interview-prep-vpc-flow-log"
+    environment = var.environment
+  }
 }

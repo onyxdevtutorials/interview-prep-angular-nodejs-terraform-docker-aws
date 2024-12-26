@@ -112,6 +112,13 @@ resource "aws_iam_policy" "lambda_exec_policy" {
                 Resource = [
                     "arn:aws:ssm:${var.region}:${var.account_id}:parameter/interview-prep/${var.environment}/*"
                 ]
+            },
+            {
+                Effect = "Allow",
+                Action = [
+                    "kms:Decrypt"
+                ],
+                Resource = "arn:aws:kms:${var.region}:${var.account_id}:key/169ce983-7b59-4ff6-9c74-533af48cf478"
             }
         ]
     })
@@ -122,26 +129,54 @@ resource "aws_iam_role_policy_attachment" "lambda_exec_policy_attachment" {
     policy_arn = aws_iam_policy.lambda_exec_policy.arn
 }
 
-resource "aws_iam_policy" "lambda_ssm_policy" {
-    name = "${var.environment}-interview-prep-lambda-ssm-policy"
-    description = "Allow Lambda to read SSM parameters"
-    policy = jsonencode({
+resource "aws_iam_role" "vpc_flow_log_role" {
+    name = "vpc-flow-log-role"
+
+    assume_role_policy = jsonencode({
+        Version = "2012-10-17",
+        Statement = [
+            {
+                Effect = "Allow",
+                Principal = {
+                    Service = "vpc-flow-logs.amazonaws.com"
+                },
+                Action = "sts:AssumeRole"
+            }
+        ]
+    })
+
+    tags = {
+        Name        = "interview-prep-vpc-flow-log-role"
+        Environment = var.environment
+    }
+}
+
+resource "aws_iam_policy" "vpc_flow_log_policy" {
+    name = "vpc-flow-log-policy" 
+    description = "Policy for VPC Flow Logs"
+
+    policy = jsonencode(({
         Version = "2012-10-17",
         Statement = [
             {
                 Effect = "Allow",
                 Action = [
-                    "ssm:GetParameters",
-                    "ssm:GetParameter",
-                    "ssm:GetParameterHistory",
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
                 ],
                 Resource = "*"
-            }
+            },
         ]
-    })
+    }))
+
+    tags = {
+        Name        = "interview-prep-vpc-flow-log-policy"
+        Environment = var.environment
+    }
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_ssm_policy_attachment" {
-    role       = aws_iam_role.lambda_exec.name
-    policy_arn = aws_iam_policy.lambda_ssm_policy.arn
+resource "aws_iam_role_policy_attachment" "vpc_flow_log_role_policy" {
+    role       = aws_iam_role.vpc_flow_log_role.name
+    policy_arn = aws_iam_policy.vpc_flow_log_policy.arn
 }

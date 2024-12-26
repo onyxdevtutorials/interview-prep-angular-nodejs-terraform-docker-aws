@@ -62,3 +62,13 @@ variable "lambda_exec_role_arn" {
   description = "ARN of the role for the lambda function"
   type        = string
 }
+
+variable "timeout" {
+  description = "Timeout for the lambda function"
+  type        = number  
+}
+
+variable "memory_size" {
+  description = "Memory size for the lambda function"
+  type        = number
+}
