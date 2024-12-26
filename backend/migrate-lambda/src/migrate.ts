@@ -1,8 +1,6 @@
 import knex from 'knex';
 import knexConfig from './knexFile.js';
 import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm';
-import os from 'os';
-import { Client } from 'pg';
 
 const ssmClient = new SSMClient({ region: 'us-east-1' });
 
@@ -26,11 +24,6 @@ export const runMigrations = async () => {
             ssl: { rejectUnauthorized: false },
         };
 
-        console.log('Database configuration:', config);
-
-        const networkInterfaces = os.networkInterfaces();
-        console.log('Network interfaces:', networkInterfaces);
-
         const db = knex(config);
 
         console.log('Running migrations...');
@@ -38,15 +31,14 @@ export const runMigrations = async () => {
         await db.migrate.latest()
             .then(() => {
                 console.log('Migrations ran successfully');
-                process.exit(0);
             })
             .catch((err) => {
                 console.error('Error running migrations:', err);
-                process.exit(1);
+                throw err;
             });
     } catch (err) {
         console.error('Error running migrations:', err);
-        process.exit(1);
+        throw err;
     }
 };
 
