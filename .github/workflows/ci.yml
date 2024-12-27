@@ -134,13 +134,6 @@ jobs:
           NODE_ENV: development
           DATABASE_URL: postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
 
-      - name: Run migrations
-        working-directory: ./backend
-        run: npm run migrate
-        env:
-          NODE_ENV: development
-          DATABASE_URL: postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
