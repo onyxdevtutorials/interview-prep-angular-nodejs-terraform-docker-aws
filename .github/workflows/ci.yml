@@ -72,6 +72,8 @@ jobs:
 
       - name: Unlock migrations
         working-directory: ./backend
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: npx knex migrate:unlock
 
       - name: Run backend tests
