@@ -70,6 +70,10 @@ jobs:
         working-directory: ./backend
         run: npm install
 
+      - name: Unlock migrations
+        working-directory: ./backend
+        run: npx knex migrate:unlock
+
       - name: Run backend tests
         working-directory: ./backend
         env:
