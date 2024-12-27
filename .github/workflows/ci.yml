@@ -127,7 +127,7 @@ jobs:
       - name: Invoke Lambda function for migrations
         run: |
           aws lambda invoke \
-            --function-name run-migrations \
+            --function-name development-interview-prep-migrate \
             --region ${{ env.AWS_REGION }} \
             outputfile.txt
         env:
