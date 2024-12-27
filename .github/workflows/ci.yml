@@ -126,7 +126,7 @@ jobs:
       - name: Update Lambda migration function
         run: |
           aws lambda update-function-code \
-            --function-name run-migrations \
+            --function-name development-interview-prep-migrate \
             --zip-file fileb://backend/migrate-lambda/migrate-package.zip \
             --region ${{ env.AWS_REGION }}
 
