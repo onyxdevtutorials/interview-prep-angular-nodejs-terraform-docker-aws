@@ -75,6 +75,7 @@ module "iam" {
   environment = var.environment
   account_id = var.account_id
   region     = var.region
+  github_repository = "davidsilva/interview-prep-angular-nodejs-terraform-docker-aws"
 }
 
 module "ecr" {
@@ -109,7 +110,7 @@ module "lambda_migrate" {
   function_name = "${var.environment}-interview-prep-migrate"
   handler = "index.handler"
   runtime = "nodejs20.x"
-  timeout = 30
+  timeout = 60
   memory_size = 128
   lambda_package = var.lambda_package_migrate
   lambda_subnet_ids = [module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]

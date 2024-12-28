@@ -24,6 +24,8 @@ export const runMigrations = async () => {
             ssl: { rejectUnauthorized: false },
         };
 
+        console.log('Config:', config.connection);
+
         const db = knex(config);
 
         console.log('Running migrations...');
