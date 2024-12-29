@@ -233,6 +233,7 @@ resource "aws_iam_policy" "github_actions_policy" {
                     "logs:PutLogEvents",
                     "lambda:UpdateFunctionCode",
                     "lambda:InvokeFunction",
+                    "lambda:GetFunctionConfiguration"
                 ],
                 Resource = [
                     "arn:aws:logs:*:*:*",
