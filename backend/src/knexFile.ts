@@ -37,7 +37,7 @@ const config: { [key: string]: Knex.Config } = {
     connection: {
       connectionString: process.env['DATABASE_URL'],
       ssl: {
-        rejectUnauthorized: true 
+        rejectUnauthorized: false 
       },
     },
     migrations: {
@@ -82,7 +82,7 @@ const config: { [key: string]: Knex.Config } = {
     connection: {
       connectionString: process.env['DATABASE_URL'],
       ssl: {
-        rejectUnauthorized: true 
+        rejectUnauthorized: false 
       },
     },
     migrations: {
