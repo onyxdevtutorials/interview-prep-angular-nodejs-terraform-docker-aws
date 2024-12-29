@@ -34,7 +34,12 @@ const config: { [key: string]: Knex.Config } = {
   },
   development: {
     client: 'pg',
-    connection: process.env['DATABASE_URL'],
+    connection: {
+      connectionString: process.env['DATABASE_URL'],
+      ssl: {
+        rejectUnauthorized: true 
+      },
+    },
     migrations: {
       directory: './migrations',
     },
@@ -74,7 +79,12 @@ const config: { [key: string]: Knex.Config } = {
   },
   production: {
     client: 'pg',
-    connection: process.env['DATABASE_URL'],
+    connection: {
+      connectionString: process.env['DATABASE_URL'],
+      ssl: {
+        rejectUnauthorized: true 
+      },
+    },
     migrations: {
       directory: './migrations',
     },
