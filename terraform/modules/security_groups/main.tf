@@ -46,7 +46,10 @@ resource "aws_security_group" "backend_sg" {
         from_port = 3000
         to_port = 3000
         protocol = "tcp"
-        security_groups = [aws_security_group.frontend_sg.id]
+        security_groups = [
+            aws_security_group.frontend_sg.id,
+            aws_security_group.bastion_sg.id
+        ]
     }
 
     ingress {
