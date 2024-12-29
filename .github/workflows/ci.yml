@@ -131,16 +131,27 @@ jobs:
             --region ${{ env.AWS_REGION }}
 
       # Maybe we need this? Need to do some experimenting.
-      # - name: Wait for Lambda update
-      #   run: |
-      #     while true; do
-      #       status=$(aws lambda get-function-configuration --function-name development-interview-prep-migrate --region ${{ env.AWS_REGION }} --query 'LastUpdateStatus' --output text)
-      #       if [ "$status" == "Successful" ]; then
-      #         break
-      #       fi
-      #       echo "Waiting for Lambda update to complete..."
-      #       sleep 5
-      #     done
+      - name: Wait for Lambda update
+        run: |
+          max_attempts=30
+          attempt=0
+          while true; do
+            status=$(aws lambda get-function-configuration --function-name development-interview-prep-migrate --region ${{ env.AWS_REGION }} --query 'LastUpdateStatus' --output text)
+            if [ "$status" == "Successful" ]; then
+              break
+            fi
+            if [ "$status" == "Failed" ]; then
+              echo "Lambda update failed"
+              exit 1
+            fi
+            if [ $attempt -ge $max_attempts ]; then
+              echo "Lambda update timed out"
+              exit 1
+            fi
+            ((attempt++))
+            echo "Waiting for Lambda update to complete..."
+            sleep 5
+          done
 
       - name: Invoke Lambda function for migrations
         run: |
