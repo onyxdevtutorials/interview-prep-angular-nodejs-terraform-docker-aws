@@ -99,7 +99,13 @@ resource "aws_ecs_service" "frontend" {
     network_configuration {
         subnets          = var.public_subnet_ids
         security_groups  = [var.frontend_sg_id]
-        assign_public_ip = true
+        assign_public_ip = false
+    }
+
+    load_balancer {
+        target_group_arn = var.frontend_target_group_arn
+        container_name   = "frontend"
+        container_port   = 80
     }
 
     enable_execute_command = true
@@ -116,6 +122,12 @@ resource "aws_ecs_service" "backend" {
         subnets         = var.private_subnet_ids
         security_groups = [var.backend_sg_id]
         assign_public_ip = false
+    }
+
+    load_balancer {
+        target_group_arn = var.backend_target_group_arn
+        container_name   = "backend"
+        container_port   = 3000
     }
 
     service_registries {

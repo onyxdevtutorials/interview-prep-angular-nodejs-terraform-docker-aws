@@ -1,3 +1,7 @@
+resource "aws_route53_zone" "onyxdevtutorials_com" {
+  name = "onyxdevtutorials.com"
+}
+
 provider "aws" {
     region = var.region
     profile = var.profile
@@ -68,6 +72,8 @@ module "ecs" {
   backend_service_arn = module.service_discovery.backend_service_arn
   db_username = var.db_username
   db_password = var.db_password
+  frontend_target_group_arn = module.load_balancer.frontend_target_group_arn
+  backend_target_group_arn = module.load_balancer.backend_target_group_arn
 }
 
 module "iam" {
@@ -144,4 +150,22 @@ resource "aws_flow_log" "vpc_flow_log" {
     Name = "interview-prep-vpc-flow-log"
     environment = var.environment
   }
+}
+
+module "load_balancer" {
+  source = "../../modules/load_balancer"
+  environment = var.environment
+  security_groups = [module.security_groups.alb_sg_id]
+  public_subnet_ids = [module.subnets.public_subnet_a_id, module.subnets.public_subnet_b_id]
+  vpc_id = module.vpc.vpc_id
+  health_check_path = "/health"
+}
+
+module "dns" {
+  source = "../../modules/dns"
+  zone_id = aws_route53_zone.onyxdevtutorials_com.zone_id
+  frontend_record_name = "dev.interviewprep.onyxdevtutorials.com"
+  backend_record_name = "api.dev.interviewprep.onyxdevtutorials.com"
+  lb_dns_name = module.load_balancer.lb_dns_name
+  lb_zone_id = module.load_balancer.lb_zone_id
 }

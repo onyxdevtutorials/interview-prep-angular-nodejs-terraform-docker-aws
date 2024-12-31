@@ -82,3 +82,13 @@ variable "db_password" {
     description = "The password to use when connecting to the database"
     type        = string
 }
+
+variable "frontend_target_group_arn" {
+    description = "The ARN of the frontend target group to attach to the load balancer"
+    type        = string
+}
+
+variable "backend_target_group_arn" {
+    description = "The ARN of the backend target group to attach to the load balancer"
+    type        = string
+}
