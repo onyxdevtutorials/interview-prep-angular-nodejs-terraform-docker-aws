@@ -99,3 +99,8 @@ output "db_instance_endpoint" {
     description = "The endpoint of the RDS instance"
     value = module.rds.db_instance_endpoint
 }
+
+output "lb_dns_name" {
+    description = "The DNS name of the load balancer"
+    value = module.load_balancer.lb_dns_name
+}
