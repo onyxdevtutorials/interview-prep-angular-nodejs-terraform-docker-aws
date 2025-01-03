@@ -21,7 +21,15 @@ dotenv.config({ path: envFile });
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
+
+const corsOptions = {
+  origin: process.env['CORS_ORIGIN'] || 'http://dev.interviewprep.onyxdevtutorials.com',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(logger);
 
 // db will be test if running tests
