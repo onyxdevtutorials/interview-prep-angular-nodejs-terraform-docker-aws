@@ -7,7 +7,7 @@ resource "aws_lb" "this" {
 
   enable_deletion_protection = false
   enable_http2               = false
-  enable_cross_zone_load_balancing = false
+  enable_cross_zone_load_balancing = true
 
   tags = {
     Name        = "${var.environment}-interview-prep-lb"

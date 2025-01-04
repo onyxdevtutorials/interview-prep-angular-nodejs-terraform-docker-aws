@@ -62,6 +62,7 @@ resource "aws_ecs_task_definition" "backend" {
                 {
                     containerPort = 3000
                     hostPort      = 3000
+                    protocol      = "tcp"
                 }
             ],
             environment = [
@@ -98,8 +99,8 @@ resource "aws_ecs_service" "frontend" {
 
     network_configuration {
         subnets          = var.public_subnet_ids
-        security_groups  = [var.frontend_sg_id]
-        assign_public_ip = false
+        security_groups  = [var.frontend_sg_id, var.alb_sg_id]
+        assign_public_ip = true
     }
 
     load_balancer {
@@ -120,7 +121,7 @@ resource "aws_ecs_service" "backend" {
 
     network_configuration {
         subnets         = var.private_subnet_ids
-        security_groups = [var.backend_sg_id]
+        security_groups = [var.backend_sg_id, var.alb_sg_id]
         assign_public_ip = false
     }
 
@@ -130,9 +131,9 @@ resource "aws_ecs_service" "backend" {
         container_port   = 3000
     }
 
-    service_registries {
-        registry_arn = var.backend_service_arn
-    }
+    # service_registries {
+    #     registry_arn = var.backend_service_arn
+    # }
 
     enable_execute_command = true
 }

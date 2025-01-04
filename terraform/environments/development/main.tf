@@ -66,6 +66,7 @@ module "ecs" {
   private_subnet_ids = [module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
   frontend_sg_id            = module.security_groups.frontend_sg_id
   backend_sg_id             = module.security_groups.backend_sg_id
+  alb_sg_id                 = module.security_groups.alb_sg_id
   ecs_task_execution_role   = module.iam.ecs_task_execution_role_arn
   ecs_task_role_arn = module.iam.ecs_task_role_arn
   service_discovery_namespace_id = module.service_discovery.namespace_id
@@ -158,7 +159,7 @@ module "load_balancer" {
   security_groups = [module.security_groups.alb_sg_id]
   public_subnet_ids = [module.subnets.public_subnet_a_id, module.subnets.public_subnet_b_id]
   vpc_id = module.vpc.vpc_id
-  health_check_path = "/health"
+  health_check_path = "/"
 }
 
 module "dns" {

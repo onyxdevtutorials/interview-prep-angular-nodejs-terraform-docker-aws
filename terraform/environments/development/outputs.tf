@@ -90,6 +90,11 @@ output "backend_sg_id" {
     value = module.security_groups.backend_sg_id
 }
 
+output "alb_sg_id" {
+    description = "The ID of the ALB security group"
+    value = module.security_groups.alb_sg_id
+}
+
 output "backend_service_arn" {
     description = "The ARN of the backend service in service discovery"
     value = module.ecs.backend_service_arn
@@ -103,4 +108,34 @@ output "db_instance_endpoint" {
 output "lb_dns_name" {
     description = "The DNS name of the load balancer"
     value = module.load_balancer.lb_dns_name
+}
+
+output "public_subnet_a_id" {
+    description = "The ID of the public subnet A"
+    value = module.subnets.public_subnet_a_id
+}
+
+output "public_subnet_b_id" {
+    description = "The ID of the public subnet B"
+    value = module.subnets.public_subnet_b_id
+}
+
+output "private_subnet_a_id" {
+    description = "The ID of the private subnet A"
+    value = module.subnets.private_subnet_a_id
+}
+
+output "private_subnet_b_id" {
+    description = "The ID of the private subnet B"
+    value = module.subnets.private_subnet_b_id
+}
+
+output "frontend_target_group_arn" {
+    description = "The ARN of the frontend target group"
+    value = module.load_balancer.frontend_target_group_arn
+}
+
+output "backend_target_group_arn" {
+    description = "The ARN of the backend target group"
+    value = module.load_balancer.backend_target_group_arn
 }

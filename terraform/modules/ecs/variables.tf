@@ -43,6 +43,11 @@ variable "backend_sg_id" {
     type        = string
 }
 
+variable "alb_sg_id" {
+    description = "The ID of the security group to attach to the ALB"
+    type        = string
+}
+
 variable "ecs_task_execution_role" {
     description = "The ARN of the ECS task execution role"
     type        = string
