@@ -98,7 +98,7 @@ resource "aws_ecs_service" "frontend" {
     launch_type = "FARGATE"
 
     network_configuration {
-        subnets          = var.public_subnet_ids
+        subnets          = var.private_subnet_ids
         security_groups  = [var.frontend_sg_id, var.alb_sg_id]
         assign_public_ip = true
     }
@@ -130,10 +130,6 @@ resource "aws_ecs_service" "backend" {
         container_name   = "backend"
         container_port   = 3000
     }
-
-    # service_registries {
-    #     registry_arn = var.backend_service_arn
-    # }
 
     enable_execute_command = true
 }
