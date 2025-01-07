@@ -100,7 +100,7 @@ resource "aws_ecs_service" "frontend" {
     network_configuration {
         subnets          = var.private_subnet_ids
         security_groups  = [var.frontend_sg_id, var.alb_sg_id]
-        assign_public_ip = true
+        assign_public_ip = false
     }
 
     load_balancer {

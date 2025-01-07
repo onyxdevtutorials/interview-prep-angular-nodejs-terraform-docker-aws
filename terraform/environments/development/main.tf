@@ -67,6 +67,7 @@ module "ecs" {
   frontend_sg_id            = module.security_groups.frontend_sg_id
   backend_sg_id             = module.security_groups.backend_sg_id
   alb_sg_id                 = module.security_groups.alb_sg_id
+  bastion_sg_id             = module.security_groups.bastion_sg_id
   ecs_task_execution_role   = module.iam.ecs_task_execution_role_arn
   ecs_task_role_arn = module.iam.ecs_task_role_arn
   service_discovery_namespace_id = module.service_discovery.namespace_id
