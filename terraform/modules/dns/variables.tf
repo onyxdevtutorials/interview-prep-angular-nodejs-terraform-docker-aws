@@ -22,3 +22,9 @@ variable "lb_zone_id" {
     description = "The hosted zone ID of the load balancer"
     type        = string
 }
+
+variable "api_invoke_url" {
+    description = "The invoke URL of the API Gateway"
+    type        = string
+    default = "placeholder"
+}

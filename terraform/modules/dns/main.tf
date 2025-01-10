@@ -6,18 +6,15 @@ resource "aws_route53_record" "frontend" {
   alias {
     name                   = var.lb_dns_name
     zone_id                = var.lb_zone_id
-    evaluate_target_health = true
+    evaluate_target_health = false
   }
 }
 
 resource "aws_route53_record" "backend" {
   zone_id = var.zone_id
   name    = var.backend_record_name
-  type    = "A"
+  type    = "CNAME"
 
-  alias {
-    name                   = var.lb_dns_name
-    zone_id                = var.lb_zone_id
-    evaluate_target_health = true
-  }
+  records = [replace(var.api_invoke_url, "https://", "")]
+  ttl     = 300
 }

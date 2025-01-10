@@ -170,4 +170,14 @@ module "dns" {
   backend_record_name = "api.dev.interviewprep.onyxdevtutorials.com"
   lb_dns_name = module.load_balancer.lb_dns_name
   lb_zone_id = module.load_balancer.lb_zone_id
+  api_invoke_url = replace(module.api_gateway.api_invoke_url, "/dev", "")
+}
+
+module "api_gateway" {
+  source = "../../modules/api_gateway"
+  environment = var.environment
+  # backend_dns_name = module.dns.backend_record_name
+  cloudwatch_role_arn = module.iam.api_gateway_cloudwatch_role_arn
+  lb_dns_name = module.load_balancer.lb_dns_name
+  region = var.region
 }

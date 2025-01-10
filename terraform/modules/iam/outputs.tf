@@ -17,3 +17,8 @@ output "vpc_flow_log_role_arn" {
   description = "The ARN of the VPC flow log role"
   value = aws_iam_role.vpc_flow_log_role.arn
 }
+
+output "api_gateway_cloudwatch_role_arn" {
+  description = "The ARN of the API Gateway CloudWatch role"
+  value = aws_iam_role.api_gateway_cloudwatch_role.arn
+}
