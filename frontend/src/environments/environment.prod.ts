@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    apiBaseUrl: 'http://api.dev.interviewprep.onyxdevtutorials.com:3000/api/v0',
+    apiBaseUrl: 'https://api.dev.interviewprep.onyxdevtutorials.com/api/v0',
 };
 // export const environment = {
 //     production: true,
