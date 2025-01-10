@@ -108,3 +108,8 @@ variable "lambda_package_migrate" {
     description = "The path to the ZIP file containing the Lambda function code"
     type = string
 }
+
+variable "certificate_arn" {
+    description = "The ARN of the certificate to use for the custom domain"
+    type = string
+}

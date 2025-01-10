@@ -139,13 +139,3 @@ output "backend_target_group_arn" {
     description = "The ARN of the backend target group"
     value = module.load_balancer.backend_target_group_arn
 }
-
-# output "api_key_id" {
-#     description = "The ID of the API Gateway API key"
-#     value = module.api_gateway.api_key_id
-# }
-
-output "api_invoke_url" {
-    description = "The invoke URL of the API Gateway"
-    value = module.api_gateway.api_invoke_url
-}

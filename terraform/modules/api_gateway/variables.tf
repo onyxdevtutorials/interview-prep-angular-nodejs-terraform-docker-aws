@@ -17,3 +17,8 @@ variable "lb_dns_name" {
   description = "The DNS name of the load balancer"
   type        = string
 }
+
+variable "certificate_arn" {
+  description = "The ARN of the certificate to use for the custom domain"
+  type        = string
+}

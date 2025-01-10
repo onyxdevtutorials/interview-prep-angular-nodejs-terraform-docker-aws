@@ -160,23 +160,18 @@ resource "aws_iam_role_policy_attachment" "api_gateway_cloudwatch_policy_attachm
     role = aws_iam_role.api_gateway_cloudwatch_role.name
 }
 
-# resource "aws_api_gateway_api_key" "api_key" {
-#     name = "${var.environment}-interview-prep-api-key"
-#     description = "API Key for Interview Prep ${var.environment} environment"
-#     enabled = true
-# }
+resource "aws_api_gateway_domain_name" "custom_domain" {
+  domain_name = "api.dev.interviewprep.onyxdevtutorials.com"
 
-# resource "aws_api_gateway_usage_plan" "usage_plan" {
-#     name = "${var.environment}-interview-prep-usage-plan"
-#     description = "Usage Plan for Interview Prep ${var.environment} environment"
-#     api_stages {
-#         api_id = aws_api_gateway_rest_api.api.id
-#         stage = aws_api_gateway_stage.api_stage.stage_name
-#     }
-# }
+  endpoint_configuration {
+    types = ["EDGE"]
+  }
 
-# resource "aws_api_gateway_usage_plan_key" "usage_plan_key" {
-#     key_id = aws_api_gateway_api_key.api_key.id
-#     key_type = "API_KEY"
-#     usage_plan_id = aws_api_gateway_usage_plan.usage_plan.id
-# }
+  certificate_arn = var.certificate_arn
+}
+
+resource "aws_api_gateway_base_path_mapping" "custom_domain_mapping" {
+  api_id = aws_api_gateway_rest_api.api.id
+  stage_name = aws_api_gateway_stage.api_stage.stage_name
+  domain_name = aws_api_gateway_domain_name.custom_domain.domain_name
+}

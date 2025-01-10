@@ -1,7 +1,9 @@
-output "api_invoke_url" {
-  value = "https://${aws_api_gateway_rest_api.api.id}.execute-api.${var.region}.amazonaws.com/dev"
+output "custom_domain_name" {
+  description = "The custom domain name"
+  value       = aws_api_gateway_domain_name.custom_domain.cloudfront_domain_name
 }
 
-# output "api_key_id" {
-#   value = aws_api_gateway_api_key.api_key.id
-# }
+output "custom_domain_zone_id" {
+  description = "The custom domain zone ID"
+  value       = aws_api_gateway_domain_name.custom_domain.cloudfront_zone_id
+}

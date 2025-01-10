@@ -23,8 +23,12 @@ variable "lb_zone_id" {
     type        = string
 }
 
-variable "api_invoke_url" {
-    description = "The invoke URL of the API Gateway"
+variable "custom_domain_name" {
+    description = "The custom domain name for api"
     type        = string
-    default = "placeholder"
+}
+
+variable "custom_domain_zone_id" {
+    description = "The custom domain zone ID for api"
+    type        = string
 }
