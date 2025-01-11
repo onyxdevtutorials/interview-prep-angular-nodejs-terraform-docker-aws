@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 0.0.0.0 --port 4200",
-    "build": "ng build --configuration production",
+    "start": "ng serve --host 0.0.0.0 --port 4200 --configuration local",
+    "build:prod": "ng build --configuration production",
+    "build:dev": "ng build --configuration development",
+    "build:local": "ng build --configuration local",
     "watch": "ng build --watch --configuration local",
     "test": "ng test --no-watch",
     "test:watch": "ng test"

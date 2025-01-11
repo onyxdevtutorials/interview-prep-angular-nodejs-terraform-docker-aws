@@ -9,8 +9,6 @@ RUN npm install
 
 COPY . .
 
-# WORKDIR /app/backend
-
 RUN npm run build
 
 # Stage 2: Prepare to serve the application
@@ -21,6 +19,7 @@ WORKDIR /app
 COPY --from=build /app/dist /app/dist
 COPY --from=build /app/package.json /app/package.json
 
+# Exclude devDependencies
 RUN npm install --only=production
 
 ENV DEBUG=* NPM_CONFIG_LOGLEVEL=verbose

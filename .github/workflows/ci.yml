@@ -70,12 +70,6 @@ jobs:
         working-directory: ./backend
         run: npm install
 
-      # - name: Unlock migrations
-      #   working-directory: ./backend
-      #   env:
-      #     DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
-      #   run: npx knex migrate:unlock
-
       - name: Run backend tests
         working-directory: ./backend
         env:
@@ -103,12 +97,6 @@ jobs:
         with:
           node-version: '22'
 
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.AWS_ROLE_NAME }}
-      #     aws-region: ${{ env.AWS_REGION }}
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -129,11 +117,6 @@ jobs:
             --function-name development-interview-prep-migrate \
             --zip-file fileb://backend/migrate-lambda/migrate-package.zip \
             --region ${{ env.AWS_REGION }}
-
-      # Maybe we need this? Need to do some experimenting.
-      # - name: Wait for update completion
-      #   run: |
-      #     aws lambda get-function-configuration --function-name my-lambda-function --query 'LastUpdateStatus' --output text | while [ "$REPLY" != "Successful" ]; do aws lambda get-function-configuration --function-name my-lambda-function --query 'LastUpdateStatus' --output text; sleep 5; done
 
       - name: Wait for Lambda update
         run: |

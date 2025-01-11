@@ -12,7 +12,7 @@ COPY frontend /app/frontend
 
 RUN npm install -g @angular/cli
 
-RUN npm run build --prod
+RUN npm run build:dev
 
 # Stage 2: Prepare to serve the Angular application with Nginx
 FROM nginx:alpine AS nginx
