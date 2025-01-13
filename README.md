@@ -112,7 +112,8 @@ Prerequisites:
 1. Specify this repo and choose the Development branch.
 1. Create `.env.local` and `.env.test` files based on `.env.example` and customize the values as necessary.
 1. Open a terminal and run `docker-compose --env-file .env.local build`.
-1. Run migrations to set up the database tables: `docker-compose --env-file .env.local up migrate`
+1. `export NODE_ENV=local`
+1. Run migrations to set up the database tables: `docker-compose --env-file .env.local -f docker-compose.yml -f docker-compose.migrate.yml up`
 
 ## Run the App
 
@@ -120,6 +121,18 @@ Prerequisites:
 1. Load `http://localhost:4200/` in a web browser. You should be able to add new users and products, edit them, and list them.
 
 ## Running Tests
+
+To run both frontend and backend tests:
+
+1. `docker-compose --env-file .env.test -f docker-compose.test.yml up`
+
+To run just frontend tests:
+
+1. `docker-compose --env-file .env.test -f docker-compose.test.yml up frontend-tests`
+
+To run just backend tests:
+
+1. `docker-compose --env-file .env.test -f docker-compose.test.yml up backend-tests`
 
 ### Backend
 
@@ -138,7 +151,7 @@ I thought it would be nice to have a *live* web display of test results and cove
 
 ### Frontend
 
-1. `docker-compose --env-file .env.test up frontend-tests` (At the moment I don't have any pretty web reports set up.)
+1. `docker-compose --env-file .env.test -f docker-compose.test.yml up frontend-tests` (At the moment I don't have any pretty web reports set up.)
 
 Tests can also be run in watch mode so that they will be re-run as you make changes to code and tests:
 

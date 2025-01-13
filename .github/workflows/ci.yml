@@ -7,12 +7,21 @@ on:
       - development
       - stage
       - production
+      - workflow-test
   pull_request:
     branches:
       - main
       - development
       - stage
       - production
+      - workflow-test
+
+env:
+  AWS_REGION: us-east-1
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
 
 jobs:
   test:
@@ -63,6 +72,8 @@ jobs:
 
       - name: Run backend tests
         working-directory: ./backend
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: npm test
 
       - name: Install dependencies for frontend
@@ -73,3 +84,95 @@ jobs:
         working-directory: ./frontend
         run: npm test
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/development-github-actions-role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install dependencies for backend
+        working-directory: ./backend
+        run: npm install
+
+      - name: Package migration files
+        working-directory: ./backend
+        run: ./package-migrations.sh
+
+      - name: Update Lambda migration function
+        run: |
+          aws lambda update-function-code \
+            --function-name development-interview-prep-migrate \
+            --zip-file fileb://backend/migrate-lambda/migrate-package.zip \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Wait for Lambda update
+        run: |
+          max_attempts=100
+          attempt=0
+          while true; do
+            status=$(aws lambda get-function-configuration --function-name development-interview-prep-migrate --region ${{ env.AWS_REGION }} --query 'LastUpdateStatus' --output text)
+            if [ "$status" == "Successful" ]; then
+              break
+            fi
+            if [ "$status" == "Failed" ]; then
+              echo "Lambda update failed"
+              exit 1
+            fi
+            if [ $attempt -ge $max_attempts ]; then
+              echo "Lambda update timed out"
+              exit 1
+            fi
+            attempt=$((attempt + 1))
+            echo "Waiting for Lambda update to complete..."
+            sleep 5
+          done
+
+      - name: Invoke Lambda function for migrations
+        run: |
+          aws lambda invoke \
+            --function-name development-interview-prep-migrate \
+            --region ${{ env.AWS_REGION }} \
+            outputfile.txt
+        env:
+          NODE_ENV: development
+          DATABASE_URL: postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push backend Docker image
+        working-directory: ./backend
+        run: |
+          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/interview-prep-backend:latest -f Dockerfile .
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/interview-prep-backend:latest
+
+      - name: Build and push frontend Docker image
+        working-directory: .
+        run: |
+          docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/interview-prep-frontend:latest -f Dockerfile .
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/interview-prep-frontend:latest
+
+      - name: Update ECS service for backend
+        run: |
+          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.BACKEND_SERVICE_NAME }} --force-new-deployment
+
+      - name: Update ECS service for frontend
+        run: |
+          aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER_NAME }} --service ${{ secrets.FRONTEND_SERVICE_NAME }} --force-new-deployment

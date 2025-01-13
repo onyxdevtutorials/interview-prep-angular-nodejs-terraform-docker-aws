@@ -7,6 +7,10 @@ import { provideHttpClient } from '@angular/common/http';
 import { mockUsers } from '../mocks/mock-users';
 import { UsersService } from './users.service';
 import { User, UserStatus } from '@onyxdevtutorials/interview-prep-shared';
+import { environment } from '../../../environments/environment';
+
+const apiBaseUrl = environment.apiBaseUrl;
+const usersPath = `${apiBaseUrl}/users`;
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -38,7 +42,7 @@ describe('UsersService', () => {
       expect(users).toEqual(mockUsers);
     });
 
-    const req = httpTestingController.expectOne('http://localhost:3000/users');
+    const req = httpTestingController.expectOne(usersPath);
     expect(req.request.method).toBe('GET');
     req.flush(mockUsers);
   });
@@ -49,7 +53,7 @@ describe('UsersService', () => {
     });
 
     const req = httpTestingController.expectOne(
-      'http://localhost:3000/users/1'
+      `${usersPath}/1`
     );
     expect(req.request.method).toBe('GET');
     req.flush(mockUsers[0]);
@@ -66,7 +70,7 @@ describe('UsersService', () => {
     });
 
     const req = httpTestingController.expectOne(
-      'http://localhost:3000/users/1'
+      `${usersPath}/1`
     );
     expect(req.request.method).toBe('PUT');
     req.flush(updatedUser);
@@ -93,7 +97,7 @@ describe('UsersService', () => {
       });
     });
 
-    const req = httpTestingController.expectOne('http://localhost:3000/users');
+    const req = httpTestingController.expectOne(usersPath);
     expect(req.request.method).toBe('POST');
     req.flush({
       ...newUser,

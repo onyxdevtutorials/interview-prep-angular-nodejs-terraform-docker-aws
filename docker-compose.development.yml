@@ -1,0 +1,27 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: interview-prep-frontend:latest
+    depends_on:
+      - backend
+    networks:
+      - devnetwork # That's the name of the network in devcontainer
+    ports:
+      - "80:80"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: interview-prep-backend:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    networks:
+      - devnetwork # That's the name of the network in devcontainer
+
+networks:
+  devnetwork:

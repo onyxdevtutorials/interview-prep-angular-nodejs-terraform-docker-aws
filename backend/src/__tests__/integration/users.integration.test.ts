@@ -4,12 +4,40 @@ import knex from 'knex';
 import knexConfig from '../../knexFile';
 import dotenv from 'dotenv';
 import { User, UserStatus } from '@onyxdevtutorials/interview-prep-shared';
+import retry from "retry";
 
 dotenv.config({ path: '../../../.env.test' });
 
-const db = knex(knexConfig['test']);
+const db = knex(knexConfig['test_users']);
+
+const usersPath = '/api/v0/users';
+
+const waitForDb = async (): Promise<void> => {
+    const operation = retry.operation({
+    retries: 10,
+    factor: 2,
+    minTimeout: 2000,
+    maxTimeout: 10000,
+  });
+
+  return new Promise((resolve, reject) => {
+    operation.attempt(async (currentAttempt) => {
+      try {
+        await db.raw('SELECT 1');
+        resolve();
+      } catch (error) {
+        if (operation.retry(error as Error)) {
+          return;
+        }
+        reject(error);
+      }
+    });
+  });
+};
 
 beforeAll(async () => {
+  await waitForDb();
+
   await db.migrate.latest();
 
   await db.seed.run();
@@ -31,9 +59,9 @@ afterEach(async () => {
   await db.raw('ROLLBACK')
 });
 
-describe('GET /users', () => {
+describe('GET /api/v0/users', () => {
   it('should return a list of users', async () => {
-    const response = await request(app).get('/users');
+    const response = await request(app).get(`${usersPath}`);
     expect(response.status).toBe(200);
     expect(response.body.length).toBeGreaterThan(0);
   });
@@ -41,22 +69,22 @@ describe('GET /users', () => {
   it.todo('should handle an error');
 });
 
-describe('GET /users/:id', () => {
+describe('GET /api/v0/users/:id', () => {
   it('should return a single user', async () => {
-    const response = await request(app).get('/users/1');
+    const response = await request(app).get(`${usersPath}/1`);
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(1);
   });
 
   it('should return a 404 for a non-existent user', async () => {
-    const response = await request(app).get('/users/999');
+    const response = await request(app).get(`${usersPath}/999`);
     expect(response.status).toBe(404);
   });
 
   it.todo('should handle non-404 errors');
 });
 
-describe('POST /users', () => {
+describe('POST /api/v0/users', () => {
   it('should create a new user', async () => {
     const newUser: Omit<User, 'id'> = {
       email: 'elvis.presley@graceland.com',
@@ -65,7 +93,7 @@ describe('POST /users', () => {
       status: UserStatus.ACTIVE,
     };
 
-    const response = await request(app).post('/users').send(newUser);
+    const response = await request(app).post(usersPath).send(newUser);
 
     expect(response.status).toBe(201);
     expect(response.body.id).toBeDefined();
@@ -82,7 +110,7 @@ describe('POST /users', () => {
       last_name: 'Presley',
     };
 
-    const response = await request(app).post('/users').send(newUser);
+    const response = await request(app).post(usersPath).send(newUser);
 
     expect(response.status).toBe(400);
   });
@@ -90,7 +118,7 @@ describe('POST /users', () => {
   it.todo('should handle other errors');
 });
 
-describe('PUT /users/:id', () => {
+describe('PUT /api/v0/users/:id', () => {
   it('should update an existing user', async () => {
     const updatedUser: Omit<User, 'id'> = {
       email: 'elvis.presley@graceland.com',
@@ -99,7 +127,7 @@ describe('PUT /users/:id', () => {
       status: UserStatus.ACTIVE,
     };
 
-    const response = await request(app).put('/users/1').send(updatedUser);
+    const response = await request(app).put(`${usersPath}/1`).send(updatedUser);
 
     expect(response.status).toBe(200);
     expect(response.body.email).toBe(updatedUser.email);
@@ -115,7 +143,7 @@ describe('PUT /users/:id', () => {
       last_name: 'Presley',
     };
 
-    const response = await request(app).put('/users/1').send(updatedUser);
+    const response = await request(app).put(`${usersPath}/1`).send(updatedUser);
 
     expect(response.status).toBe(400);
   });
@@ -128,7 +156,7 @@ describe('PUT /users/:id', () => {
       status: UserStatus.ACTIVE,
     };
 
-    const response = await request(app).put('/users/999').send(updatedUser);
+    const response = await request(app).put(`${usersPath}/999`).send(updatedUser);
 
     expect(response.status).toBe(404);
   });
@@ -136,13 +164,13 @@ describe('PUT /users/:id', () => {
   it.todo('should handle other errors');
 });
 
-describe('PATCH /users/:id', () => {
+describe('PATCH /api/v0/users/:id', () => {
   it('should update an existing user', async () => {
     const updatedUser: Partial<User> = {
       email: 'elvis.presley@graceland.com',
     };
 
-    const response = await request(app).patch('/users/1').send(updatedUser);
+    const response = await request(app).patch(`${usersPath}/1`).send(updatedUser);
 
     expect(response.status).toBe(200);
     expect(response.body.email).toBe(updatedUser.email);
@@ -153,7 +181,7 @@ describe('PATCH /users/:id', () => {
       email: 'elvis.presley@graceland.com',
     };
 
-    const response = await request(app).patch('/users/1').send(updatedUser);
+    const response = await request(app).patch(`${usersPath}/1`).send(updatedUser);
 
     expect(response.status).toBe(200);
   });
@@ -163,7 +191,7 @@ describe('PATCH /users/:id', () => {
       email: 'elvis.presley@graceland.com',
     };
 
-    const response = await request(app).patch('/users/999').send(updatedUser);
+    const response = await request(app).patch(`${usersPath}/999`).send(updatedUser);
 
     expect(response.status).toBe(404);
   });
@@ -171,14 +199,14 @@ describe('PATCH /users/:id', () => {
   it.todo('should handle other errors');
 });
 
-describe('DELETE /users/:id', () => {
+describe('DELETE /api/v0/users/:id', () => {
   it('should delete an existing user', async () => {
-    const response = await request(app).delete('/users/1');
+    const response = await request(app).delete(`${usersPath}/1`);
     expect(response.status).toBe(204);
   });
 
   it('should return a 404 for a non-existent user', async () => {
-    const response = await request(app).delete('/users/999');
+    const response = await request(app).delete(`${usersPath}/999`);
     expect(response.status).toBe(404);
   });
 
