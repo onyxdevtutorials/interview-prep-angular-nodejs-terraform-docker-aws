@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y chromium
 # Set the CHROME_BIN environment variable
 ENV CHROME_BIN=/usr/bin/chromium
 
-RUN npm run build --prod
+RUN npm run build:dev
 
 EXPOSE 4200
 

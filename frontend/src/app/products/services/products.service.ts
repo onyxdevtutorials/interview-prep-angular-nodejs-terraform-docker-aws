@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, tap } from 'rxjs';
 import { Product } from '@onyxdevtutorials/interview-prep-shared';
 import { HttpErrorHandlerService } from '../../core/services/http-error-handler.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductsService {
-  private apiUrl = 'http://localhost:3000/products';
+  private apiUrl = `${environment.apiBaseUrl}/products`;
 
   constructor(
     private http: HttpClient,

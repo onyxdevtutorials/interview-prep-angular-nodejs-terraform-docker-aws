@@ -10,6 +10,10 @@ import {
   Product,
   ProductStatus,
 } from '@onyxdevtutorials/interview-prep-shared';
+import { environment } from '../../../environments/environment';
+
+const apiBaseUrl = environment.apiBaseUrl;
+const productsPath = `${apiBaseUrl}/products`;
 
 describe('ProductsService', () => {
   let service: ProductsService;
@@ -42,7 +46,7 @@ describe('ProductsService', () => {
     });
 
     const req = httpTestingController.expectOne(
-      'http://localhost:3000/products'
+      productsPath
     );
     expect(req.request.method).toBe('GET');
     req.flush(mockProducts);
@@ -54,7 +58,7 @@ describe('ProductsService', () => {
     });
 
     const req = httpTestingController.expectOne(
-      'http://localhost:3000/products/1'
+      `${productsPath}/1`
     );
     expect(req.request.method).toBe('GET');
     req.flush(mockProducts[0]);
@@ -71,7 +75,7 @@ describe('ProductsService', () => {
     });
 
     const req = httpTestingController.expectOne(
-      'http://localhost:3000/products/1'
+      `${productsPath}/1`
     );
     expect(req.request.method).toBe('PUT');
     req.flush(updatedProduct);
@@ -90,7 +94,7 @@ describe('ProductsService', () => {
     });
 
     const req = httpTestingController.expectOne(
-      'http://localhost:3000/products'
+      productsPath
     );
     expect(req.request.method).toBe('POST');
     req.flush({ ...newProduct, id: 3 });

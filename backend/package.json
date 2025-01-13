@@ -22,10 +22,12 @@
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "express": "^4.21.1",
+    "dotenv": "^16.4.5",
     "joi": "^17.13.3",
     "knex": "^3.1.0",
     "module-alias": "^2.2.3",
     "pg": "^8.13.0",
+    "retry": "^0.13.1",
     "tslib": "^2.7.0"
   },
   "devDependencies": {
@@ -37,9 +39,9 @@
     "@types/module-alias": "^2.0.4",
     "@types/node": "^22.7.6",
     "@types/pg": "^8.11.10",
+    "@types/retry": "^0.12.5",
     "@types/supertest": "^6.0.2",
     "browser-sync": "^3.0.3",
-    "dotenv": "^16.4.5",
     "jest": "^29.7.0",
     "jest-stare": "^2.5.2",
     "nodemon": "^3.1.7",
