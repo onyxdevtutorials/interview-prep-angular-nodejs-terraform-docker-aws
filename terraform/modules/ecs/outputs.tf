@@ -42,8 +42,3 @@ output "backend_image" {
     description = "The backend image"
     value = var.backend_image
 }
-
-# output "backend_service_arn" {
-#     description = "The ARN of the backend service in service discovery"
-#     value = var.backend_service_arn
-# }

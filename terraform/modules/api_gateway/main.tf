@@ -1,9 +1,3 @@
-# http://development-interview-prep-lb-585997728.us-east-1.elb.amazonaws.com:3000/{proxy}
-# curl -X GET http://development-interview-prep-lb-585997728.us-east-1.elb.amazonaws.com:3000/api/v0/products
-# https://zbubkekd26.execute-api.us-east-1.amazonaws.com/dev
-# curl -X GET https://zbubkekd26.execute-api.us-east-1.amazonaws.com/dev/api/v0/products
-
-
 resource "aws_api_gateway_rest_api" "api" {
   name        = "${var.environment}-interview-prep-api"
   description = "API Gateway for Interview Prep ${var.environment} environment"
@@ -91,6 +85,10 @@ resource "aws_api_gateway_deployment" "api_deployment" {
       aws_api_gateway_method_response.proxy_options_response
     ]
     rest_api_id = aws_api_gateway_rest_api.api.id
+
+    triggers = {
+      redeployment = "${timestamp()}"
+    }
 }
 
 resource "aws_api_gateway_stage" "api_stage" {

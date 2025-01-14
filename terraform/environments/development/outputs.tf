@@ -1,5 +1,3 @@
-# environments/development/outputs.tf
-
 output "vpc_id" {
   description = "The ID of the VPC"
   value       = module.vpc.vpc_id
@@ -94,11 +92,6 @@ output "alb_sg_id" {
     description = "The ID of the ALB security group"
     value = module.security_groups.alb_sg_id
 }
-
-# output "backend_service_arn" {
-#     description = "The ARN of the backend service in service discovery"
-#     value = module.ecs.backend_service_arn
-# }
 
 output "db_instance_endpoint" {
     description = "The endpoint of the RDS instance"

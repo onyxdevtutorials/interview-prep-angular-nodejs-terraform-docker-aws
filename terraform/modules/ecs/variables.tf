@@ -68,16 +68,6 @@ variable "backend_repository_url" {
     type        = string
 }
 
-# variable "service_discovery_namespace_id" {
-#     description = "The ID of the service discovery namespace"
-#     type        = string
-# }
-
-# variable "backend_service_arn" {
-#     description = "The ARN of the backend service in service discovery"
-#     type        = string
-# }
-
 variable "ecs_task_role_arn" {
     description = "The ARN of the ECS task role"
     type        = string

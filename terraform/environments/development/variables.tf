@@ -94,16 +94,6 @@ variable "key_name" {
     type = string
 }
 
-# variable "public_subnet_ids" {
-#     description = "The IDs of the public subnets"
-#     type = list(string)
-# }
-
-# variable "private_subnet_ids" {
-#     description = "The IDs of the private subnets"
-#     type = list(string)
-# }
-
 variable "lambda_package_migrate" {
     description = "The path to the ZIP file containing the Lambda function code"
     type = string
