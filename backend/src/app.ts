@@ -42,7 +42,7 @@ if (process.env['NODE_ENV'] === 'local') {
 
 const corsOptions = {
   origin: corsOrigin,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   credentials: true,
   optionsSuccessStatus: 200,
 };
