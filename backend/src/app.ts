@@ -9,21 +9,39 @@ import knex from 'knex';
 import knexConfig from './knexFile';
 import dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express-serve-static-core';
+import path from 'path';
 
-const envFile =
-  process.env['NODE_ENV'] === 'production'
-    ? '../.env.production'
-    : process.env['NODE_ENV'] === 'test'
-    ? '../.env.test'
-    : '../.env.local';
+// let envFile: string;
 
-dotenv.config({ path: envFile });
+// switch (process.env['NODE_ENV']) {
+//   case 'production':
+//     envFile = path.resolve(__dirname, '../.env.production');
+//     break;
+//   case 'development':
+//     envFile = path.resolve(__dirname, '../.env.development');
+//     break;
+//   case 'test':
+//     envFile = path.resolve(__dirname, '../.env.test');
+//     break;
+//   default:
+//     envFile = path.resolve(__dirname, '../.env.local');
+// }
+
+// dotenv.config({ path: envFile });
 
 const app = express();
 app.use(bodyParser.json());
 
+let corsOrigin: string;
+
+if (process.env['NODE_ENV'] === 'local') {
+  corsOrigin = 'http://localhost:4200';
+} else {
+  corsOrigin = 'http://dev.interviewprep.onyxdevtutorials.com';
+}
+
 const corsOptions = {
-  origin: process.env['CORS_ORIGIN'] || 'http://dev.interviewprep.onyxdevtutorials.com',
+  origin: corsOrigin,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
   optionsSuccessStatus: 200,

@@ -2,11 +2,11 @@ import request from 'supertest';
 import app from '../../app';
 import knex from 'knex';
 import knexConfig from '../../knexFile';
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 import { User, UserStatus } from '@onyxdevtutorials/interview-prep-shared';
 import retry from "retry";
 
-dotenv.config({ path: '../../../.env.test' });
+// dotenv.config({ path: '../../../.env.test' });
 
 const db = knex(knexConfig['test_users']);
 

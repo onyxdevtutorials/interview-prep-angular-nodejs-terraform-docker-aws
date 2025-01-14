@@ -28,13 +28,14 @@ services:
 
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     image: interview-prep-backend:latest
     ports:
       - "3000:3000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
+      - NODE_ENV=${NODE_ENV}
     volumes:
       # The following works but shouldn't be necessary:
       # - /Users/davidsilva/Dev/interview-prep/backend:/app/backend
@@ -63,8 +64,8 @@ services:
 
   migrate:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     working_dir: /app/backend
     environment:
       - NODE_ENV=${NODE_ENV}
