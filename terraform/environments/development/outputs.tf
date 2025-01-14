@@ -95,10 +95,10 @@ output "alb_sg_id" {
     value = module.security_groups.alb_sg_id
 }
 
-output "backend_service_arn" {
-    description = "The ARN of the backend service in service discovery"
-    value = module.ecs.backend_service_arn
-}
+# output "backend_service_arn" {
+#     description = "The ARN of the backend service in service discovery"
+#     value = module.ecs.backend_service_arn
+# }
 
 output "db_instance_endpoint" {
     description = "The endpoint of the RDS instance"

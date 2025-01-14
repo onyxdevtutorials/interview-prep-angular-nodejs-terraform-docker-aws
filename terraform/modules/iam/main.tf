@@ -123,13 +123,6 @@ resource "aws_iam_policy" "lambda_exec_policy" {
                 ],
                 Resource = "arn:aws:kms:${var.region}:${var.account_id}:key/169ce983-7b59-4ff6-9c74-533af48cf478"
             },
-            # {
-            #     "Effect": "Allow",
-            #     "Action": [
-            #         "rds-db:connect"
-            #     ],
-            #     "Resource": "arn:aws:rds:us-east-1:909500381447:db:development-interview-prep-db"
-            # }
         ]
     })
 }
@@ -218,7 +211,7 @@ resource "aws_iam_role" "github_actions_role" {
         Environment = var.environment
     }
 }
-# Should rename this to something more descriptive.
+
 resource "aws_iam_policy" "github_actions_policy" {
     name = "${var.environment}-github-actions-policy"
     description = "Policy for GitHub Actions"
