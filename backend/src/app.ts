@@ -7,27 +7,7 @@ import { errorHandler } from './middleware/errorHandler';
 import { logger } from './middleware/logger';
 import knex from 'knex';
 import knexConfig from './knexFile';
-import dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express-serve-static-core';
-import path from 'path';
-
-// let envFile: string;
-
-// switch (process.env['NODE_ENV']) {
-//   case 'production':
-//     envFile = path.resolve(__dirname, '../.env.production');
-//     break;
-//   case 'development':
-//     envFile = path.resolve(__dirname, '../.env.development');
-//     break;
-//   case 'test':
-//     envFile = path.resolve(__dirname, '../.env.test');
-//     break;
-//   default:
-//     envFile = path.resolve(__dirname, '../.env.local');
-// }
-
-// dotenv.config({ path: envFile });
 
 const app = express();
 app.use(bodyParser.json());
