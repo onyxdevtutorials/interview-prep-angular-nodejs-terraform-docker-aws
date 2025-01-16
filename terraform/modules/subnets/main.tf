@@ -40,18 +40,18 @@ resource "aws_subnet" "private_subnet_b" {
   }
 }
 
-resource "aws_nat_gateway" "nat_gw" {
-  allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public_subnet_a.id
-  tags = {
-    Name        = "interview-prep-nat-gw"
-    Environment = var.environment
-  }
-}
+# resource "aws_nat_gateway" "nat_gw" {
+#   allocation_id = aws_eip.nat_eip.id
+#   subnet_id     = aws_subnet.public_subnet_a.id
+#   tags = {
+#     Name        = "interview-prep-nat-gw"
+#     Environment = var.environment
+#   }
+# }
 
-resource "aws_eip" "nat_eip" {
-  tags = {
-    Name        = "interview-prep-nat-eip"
-    Environment = var.environment
-  }
-}
+# resource "aws_eip" "nat_eip" {
+#   tags = {
+#     Name        = "interview-prep-nat-eip"
+#     Environment = var.environment
+#   }
+# }
