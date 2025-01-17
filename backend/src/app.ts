@@ -13,22 +13,23 @@ import { Request, Response, NextFunction } from 'express-serve-static-core';
 const app = express();
 app.use(bodyParser.json());
 
-let corsOrigin: string;
+// let corsOrigin: string;
 
-if (process.env['NODE_ENV'] === 'local') {
-  corsOrigin = 'http://localhost:4200';
-} else {
-  corsOrigin = 'http://dev.interviewprep.onyxdevtutorials.com';
-}
+// if (process.env['NODE_ENV'] === 'local') {
+//   corsOrigin = 'http://localhost:4200';
+// } else {
+//   corsOrigin = 'http://dev.interviewprep.onyxdevtutorials.com';
+// }
 
-const corsOptions = {
-  origin: corsOrigin,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
+// const corsOptions = {
+//   origin: corsOrigin,
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+//   credentials: true,
+//   optionsSuccessStatus: 200,
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors());
 app.use(logger);
 
 app.use('/health', healthRouter);
