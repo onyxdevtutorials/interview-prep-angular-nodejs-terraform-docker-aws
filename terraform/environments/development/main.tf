@@ -56,7 +56,6 @@ module "ecs" {
   backend_image = "interview-prep-backend"
   backend_repository_url = module.ecr.backend_repository_url
   database_url = module.rds.db_instance_endpoint
-  public_subnet_ids         = [module.subnets.public_subnet_a_id, module.subnets.public_subnet_b_id]
   private_subnet_ids = [module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
   frontend_sg_id            = module.security_groups.frontend_sg_id
   backend_sg_id             = module.security_groups.backend_sg_id
@@ -110,7 +109,7 @@ module "lambda_migrate" {
   function_name = "${var.environment}-interview-prep-migrate"
   handler = "index.handler"
   runtime = "nodejs20.x"
-  timeout = 60
+  timeout = 300
   memory_size = 128
   lambda_package = var.lambda_package_migrate
   lambda_subnet_ids = [module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
