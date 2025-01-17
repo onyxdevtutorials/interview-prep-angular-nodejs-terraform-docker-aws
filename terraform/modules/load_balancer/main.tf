@@ -28,6 +28,7 @@ resource "aws_lb_target_group" "frontend" {
     unhealthy_threshold = 2
     timeout             = 5
     interval            = 30
+    matcher = "200-299"
   }
 
   tags = {
@@ -49,6 +50,7 @@ resource "aws_lb_target_group" "backend" {
     unhealthy_threshold = 2
     timeout             = 5
     interval            = 30
+    matcher = "200-299"
   }
 
   tags = {

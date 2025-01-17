@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import usersRouter from './routes/users';
 import productsRouter from './routes/products';
+import healthRouter from './routes/health';
 import { errorHandler } from './middleware/errorHandler';
 import { logger } from './middleware/logger';
 import knex from 'knex';
@@ -29,6 +30,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(logger);
+
+app.use('/health', healthRouter);
 
 // db will be test if running tests
 if (!app.get('db')) {
