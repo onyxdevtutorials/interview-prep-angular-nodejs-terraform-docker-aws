@@ -152,7 +152,7 @@ module "load_balancer" {
   public_subnet_ids = [module.subnets.public_subnet_a_id, module.subnets.public_subnet_b_id]
   vpc_id = module.vpc.vpc_id
   frontend_health_check_path = "/health"
-  backend_health_check_path = "/"
+  backend_health_check_path = "/health"
 }
 
 module "dns" {
