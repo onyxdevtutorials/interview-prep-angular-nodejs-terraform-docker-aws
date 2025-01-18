@@ -31,8 +31,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(logger);
 
-app.use('/health', healthRouter);
-
 // db will be test if running tests
 if (!app.get('db')) {
   const db = knex(knexConfig[process.env['NODE_ENV'] || 'development']);
@@ -61,6 +59,8 @@ app.use(
 // app.get('/health', (req, res) => {
 //   res.status(200).send('OK');
 // });
+
+app.use('/health', healthRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');
