@@ -31,7 +31,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(logger);
 
-// app.use('/health', healthRouter);
+app.use('/health', healthRouter);
 
 // db will be test if running tests
 if (!app.get('db')) {
@@ -58,9 +58,9 @@ app.use(
   productsRouter
 );
 
-app.get('/health', (req, res) => {
-  res.status(200).send('OK');
-});
+// app.get('/health', (req, res) => {
+//   res.status(200).send('OK');
+// });
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');
