@@ -18,8 +18,14 @@ variable "vpc_id" {
     type        = string
 }
 
-variable "health_check_path" {
-    description = "The path to use for the health check"
+variable "frontend_health_check_path" {
+    description = "The path to use for the frontend health check"
     type        = string
     default     = "/health"
+}
+
+variable "backend_health_check_path" {
+    description = "The path to use for the backend health check"
+    type        = string
+    default     = "/"
 }

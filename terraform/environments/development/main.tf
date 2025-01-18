@@ -151,7 +151,8 @@ module "load_balancer" {
   security_groups = [module.security_groups.alb_sg_id]
   public_subnet_ids = [module.subnets.public_subnet_a_id, module.subnets.public_subnet_b_id]
   vpc_id = module.vpc.vpc_id
-  health_check_path = "/health"
+  frontend_health_check_path = "/health"
+  backend_health_check_path = "/"
 }
 
 module "dns" {

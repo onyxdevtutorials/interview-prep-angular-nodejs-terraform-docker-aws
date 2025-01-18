@@ -43,6 +43,29 @@ resource "aws_api_gateway_integration" "proxy_integration" {
     timeout_milliseconds = 29000
 }
 
+resource "aws_api_gateway_resource" "health" {
+    rest_api_id = aws_api_gateway_rest_api.api.id
+    parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+    path_part   = "health"
+}
+
+resource "aws_api_gateway_method" "health_get" {
+    rest_api_id = aws_api_gateway_rest_api.api.id
+    resource_id = aws_api_gateway_resource.health.id
+    http_method = "GET"
+    authorization = "NONE"
+    api_key_required = false
+}
+
+resource "aws_api_gateway_integration" "health_integration" {
+    rest_api_id = aws_api_gateway_rest_api.api.id
+    resource_id = aws_api_gateway_resource.health.id
+    http_method = aws_api_gateway_method.health_get.http_method
+    type = "HTTP_PROXY"
+    integration_http_method = "GET"
+    uri = "http://${var.lb_dns_name}:3000/health"
+}
+
 resource "aws_api_gateway_integration" "proxy_options_integration" {
     rest_api_id = aws_api_gateway_rest_api.api.id
     resource_id = aws_api_gateway_resource.proxy.id
