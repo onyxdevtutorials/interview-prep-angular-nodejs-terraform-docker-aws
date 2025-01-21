@@ -1,3 +1,9 @@
+variable "project_name" {
+    description = "The name of the project"
+    type = string
+    default = "interview-prep"
+}
+
 variable "account_id" {
     description = "The AWS account ID"
     type = string

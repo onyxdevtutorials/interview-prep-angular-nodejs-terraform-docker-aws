@@ -1,5 +1,5 @@
 resource "aws_ecs_cluster" "main" {
-    name = "${var.environment}-ecs-cluster"
+    name = "${var.environment}-${var.project_name}-ecs-cluster"
 }
 
 resource "aws_ecs_task_definition" "frontend" {
