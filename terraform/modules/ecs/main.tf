@@ -91,7 +91,7 @@ resource "aws_ecs_task_definition" "backend" {
 }
 
 resource "aws_ecs_service" "frontend" {
-    name            = "${var.environment}-frontend-ecs-service"
+    name            = "${var.environment}-${var.project_name}-frontend-ecs-service"
     cluster         = aws_ecs_cluster.main.id
     task_definition = aws_ecs_task_definition.frontend.arn
     desired_count   = 1
@@ -113,7 +113,7 @@ resource "aws_ecs_service" "frontend" {
 }
 
 resource "aws_ecs_service" "backend" {
-    name            = "${var.environment}-backend-ecs-service"
+    name            = "${var.environment}-${var.project_name}-backend-ecs-service"
     cluster         = aws_ecs_cluster.main.id
     task_definition = aws_ecs_task_definition.backend.arn
     desired_count   = 1
