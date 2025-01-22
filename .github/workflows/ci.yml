@@ -70,11 +70,21 @@ jobs:
         working-directory: ./backend
         run: npm install
 
-      - name: Run backend tests
+      - name: Run backend integration tests for users
         working-directory: ./backend
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
-        run: npm test
+        run: npm test -- src/__tests__/integration/users.integration.test.ts
+
+      - name: Run backend integration tests for products
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+        run: npm test -- src/__tests__/integration/products.integration.test.ts
+
+      - name: Run backend unit tests
+        working-directory: ./backend
+        run: npm test -- src/__tests__/unit
 
       - name: Install dependencies for frontend
         working-directory: ./frontend
