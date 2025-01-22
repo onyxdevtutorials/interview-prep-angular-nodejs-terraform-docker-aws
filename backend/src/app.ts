@@ -56,10 +56,6 @@ app.use(
   productsRouter
 );
 
-// app.get('/health', (req, res) => {
-//   res.status(200).send('OK');
-// });
-
 app.use('/health', healthRouter);
 
 app.get('/', (req, res) => {
