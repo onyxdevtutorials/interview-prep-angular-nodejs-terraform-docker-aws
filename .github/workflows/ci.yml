@@ -70,6 +70,7 @@ jobs:
         working-directory: ./backend
         run: npm install
 
+      # Run integration tests separately to avoid db conflicts
       - name: Run backend integration tests for users
         working-directory: ./backend
         env:
@@ -82,6 +83,7 @@ jobs:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: npm test -- src/__tests__/integration/products.integration.test.ts
 
+      # Unit tests can be run together
       - name: Run backend unit tests
         working-directory: ./backend
         run: npm test -- src/__tests__/unit
