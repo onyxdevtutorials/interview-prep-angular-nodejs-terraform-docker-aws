@@ -173,4 +173,5 @@ module "api_gateway" {
   lb_dns_name = module.load_balancer.lb_dns_name
   region = var.region
   certificate_arn = var.certificate_arn
+  cors_origin = "http://dev.interviewprep.onyxdevtutorials.com"
 }

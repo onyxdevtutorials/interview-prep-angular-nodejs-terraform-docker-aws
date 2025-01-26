@@ -22,3 +22,8 @@ variable "certificate_arn" {
   description = "The ARN of the certificate to use for the custom domain"
   type        = string
 }
+
+variable "cors_origin" {
+  description = "The origin to allow CORS requests from"
+  type        = string
+}

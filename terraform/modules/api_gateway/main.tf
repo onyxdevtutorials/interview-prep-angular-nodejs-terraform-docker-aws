@@ -84,7 +84,7 @@ resource "aws_api_gateway_integration_response" "proxy_options_integration_respo
     response_parameters = {
         "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
         "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,PUT,POST,DELETE,PATCH'"
-        "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+        "method.response.header.Access-Control-Allow-Origin"  = "'${var.cors_origin}'"
     }
 }
 
