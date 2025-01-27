@@ -23,11 +23,12 @@ resource "aws_lb_target_group" "frontend" {
   target_type = "ip"
 
   health_check {
-    path                = var.health_check_path
+    path                = var.frontend_health_check_path
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 5
     interval            = 30
+    matcher = "200-299"
   }
 
   tags = {
@@ -44,11 +45,12 @@ resource "aws_lb_target_group" "backend" {
   target_type = "ip"
 
   health_check {
-    path                = var.health_check_path
+    path                = var.backend_health_check_path
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 5
     interval            = 30
+    matcher = "200-299"
   }
 
   tags = {

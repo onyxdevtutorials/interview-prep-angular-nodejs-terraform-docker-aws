@@ -1,3 +1,9 @@
+variable "project_name" {
+    description = "The name of the project"
+    type = string
+    default = "interview-prep"
+}
+
 variable "account_id" {
     description = "The AWS account ID"
     type = string
@@ -93,16 +99,6 @@ variable "key_name" {
     description = "The name of the key pair to use for the bastion host"
     type = string
 }
-
-# variable "public_subnet_ids" {
-#     description = "The IDs of the public subnets"
-#     type = list(string)
-# }
-
-# variable "private_subnet_ids" {
-#     description = "The IDs of the private subnets"
-#     type = list(string)
-# }
 
 variable "lambda_package_migrate" {
     description = "The path to the ZIP file containing the Lambda function code"

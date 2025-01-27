@@ -1,9 +1,3 @@
-# http://development-interview-prep-lb-585997728.us-east-1.elb.amazonaws.com:3000/{proxy}
-# curl -X GET http://development-interview-prep-lb-585997728.us-east-1.elb.amazonaws.com:3000/api/v0/products
-# https://zbubkekd26.execute-api.us-east-1.amazonaws.com/dev
-# curl -X GET https://zbubkekd26.execute-api.us-east-1.amazonaws.com/dev/api/v0/products
-
-
 resource "aws_api_gateway_rest_api" "api" {
   name        = "${var.environment}-interview-prep-api"
   description = "API Gateway for Interview Prep ${var.environment} environment"
@@ -49,6 +43,29 @@ resource "aws_api_gateway_integration" "proxy_integration" {
     timeout_milliseconds = 29000
 }
 
+resource "aws_api_gateway_resource" "health" {
+    rest_api_id = aws_api_gateway_rest_api.api.id
+    parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+    path_part   = "health"
+}
+
+resource "aws_api_gateway_method" "health_get" {
+    rest_api_id = aws_api_gateway_rest_api.api.id
+    resource_id = aws_api_gateway_resource.health.id
+    http_method = "GET"
+    authorization = "NONE"
+    api_key_required = false
+}
+
+resource "aws_api_gateway_integration" "health_integration" {
+    rest_api_id = aws_api_gateway_rest_api.api.id
+    resource_id = aws_api_gateway_resource.health.id
+    http_method = aws_api_gateway_method.health_get.http_method
+    type = "HTTP_PROXY"
+    integration_http_method = "GET"
+    uri = "http://${var.lb_dns_name}:3000/health"
+}
+
 resource "aws_api_gateway_integration" "proxy_options_integration" {
     rest_api_id = aws_api_gateway_rest_api.api.id
     resource_id = aws_api_gateway_resource.proxy.id
@@ -66,8 +83,8 @@ resource "aws_api_gateway_integration_response" "proxy_options_integration_respo
     status_code = "200"
     response_parameters = {
         "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
-        "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
-        "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+        "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,PUT,POST,DELETE,PATCH'"
+        "method.response.header.Access-Control-Allow-Origin"  = "'${var.cors_origin}'"
     }
 }
 
@@ -91,6 +108,14 @@ resource "aws_api_gateway_deployment" "api_deployment" {
       aws_api_gateway_method_response.proxy_options_response
     ]
     rest_api_id = aws_api_gateway_rest_api.api.id
+
+    triggers = {
+      redeployment = "${timestamp()}"
+    }
+
+    lifecycle {
+        create_before_destroy = true
+    }
 }
 
 resource "aws_api_gateway_stage" "api_stage" {

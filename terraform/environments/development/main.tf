@@ -47,14 +47,9 @@ module "rds" {
   environment = var.environment
 }
 
-module "service_discovery" {
-  source      = "../../modules/service_discovery"
-  environment = var.environment
-  vpc_id      = module.vpc.vpc_id
-}
-
 module "ecs" {
   source                    = "../../modules/ecs"
+  project_name              = var.project_name
   environment               = var.environment
   region                    = var.region
   frontend_image = "interview-prep-frontend"
@@ -62,16 +57,12 @@ module "ecs" {
   backend_image = "interview-prep-backend"
   backend_repository_url = module.ecr.backend_repository_url
   database_url = module.rds.db_instance_endpoint
-  public_subnet_ids         = [module.subnets.public_subnet_a_id, module.subnets.public_subnet_b_id]
   private_subnet_ids = [module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
   frontend_sg_id            = module.security_groups.frontend_sg_id
   backend_sg_id             = module.security_groups.backend_sg_id
   alb_sg_id                 = module.security_groups.alb_sg_id
-  bastion_sg_id             = module.security_groups.bastion_sg_id
   ecs_task_execution_role   = module.iam.ecs_task_execution_role_arn
   ecs_task_role_arn = module.iam.ecs_task_role_arn
-  service_discovery_namespace_id = module.service_discovery.namespace_id
-  backend_service_arn = module.service_discovery.backend_service_arn
   db_username = var.db_username
   db_password = var.db_password
   frontend_target_group_arn = module.load_balancer.frontend_target_group_arn
@@ -118,7 +109,7 @@ module "lambda_migrate" {
   function_name = "${var.environment}-interview-prep-migrate"
   handler = "index.handler"
   runtime = "nodejs20.x"
-  timeout = 60
+  timeout = 300
   memory_size = 128
   lambda_package = var.lambda_package_migrate
   lambda_subnet_ids = [module.subnets.private_subnet_a_id, module.subnets.private_subnet_b_id]
@@ -160,7 +151,8 @@ module "load_balancer" {
   security_groups = [module.security_groups.alb_sg_id]
   public_subnet_ids = [module.subnets.public_subnet_a_id, module.subnets.public_subnet_b_id]
   vpc_id = module.vpc.vpc_id
-  health_check_path = "/"
+  frontend_health_check_path = "/health"
+  backend_health_check_path = "/health"
 }
 
 module "dns" {
@@ -181,4 +173,5 @@ module "api_gateway" {
   lb_dns_name = module.load_balancer.lb_dns_name
   region = var.region
   certificate_arn = var.certificate_arn
+  cors_origin = "http://dev.interviewprep.onyxdevtutorials.com"
 }

@@ -1,5 +1,5 @@
 resource "aws_ecs_cluster" "main" {
-    name = "${var.environment}-ecs-cluster"
+    name = "${var.environment}-${var.project_name}-ecs-cluster"
 }
 
 resource "aws_ecs_task_definition" "frontend" {
@@ -8,7 +8,7 @@ resource "aws_ecs_task_definition" "frontend" {
     requires_compatibilities = ["FARGATE"]
     cpu                      = "256"
     memory                   = "512"
-    execution_role_arn = var.ecs_task_execution_role # aws_iam_role.ecs_task_execution_role.arn
+    execution_role_arn = var.ecs_task_execution_role
     task_role_arn = var.ecs_task_role_arn
 
     container_definitions = jsonencode([
@@ -50,13 +50,13 @@ resource "aws_ecs_task_definition" "backend" {
     requires_compatibilities = ["FARGATE"]
     cpu                      = "256"
     memory                   = "512"
-    execution_role_arn = var.ecs_task_execution_role # aws_iam_role.ecs_task_execution_role.arn
+    execution_role_arn = var.ecs_task_execution_role
     task_role_arn = var.ecs_task_role_arn
 
     container_definitions = jsonencode([
         {
             name = "backend"
-            image = "${var.backend_repository_url}" # previously was "${aws_ecr_repository.backend.repository_url}:latest"
+            image = "${var.backend_repository_url}"
             essential = true
             portMappings = [
                 {
@@ -91,7 +91,7 @@ resource "aws_ecs_task_definition" "backend" {
 }
 
 resource "aws_ecs_service" "frontend" {
-    name            = "${var.environment}-frontend-ecs-service"
+    name            = "${var.environment}-${var.project_name}-frontend-ecs-service"
     cluster         = aws_ecs_cluster.main.id
     task_definition = aws_ecs_task_definition.frontend.arn
     desired_count   = 1
@@ -113,7 +113,7 @@ resource "aws_ecs_service" "frontend" {
 }
 
 resource "aws_ecs_service" "backend" {
-    name            = "${var.environment}-backend-ecs-service"
+    name            = "${var.environment}-${var.project_name}-backend-ecs-service"
     cluster         = aws_ecs_cluster.main.id
     task_definition = aws_ecs_task_definition.backend.arn
     desired_count   = 1

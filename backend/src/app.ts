@@ -3,28 +3,27 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import usersRouter from './routes/users';
 import productsRouter from './routes/products';
+import healthRouter from './routes/health';
 import { errorHandler } from './middleware/errorHandler';
 import { logger } from './middleware/logger';
 import knex from 'knex';
 import knexConfig from './knexFile';
-import dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express-serve-static-core';
-
-const envFile =
-  process.env['NODE_ENV'] === 'production'
-    ? '../.env.production'
-    : process.env['NODE_ENV'] === 'test'
-    ? '../.env.test'
-    : '../.env.local';
-
-dotenv.config({ path: envFile });
 
 const app = express();
 app.use(bodyParser.json());
 
+let corsOrigin: string;
+
+if (process.env['NODE_ENV'] === 'local') {
+  corsOrigin = 'http://localhost:4200';
+} else {
+  corsOrigin = 'http://dev.interviewprep.onyxdevtutorials.com';
+}
+
 const corsOptions = {
-  origin: process.env['CORS_ORIGIN'] || 'http://dev.interviewprep.onyxdevtutorials.com',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: corsOrigin,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -56,6 +55,8 @@ app.use(
   },
   productsRouter
 );
+
+app.use('/health', healthRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');

@@ -2,14 +2,11 @@ import request from 'supertest';
 import app from '../../app';
 import knex from 'knex';
 import knexConfig from '../../knexFile';
-import dotenv from 'dotenv';
 import {
   Product,
   ProductStatus,
 } from '@onyxdevtutorials/interview-prep-shared';
 import retry from "retry";
-
-dotenv.config({ path: '../../../.env.test' });
 
 const db = knex(knexConfig['test_products']);
 
