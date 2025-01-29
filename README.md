@@ -117,6 +117,7 @@ A lot of `ci.yml` is self-explanatory but here are some notes to help clarify so
   * Does an install and build for the Lambda function.
   * And finally zips up everything.
 * **Update Lambda migration function**: Updates the AWS Lambda function code for database migrations using the AWS CLI. The workflow waits for the update to be completed before the function is invoked.
+* **Build and push frontend Docker image**: Note that this step uses a Dockerfile in the root of the project, rather than the Dockerfile in the frontend directory. I wanted to keep the Dockerfile in the frontend directory for local development purposes, e.g., `frontend/Dockerfile` uses the Angular server and port 4200.
 
 ## Infrastructure
 
@@ -134,7 +135,7 @@ The diagram above illustrates the major parts of the application infrastructure:
 * **Public route table**: The public routing table is associated with the public subnets and directs traffic to the internet through the Internet Gateway. This allows resources in the public subnets, such as the load balancer and bastion host, to communicate with the internet.
 * **Private route table**: The private routing table is associated with the private subnets and directs traffic to the internet through the NAT Gateway. This allows resources in the private subnets, such as the ECS services and RDS database, to access the internet for updates and patches while keeping them isolated from direct internet access.
 * **Internet gateway**: Allows resources within the VPC to communicate with the internet.
-* **NAT gateway**: The NAT gateway is in public subnet A but both private subnets can use it via the private route table. We *could* add a NAT gateway to public subnet B to ensure higher availability and fault tolerance.
+* **NAT gateway**: The NAT gateway is in public subnet A but both private subnets can use it via the private route table. We *could* add a NAT gateway to public subnet B to ensure higher availability and fault tolerance. The NAT gateway is used, for example, by ECS tasks to pull Docker images from the ECR. It's also used by the migrate Lambda function to get values from AWS Systems Manager Parameter Store.
 * **API gateway**: This serves as a proxy that forwards the path, data, method, and other request details to the backend API server. This allows the backend to handle the actual processing of the requests. The API gateway is set up to handle CORS, limiting web browser requests to pages served from our frontend host. In the future we'll add an API key and authorization to restrict usage of the API.
 * **ECR for hosting frontend and backend Docker images**: Our GitHub workflow builds and pushes Docker images of our frontend and backend apps to the AWS Elastic Container Registry, tagging the latest build as... "latest."
 * **ECS cluster with frontend and backend ECS services**: The GitHub workflow updates the backend and frontend services in the AWS Elastic Container Service. These services are where our frontend and backend servers actually run, providing the necessary environments for our applications to operate.
