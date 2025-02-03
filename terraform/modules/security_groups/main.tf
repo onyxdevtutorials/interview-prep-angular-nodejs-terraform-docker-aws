@@ -182,3 +182,13 @@ resource "aws_security_group_rule" "allow_bastion_to_db" {
     source_security_group_id = aws_security_group.bastion_sg.id
     security_group_id = aws_security_group.db_sg.id
 }
+
+resource "aws_security_group_rule" "allow_backend_to_db" {
+    type = "ingress"
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+    source_security_group_id = aws_security_group.backend_sg.id
+    security_group_id = aws_security_group.db_sg.id
+    description = "Allow backend to access the db"
+}
