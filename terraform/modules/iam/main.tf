@@ -25,11 +25,6 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
     policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# resource "aws_iam_role_policy_attachment" "ecr_pull_policy" {
-#     role       = aws_iam_role.ecs_task_execution_role.name
-#     policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-# }
-
 # Role is assumed by the ECS tasks themselves. It allows the containers running within the tasks to interact with other AWS services. Common actions: reading from or writing to S3 buckets; accessing secrets from SSM Parameter Store; interacting with DynamoDB tables, etc. Here, because we don't attach any policies, the role does not grant any permissions to perform actions on AWS resources.
 resource "aws_iam_role" "ecs_task_role" {
     name = "${var.environment}-ecs-task-role"
@@ -71,6 +66,7 @@ resource "aws_iam_role" "lambda_exec" {
     }
 }
 
+# The ec2 permissions are needed because the Lambda function is running in a VPC and needs to create and delete network interfaces.
 resource "aws_iam_policy" "lambda_exec_policy" {
     name = "${var.environment}-interview-prep-lambda-exec-policy"
     description = "Policy for Lambda execution role"
@@ -109,13 +105,6 @@ resource "aws_iam_policy" "lambda_exec_policy" {
                     "arn:aws:ssm:${var.region}:${var.account_id}:parameter/interview-prep/${var.environment}/*"
                 ]
             },
-            # {
-            #     Effect = "Allow",
-            #     Action = [
-            #         "kms:Decrypt"
-            #     ],
-            #     Resource = "arn:aws:kms:${var.region}:${var.account_id}:key/169ce983-7b59-4ff6-9c74-533af48cf478"
-            # },
         ]
     })
 }
