@@ -160,8 +160,8 @@ jobs:
             outputfile.txt
         env:
           NODE_ENV: development
-          DATABASE_URL: postgres://${{ secrets.DB_USERNAME }}:${{ secrets.DB_PASSWORD }}@${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
 
+      # sets up Docker Buildx to enable advanced build features in the workflow.
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 

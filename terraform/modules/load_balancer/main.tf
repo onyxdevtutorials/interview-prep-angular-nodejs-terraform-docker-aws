@@ -1,13 +1,13 @@
 resource "aws_lb" "this" {
   name               = "${var.environment}-interview-prep-lb"
-  internal           = false
-  load_balancer_type = "application"
+  internal           = false # Set to false to create an internet-facing load balancer
+  load_balancer_type = "application" # Other types include network and gateway
   security_groups    = var.security_groups
   subnets            = var.public_subnet_ids
 
-  enable_deletion_protection = false
-  enable_http2               = false
-  enable_cross_zone_load_balancing = true
+  enable_deletion_protection = false # Set to true to enable accidental deletion protection
+  enable_http2               = false # Set to true to enable HTTP/2
+  enable_cross_zone_load_balancing = true # Set to true to enable cross-zone load balancing. This distributes incoming requests evenly across all registered targets in all enabled Availability Zones.
 
   tags = {
     Name        = "${var.environment}-interview-prep-lb"
@@ -20,7 +20,7 @@ resource "aws_lb_target_group" "frontend" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
-  target_type = "ip"
+  target_type = "ip" # Other types include instance and lambda
 
   health_check {
     path                = var.frontend_health_check_path
@@ -66,7 +66,7 @@ resource "aws_lb_listener" "http_frontend" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.frontend.arn
+    target_group_arn = aws_lb_target_group.frontend.arn # Refer to the ECS module to see how the target group ARN is passed to the ECS service.
   }
 }
 
@@ -77,6 +77,6 @@ resource "aws_lb_listener" "http_backend" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.backend.arn
+    target_group_arn = aws_lb_target_group.backend.arn # Refer to the ECS module to see how the target group ARN is passed to the ECS service.
   }
 }
