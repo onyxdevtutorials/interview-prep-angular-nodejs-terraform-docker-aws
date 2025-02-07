@@ -1,5 +1,7 @@
 # InterviewPrep
 
+[Video](https://youtu.be/e8xXtHpPZ_o)
+
 This project grew out of wanting to prepare for an interview for a job that would have focused on Angular. As I had been using React exclusively for several months, I needed to refresh my Angular skills. Then I began to add more things to make up for my focus on AWS Amplify. The result is in some ways the opposite of what I have in my previous videos:
 
 * Angular instead of React/NextJS
@@ -280,7 +282,7 @@ Assuming CWD is `backend`, `npx knex migrate:make <migration-file-name> --knexfi
 
 ## Version History
 
-### 0.1.0
+### 0.1.2
 - Added Terraform configuration for managing AWS infrastructure.
 - Set up AWS resources including VPC, subnets, security groups, RDS, ECS, ECR, bastion host, SSM parameters, Lambda functions, load balancer, Route 53 DNS, and API Gateway.
 - Updated GitHub workflow to deploy infrastructure and application.
