@@ -18,11 +18,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@onyxdevtutorials/interview-prep-shared": "^1.0.3",
+    "@onyxdevtutorials/interview-prep-shared": "^1.0.4",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "express": "^4.21.1",
     "dotenv": "^16.4.5",
+    "express": "^4.21.1",
     "joi": "^17.13.3",
     "knex": "^3.1.0",
     "module-alias": "^2.2.3",
