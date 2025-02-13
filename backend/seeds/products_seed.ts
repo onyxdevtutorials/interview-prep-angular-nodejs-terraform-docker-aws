@@ -16,18 +16,21 @@ export async function seed(knex: Knex): Promise<void> {
       description: 'product 1 description',
       price: 100,
       status: ProductStatus.AVAILABLE,
+      version: 1,
     },
     {
       name: 'Product 2',
       description: 'product 2 description',
       price: 200,
       status: ProductStatus.AVAILABLE,
+      version: 1,
     },
     {
       name: 'Product 3',
       description: 'product 3 description',
       price: 300,
       status: ProductStatus.AVAILABLE,
+      version: 1,
     },
   ];
 
