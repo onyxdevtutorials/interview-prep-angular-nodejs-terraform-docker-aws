@@ -3,6 +3,7 @@ import { Product } from '@onyxdevtutorials/interview-prep-shared';
 import { productSchema, productPatchSchema } from '../validation/productSchema';
 import { ValidationError } from '../errors/ValidationError';
 import { NotFoundError } from '../errors/NotFoundError';
+import { ConflictError } from '../errors/ConflictError';
 
 const router = Router();
 
@@ -43,8 +44,9 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const db = req.db;
+    const productToInsert = { ...value, version: 1 };
     const [product]: Product[] = await db('products')
-      .insert(value)
+      .insert(productToInsert)
       .returning('*');
     res.status(201).json(product);
   } catch (error) {
@@ -63,15 +65,28 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const db = req.db;
-    const [product]: Product[] = await db('products')
-      .where({ id })
-      .update(value)
-      .returning('*');
-    if (!product) {
+    const currentProduct = await db('products').where({ id }).first();
+
+    if (!currentProduct) {
       return next(new NotFoundError('Product not found'));
-    } else {
-      res.status(200).json(product);
     }
+
+    const updatedProduct = { 
+      ...value, 
+      version: currentProduct.version + 1
+    };
+
+    // If we don't find a product with the given id and "current" version, we know that the product has been updated by another request.
+    const [product]: Product[] = await db('products')
+      .where({ id, version: currentProduct.version })
+      .update(updatedProduct)
+      .returning('*');
+    
+    if (!product) {
+      return next(new ConflictError('Conflict: Product has been updated by another request'));
+    }
+    
+    res.status(200).json(product);
   } catch (error) {
     console.error('Error updating product:', error);
     next(error);
@@ -92,15 +107,28 @@ router.patch(
 
     try {
       const db = req.db;
-      const [product]: Product[] = await db('products')
-        .where({ id })
-        .update(value)
-        .returning('*');
-      if (!product) {
+      const currentProduct = await db('products').where({ id }).first();
+
+      if (!currentProduct) {
         return next(new NotFoundError('Product not found'));
-      } else {
-        res.status(200).json(product);
       }
+
+      const updatedProduct = {
+        ...currentProduct,
+        ...value,
+        version: currentProduct.version + 1,
+      };
+
+      const [product]: Product[] = await db('products')
+        .where({ id, version: currentProduct.version })
+        .update(updatedProduct)
+        .returning('*');
+
+      if (!product) {
+        return next(new ConflictError('Conflict: Product has been updated by another request'));
+      }
+
+      res.status(200).json(product);
     } catch (error) {
       console.error('Error updating product:', error);
       next(error);

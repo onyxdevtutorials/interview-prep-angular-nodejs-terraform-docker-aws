@@ -3,6 +3,7 @@ import { User } from '@onyxdevtutorials/interview-prep-shared';
 import { userSchema, userPatchSchema } from '../validation/userSchema';
 import { ValidationError } from '../errors/ValidationError';
 import { NotFoundError } from '../errors/NotFoundError';
+import { ConflictError } from '../errors/ConflictError';
 
 const router = Router();
 
@@ -43,7 +44,8 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const db = req.db;
-    const [user]: User[] = await db('users').insert(value).returning('*');
+    const userToInsert = { ...value, version: 1 };
+    const [user]: User[] = await db('users').insert(userToInsert).returning('*');
     res.status(201).json(user);
   } catch (error) {
     console.error('Error creating user:', error);
@@ -60,15 +62,28 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const db = req.db;
-    const [user]: User[] = await db('users')
-      .where({ id })
-      .update(value)
-      .returning('*');
-    if (!user) {
+    const currentUser = await db('users').where({ id }).first();
+
+    if (!currentUser) {
       return next(new NotFoundError('User not found'));
-    } else {
-      res.status(200).json(user);
     }
+
+    const updatedUser = {
+      ...value,
+      version: currentUser.version + 1,
+    }
+
+    // If we don't find a user with the id and "current" version, we know that the user has been updated by another request.
+    const [user]: User[] = await db('users')
+      .where({ id, version: currentUser.version })
+      .update(updatedUser)
+      .returning('*');
+    
+    if (!user) {
+      return next(new ConflictError('Conflict: User has been updated by another request'));
+    }
+
+    res.status(200).json(user);
   } catch (error) {
     console.error('Error updating user:', error);
     next(error);
@@ -76,6 +91,7 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 // Patch user
+// Remember that PATCH is used to update a subset of fields on a resource, while PUT is used to update the entire resource.
 router.patch(
   '/:id',
   async (req: Request, res: Response, next: NextFunction) => {
@@ -89,15 +105,29 @@ router.patch(
 
     try {
       const db = req.db;
-      const [user]: User[] = await db('users')
-        .where({ id })
-        .update(value)
-        .returning('*');
-      if (!user) {
+      const currentUser = await db('users').where({ id }).first();
+
+      if (!currentUser) {
         return next(new NotFoundError('User not found'));
-      } else {
-        res.status(200).json(user);
       }
+
+      const updatedUser = {
+        ...currentUser,
+        ...value,
+        version: currentUser.version + 1,
+      }
+
+      // If we don't find a user with the id and "current" version, we know that the user has been updated by another request.
+      const [user]: User[] = await db('users')
+        .where({ id, version: currentUser.version })
+        .update(updatedUser)
+        .returning('*');
+
+      if (!user) {
+        return next(new ConflictError('Conflict: User has been updated by another request'));
+      }
+
+      res.status(200).json(user);
     } catch (error) {
       console.error('Error updating user:', error);
       next(error);

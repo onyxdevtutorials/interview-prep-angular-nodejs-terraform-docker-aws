@@ -23,6 +23,9 @@ export class HttpErrorHandlerService {
         case 404:
           errorMessage = `Not Found: The requested resource was not found. URL: ${error.url}`;
           break;
+        case 409:
+          errorMessage = `Conflict: The item has been modified by another process. Please reload and try again.`;
+          break;
         case 500:
           errorMessage = `Internal Server Error: A server-side error occurred. URL: ${error.url}`;
           break;
