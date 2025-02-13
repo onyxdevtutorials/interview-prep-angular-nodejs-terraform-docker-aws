@@ -3,6 +3,7 @@ import { UsersFormComponent } from '../users-form/users-form.component';
 import { UsersService } from '../../services/users.service';
 import { User } from '@onyxdevtutorials/interview-prep-shared';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-users-update',
@@ -14,6 +15,7 @@ import { Router } from '@angular/router';
 export class UsersUpdateComponent implements OnInit {
   usersService = inject(UsersService);
   router = inject(Router);
+  snackBar = inject(MatSnackBar);
 
   userId = input.required<string>();
 
@@ -26,7 +28,13 @@ export class UsersUpdateComponent implements OnInit {
         console.log('User updated:', user);
         this.router.navigate(['/users']);
       },
-      error: (error) => console.error('Error updating user:', error),
+      error: (error) => {
+        const errorMessage = (error as Error).message;
+        console.error('Error updating user:', errorMessage);
+        this.snackBar.open(errorMessage, 'Close', {
+          duration: 5000,
+        });
+      },
       complete: () => console.log('User update complete'),
     });
   }
@@ -37,7 +45,13 @@ export class UsersUpdateComponent implements OnInit {
         console.log('users-update component User:', user);
         this.userData = user;
       },
-      error: (error) => console.error('Error getting user:', error),
+      error: (error) => {
+        const errorMessage = (error as Error).message;
+        console.error('Error getting user:', errorMessage);
+        this.snackBar.open(errorMessage, 'Close', {
+          duration: 5000
+        });
+      },
       complete: () => console.log('User retrieval complete'),
     });
   }

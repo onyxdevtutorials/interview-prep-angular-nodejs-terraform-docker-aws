@@ -11,6 +11,7 @@ import {
 } from '@onyxdevtutorials/interview-prep-shared';
 import { mockProducts } from '../../mocks/mock-products';
 import { of, throwError } from 'rxjs';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 describe('ProductsUpdateComponent', () => {
   let component: ProductsUpdateComponent;
@@ -20,7 +21,7 @@ describe('ProductsUpdateComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProductsUpdateComponent, BrowserAnimationsModule],
+      imports: [ProductsUpdateComponent, BrowserAnimationsModule, MatSnackBarModule],
       providers: [
         provideRouter(routes),
         { provide: ProductsService, useClass: MockProductsService },
@@ -42,6 +43,11 @@ describe('ProductsUpdateComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should inject ProductsService and MatSnackBar', () => {
+    expect(component.productsService).toBeDefined();
+    expect(component.snackBar).toBeDefined();
   });
 
   it('should call updateProduct on ProductsService when handleFormSubmit is called', () => {
@@ -89,7 +95,7 @@ describe('ProductsUpdateComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/products']);
   });
 
-  it('should log an error when updateProduct fails', () => {
+  it('should log an error and display error in MatSnackBar when updateProduct fails', () => {
     const formData = {
       name: 'Product 1',
       description: 'Product 1 description',
@@ -100,7 +106,7 @@ describe('ProductsUpdateComponent', () => {
     spyOn(mockProductsService, 'updateProduct').and.returnValue(
       throwError(() => new Error('Simulated network error'))
     );
-
+    spyOn(component.snackBar, 'open');
     spyOn(console, 'error');
 
     component.handleFormSubmit(formData);
@@ -108,6 +114,14 @@ describe('ProductsUpdateComponent', () => {
     expect(console.error).toHaveBeenCalledWith(
       'Error updating product:',
       new Error('Simulated network error')
+    );
+
+    expect(component.snackBar.open).toHaveBeenCalledWith(
+      'Simulated network error',
+      'Close',
+      {
+        duration: 5000,
+      }
     );
   });
 
@@ -124,6 +138,7 @@ describe('ProductsUpdateComponent', () => {
       throwError(() => new Error('Simulated network error'))
     );
 
+    spyOn(component.snackBar, 'open');
     spyOn(console, 'error');
 
     component.ngOnInit();
@@ -131,6 +146,14 @@ describe('ProductsUpdateComponent', () => {
     expect(console.error).toHaveBeenCalledWith(
       'Error getting product:',
       new Error('Simulated network error')
+    );
+
+    expect(component.snackBar.open).toHaveBeenCalledWith(
+      'Simulated network error',
+      'Close',
+      {
+        duration: 5000,
+      }
     );
   });
 });
