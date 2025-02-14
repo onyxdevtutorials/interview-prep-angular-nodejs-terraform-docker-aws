@@ -10,5 +10,5 @@ export interface Product {
   created_at?: Date;
   updated_at?: Date;
   color?: string;
-  version?: number;
+  version: number;
 }

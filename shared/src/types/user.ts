@@ -14,5 +14,5 @@ export interface User {
   city?: string;
   favorite_song?: string;
   favorite_color?: string;
-  version?: number;
+  version: number;
 }
