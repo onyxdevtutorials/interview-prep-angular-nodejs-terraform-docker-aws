@@ -10,7 +10,10 @@
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "serve:report": "browser-sync start --config bs-config.js",
-    "test:clearCache": "jest --clearCache"
+    "test:clearCache": "jest --clearCache",
+    "test:users": "jest --config ./jest.config.ts --testPathPattern=users.integration.test.ts",
+    "test:products": "jest --config ./jest.config.ts --testPathPattern=products.integration.test.ts",
+    "test:unit": "jest --config ./jest.config.ts --testPathPattern=unit"
   },
   "_moduleAliases": {},
   "keywords": [],
