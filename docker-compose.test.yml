@@ -36,7 +36,7 @@ services:
     working_dir: /app/backend
     depends_on:
       - db-test
-    command: sh -c "npx jest --clearCache && npx jest --watch=false --config ./jest.config.ts"
+    command: sh -c "npx jest --clearCache && npx jest --watch=false --config ./jest.config.ts --testPathPattern=users.integration.test.ts && npx jest --watch=false --config  ./jest.config.ts --testPathPattern=products.integration.test.ts && npx jest --watch=false --config  ./jest.config.ts --testPathPattern=unit"
     # command: tail -f /dev/null
     networks:
       - devnetwork
