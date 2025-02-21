@@ -132,6 +132,7 @@ describe('PUT /api/v0/products/:id', () => {
       price: 200,
       description: 'Updated product description',
       status: ProductStatus.AVAILABLE,
+      version: 1,
     };
 
     const response = await request(app).put(`${productsPath}/1`).send(updatedProduct);
@@ -141,6 +142,7 @@ describe('PUT /api/v0/products/:id', () => {
     expect(response.body.price).toBe(updatedProduct.price);
     expect(response.body.description).toBe(updatedProduct.description);
     expect(response.body.status).toBe(updatedProduct.status);
+    expect(response.body.version).toBe(2);
   });
 
   it('should return a 400 for a product with missing fields', async () => {
@@ -148,6 +150,7 @@ describe('PUT /api/v0/products/:id', () => {
       name: 'Updated Product',
       price: 200,
       status: ProductStatus.AVAILABLE,
+      version: 1,
     };
 
     const response = await request(app).put(`${productsPath}/1`).send(updatedProduct);
@@ -161,6 +164,7 @@ describe('PUT /api/v0/products/:id', () => {
       price: 200,
       description: 'Updated product description',
       status: ProductStatus.AVAILABLE,
+      version: 1,
     };
 
     const response = await request(app)
@@ -170,6 +174,47 @@ describe('PUT /api/v0/products/:id', () => {
     expect(response.status).toBe(404);
   });
 
+  it('PUT should return a 409 conflict when there is a version mismatch', async () => {
+    const product: Omit<Product, 'id'> = {
+      name: 'Original Product',
+      price: 100,
+      description: 'Original product description',
+      status: ProductStatus.AVAILABLE,
+    };
+
+    const [createdProduct] = await db('products').insert(product).returning('*');
+
+    console.log('****** createdProduct:', createdProduct);
+
+    const firstUpdate: Partial<Product> = {
+      ...createdProduct,
+      name: 'First Update',
+    };
+
+    const firstResponse = await request(app)
+      .put(`${productsPath}/${createdProduct.id}`)
+      .send(firstUpdate);
+    
+    console.log('****** firstResponse:', firstResponse.body);
+
+    expect(firstResponse.status).toBe(200);
+
+    // Intentionally create a version mismatch
+    const secondUpdate: Partial<Product> = {
+      ...createdProduct,
+      name: 'Second Update',
+      version: createdProduct.version,
+    };
+
+    const secondResponse = await request(app)
+      .put(`${productsPath}/${createdProduct.id}`)
+      .send(secondUpdate);
+
+    expect(secondResponse.status).toBe(409);
+    expect(secondResponse.body.error).toBe('Conflict: Product has been updated by another request. Please reload the page and try again.');
+  });
+
+
   it.todo('should handle other errors');
 });
 
@@ -177,6 +222,7 @@ describe('PATCH /api/v0/products/:id', () => {
   it('should update an existing product', async () => {
     const updatedProduct: Partial<Product> = {
       name: 'Updated Product',
+      version: 1,
     };
 
     const response = await request(app)
@@ -185,12 +231,14 @@ describe('PATCH /api/v0/products/:id', () => {
 
     expect(response.status).toBe(200);
     expect(response.body.name).toBe(updatedProduct.name);
+    expect(response.body.version).toBe(2);
   });
 
   it('should not return a 400 for a product with "missing" fields (should return 200)', async () => {
     const updatedProduct: Partial<Product> = {
       name: 'Updated Product',
       description: 'Updated Product Description',
+      version: 1,
     };
 
     const response = await request(app)
@@ -203,6 +251,7 @@ describe('PATCH /api/v0/products/:id', () => {
   it('should return a 404 for a non-existent product', async () => {
     const updatedProduct: Partial<Product> = {
       name: 'Updated Product',
+      version: 1,
     };
 
     const response = await request(app)
@@ -210,6 +259,42 @@ describe('PATCH /api/v0/products/:id', () => {
       .send(updatedProduct);
 
     expect(response.status).toBe(404);
+  });
+
+  it('should return a 409 conflict when there is a version mismatch', async () => {
+    const product: Omit<Product, 'id'> = {
+      name: 'Original Product',
+      price: 100,
+      description: 'Original product description',
+      status: ProductStatus.AVAILABLE,
+      version: 1,
+    };
+
+    const [createdProduct] = await db('products').insert(product).returning('*');
+
+    const firstUpdate: Partial<Product> = {
+      name: 'First Update',
+      version: createdProduct.version,
+    };
+
+    const firstResponse = await request(app)
+      .patch(`${productsPath}/${createdProduct.id}`)
+      .send(firstUpdate);
+
+    expect(firstResponse.status).toBe(200);
+
+    // Intentionally create a version mismatch
+    const secondUpdate: Partial<Product> = {
+      name: 'Second Update',
+      version: createdProduct.version,
+    };
+
+    const secondResponse = await request(app)
+      .patch(`${productsPath}/${createdProduct.id}`)
+      .send(secondUpdate);
+
+    expect(secondResponse.status).toBe(409);
+    expect(secondResponse.body.error).toBe('Conflict: Product has been updated by another request. Please reload the page and try again.');
   });
 
   it.todo("should handle a validation error if field isn't in schema at all");
