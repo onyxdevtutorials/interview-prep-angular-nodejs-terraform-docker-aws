@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { Product } from '@onyxdevtutorials/interview-prep-shared';
-import { productSchema, productPatchSchema } from '../validation/productSchema';
+import { productSchema, productPatchSchema, productCreateSchema } from '../validation/productSchema';
 import { ValidationError } from '../errors/ValidationError';
 import { NotFoundError } from '../errors/NotFoundError';
 import { ConflictError } from '../errors/ConflictError';
@@ -37,7 +37,7 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
-  const { error, value } = productSchema.validate(req.body);
+  const { error, value } = productCreateSchema.validate(req.body);
   if (error) {
     return next(new ValidationError(error.details[0].message));
   }
@@ -63,6 +63,10 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     return next(new ValidationError(error.details[0].message));
   }
 
+  if (!value.version) {
+    return next(new ValidationError('Version is required'));
+  }
+
   try {
     const db = req.db;
     const currentProduct = await db('products').where({ id }).first();
@@ -71,6 +75,11 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
       return next(new NotFoundError('Product not found'));
     }
 
+    if (value.version !== currentProduct.version) {
+      return next(new ConflictError('Conflict: Product has been updated by another request. Please reload the page and try again.'));
+    }
+
+    // With a PUT request, client should have provided the entire product object.
     const updatedProduct = { 
       ...value, 
       version: currentProduct.version + 1
@@ -83,7 +92,7 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
       .returning('*');
     
     if (!product) {
-      return next(new ConflictError('Conflict: Product has been updated by another request'));
+      return next(new ConflictError('Conflict: Product has been updated by another request. Please reload the page and try again.'));
     }
     
     res.status(200).json(product);
@@ -98,11 +107,16 @@ router.patch(
   '/:id',
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
+    // Not sure if I should use `presence: 'optional'` here. I think I could leave it out, as in productPatchSchema all but `version` are marked as optional while `version` is required.
     const { error, value } = productPatchSchema.validate(req.body, {
       presence: 'optional',
     });
     if (error) {
       return next(new ValidationError(error.details[0].message));
+    }
+
+    if (!value.version) {
+      return next(new ValidationError('Version is required'));
     }
 
     try {
@@ -111,6 +125,10 @@ router.patch(
 
       if (!currentProduct) {
         return next(new NotFoundError('Product not found'));
+      }
+
+      if (value.version !== currentProduct.version) {
+        return next(new ConflictError('Conflict: Product has been updated by another request. Please reload the page and try again.'));
       }
 
       const updatedProduct = {

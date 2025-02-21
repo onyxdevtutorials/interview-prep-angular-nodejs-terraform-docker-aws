@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { User } from '@onyxdevtutorials/interview-prep-shared';
-import { userSchema, userPatchSchema } from '../validation/userSchema';
+import { userSchema, userPatchSchema, userCreateSchema } from '../validation/userSchema';
 import { ValidationError } from '../errors/ValidationError';
 import { NotFoundError } from '../errors/NotFoundError';
 import { ConflictError } from '../errors/ConflictError';
@@ -37,7 +37,7 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
-  const { error, value } = userSchema.validate(req.body);
+  const { error, value } = userCreateSchema.validate(req.body);
   if (error) {
     return next(new ValidationError(error.details[0].message));
   }
@@ -60,12 +60,20 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     return next(new ValidationError(error.details[0].message));
   }
 
+  if (!value.version) {
+    return next(new ValidationError('Version is required'));
+  }
+
   try {
     const db = req.db;
     const currentUser = await db('users').where({ id }).first();
 
     if (!currentUser) {
       return next(new NotFoundError('User not found'));
+    }
+
+    if (value.version !== currentUser.version) {
+      return next(new ConflictError('Conflict: User has been updated by another process. Please reload the page and try again.'));
     }
 
     const updatedUser = {
@@ -80,7 +88,7 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
       .returning('*');
     
     if (!user) {
-      return next(new ConflictError('Conflict: User has been updated by another request'));
+      return next(new ConflictError('Conflict: User has been updated by another process. Please reload the page and try again.'));
     }
 
     res.status(200).json(user);
@@ -103,12 +111,20 @@ router.patch(
       return next(new ValidationError(error.details[0].message));
     }
 
+    if (!value.version) {
+      return next(new ValidationError('Version is required'));
+    }
+
     try {
       const db = req.db;
       const currentUser = await db('users').where({ id }).first();
 
       if (!currentUser) {
         return next(new NotFoundError('User not found'));
+      }
+
+      if (value.version !== currentUser.version) {
+        return next(new ConflictError('Conflict: User has been updated by another process. Please reload the page and try again.'));
       }
 
       const updatedUser = {
@@ -124,7 +140,7 @@ router.patch(
         .returning('*');
 
       if (!user) {
-        return next(new ConflictError('Conflict: User has been updated by another request'));
+        return next(new ConflictError('Conflict: User has been updated by another process. Please reload the page and try again.'));
       }
 
       res.status(200).json(user);
