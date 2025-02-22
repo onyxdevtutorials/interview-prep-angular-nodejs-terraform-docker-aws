@@ -30,7 +30,7 @@ export class UsersUpdateComponent implements OnInit {
       },
       error: (error) => {
         const errorMessage = (error as Error).message;
-        console.error('Error updating user:', errorMessage);
+        console.error('Error updating user:', error);
         this.snackBar.open(errorMessage, 'Close', {
           duration: 5000,
         });
@@ -47,7 +47,7 @@ export class UsersUpdateComponent implements OnInit {
       },
       error: (error) => {
         const errorMessage = (error as Error).message;
-        console.error('Error getting user:', errorMessage);
+        console.error('Error getting user:', error);
         this.snackBar.open(errorMessage, 'Close', {
           duration: 5000
         });

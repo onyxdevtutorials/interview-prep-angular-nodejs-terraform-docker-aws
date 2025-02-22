@@ -30,7 +30,7 @@ export class ProductsUpdateComponent {
       },
       error: (error) => {
         const errorMessage = (error as Error).message;
-        console.error('Error updating product:', errorMessage);
+        console.error('Error updating product:', error);
         this.snackBar.open(errorMessage, 'Close', {
           duration: 5000,
         });
@@ -47,7 +47,7 @@ export class ProductsUpdateComponent {
       },
       error: (error) => {
         const errorMessage = (error as Error).message;
-        console.error('Error getting product:', errorMessage);
+        console.error('Error getting product:', error);
         this.snackBar.open(errorMessage, 'Close', {
           duration: 5000
         });
