@@ -1,4 +1,4 @@
-# InterviewPrep
+# Interview Prep
 
 [Video](https://youtu.be/e8xXtHpPZ_o)
 
@@ -98,6 +98,16 @@ Jest is used for testing.
 ## Shared
 
 Both the frontend and backend apps use an NPM package `@onyxdevtutorials/interview-prep-shared` that defines TypeScript interfaces for `product` and `user`. The source code for the package is in `shared`.
+
+### How to Update
+
+Obviously, this only applies to *me*. You wouldn't update my NPM package but I include the information here in case you want to publish packages to the NPM repository.
+
+* Make edits.
+* Bump version in package.json.
+* `npm login`
+* `npm publish --access public`
+
 
 ## Workflow and Continuous Integration/Continuous Deployment (CI/CD)
 
@@ -249,6 +259,7 @@ To run frontend tests:
 Tests can also be run in watch mode so that they will be re-run as you make changes to code and tests:
 
 1. `docker-compose --env-file .env.local up frontend`
+1. Switch to another terminal window.
 1. `cd frontend`
 1. `npm run test:watch`
 
@@ -281,6 +292,9 @@ Type `\d products` or `\d users` to get information about each of these tables.
 Assuming CWD is `backend`, `npx knex migrate:make <migration-file-name> --knexfile ./src/knexFile.ts --migrations-directory ../migrations`.
 
 ## Version History
+
+### 0.1.3
+- Added optimistic locking. (Alternatives: Pessimistic Locking, Automatic Conflict Resolution, Eventual Consistency.)
 
 ### 0.1.2
 - Added Terraform configuration for managing AWS infrastructure.
