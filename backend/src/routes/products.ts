@@ -1,8 +1,9 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { Product } from '@onyxdevtutorials/interview-prep-shared';
-import { productSchema, productPatchSchema } from '../validation/productSchema';
+import { productSchema, productPatchSchema, productCreateSchema } from '../validation/productSchema';
 import { ValidationError } from '../errors/ValidationError';
 import { NotFoundError } from '../errors/NotFoundError';
+import { ConflictError } from '../errors/ConflictError';
 
 const router = Router();
 
@@ -36,15 +37,16 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
-  const { error, value } = productSchema.validate(req.body);
+  const { error, value } = productCreateSchema.validate(req.body);
   if (error) {
     return next(new ValidationError(error.details[0].message));
   }
 
   try {
     const db = req.db;
+    const productToInsert = { ...value, version: 1 };
     const [product]: Product[] = await db('products')
-      .insert(value)
+      .insert(productToInsert)
       .returning('*');
     res.status(201).json(product);
   } catch (error) {
@@ -61,17 +63,39 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
     return next(new ValidationError(error.details[0].message));
   }
 
+  if (!value.version) {
+    return next(new ValidationError('Version is required'));
+  }
+
   try {
     const db = req.db;
-    const [product]: Product[] = await db('products')
-      .where({ id })
-      .update(value)
-      .returning('*');
-    if (!product) {
+    const currentProduct = await db('products').where({ id }).first();
+
+    if (!currentProduct) {
       return next(new NotFoundError('Product not found'));
-    } else {
-      res.status(200).json(product);
     }
+
+    if (value.version !== currentProduct.version) {
+      return next(new ConflictError('Conflict: Product has been updated by another request. Please reload the page and try again.'));
+    }
+
+    // With a PUT request, client should have provided the entire product object.
+    const updatedProduct = { 
+      ...value, 
+      version: currentProduct.version + 1
+    };
+
+    // If we don't find a product with the given id and "current" version, we know that the product has been updated by another request.
+    const [product]: Product[] = await db('products')
+      .where({ id, version: currentProduct.version })
+      .update(updatedProduct)
+      .returning('*');
+    
+    if (!product) {
+      return next(new ConflictError('Conflict: Product has been updated by another request. Please reload the page and try again.'));
+    }
+    
+    res.status(200).json(product);
   } catch (error) {
     console.error('Error updating product:', error);
     next(error);
@@ -83,6 +107,7 @@ router.patch(
   '/:id',
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
+    // Not sure if I should use `presence: 'optional'` here. I think I could leave it out, as in productPatchSchema all but `version` are marked as optional while `version` is required.
     const { error, value } = productPatchSchema.validate(req.body, {
       presence: 'optional',
     });
@@ -90,17 +115,38 @@ router.patch(
       return next(new ValidationError(error.details[0].message));
     }
 
+    if (!value.version) {
+      return next(new ValidationError('Version is required'));
+    }
+
     try {
       const db = req.db;
-      const [product]: Product[] = await db('products')
-        .where({ id })
-        .update(value)
-        .returning('*');
-      if (!product) {
+      const currentProduct = await db('products').where({ id }).first();
+
+      if (!currentProduct) {
         return next(new NotFoundError('Product not found'));
-      } else {
-        res.status(200).json(product);
       }
+
+      if (value.version !== currentProduct.version) {
+        return next(new ConflictError('Conflict: Product has been updated by another request. Please reload the page and try again.'));
+      }
+
+      const updatedProduct = {
+        ...currentProduct,
+        ...value,
+        version: currentProduct.version + 1,
+      };
+
+      const [product]: Product[] = await db('products')
+        .where({ id, version: currentProduct.version })
+        .update(updatedProduct)
+        .returning('*');
+
+      if (!product) {
+        return next(new ConflictError('Conflict: Product has been updated by another request'));
+      }
+
+      res.status(200).json(product);
     } catch (error) {
       console.error('Error updating product:', error);
       next(error);

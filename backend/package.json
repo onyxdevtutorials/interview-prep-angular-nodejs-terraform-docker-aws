@@ -10,7 +10,10 @@
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "serve:report": "browser-sync start --config bs-config.js",
-    "test:clearCache": "jest --clearCache"
+    "test:clearCache": "jest --clearCache",
+    "test:users": "jest --config ./jest.config.ts --testPathPattern=users.integration.test.ts",
+    "test:products": "jest --config ./jest.config.ts --testPathPattern=products.integration.test.ts",
+    "test:unit": "jest --config ./jest.config.ts --testPathPattern=unit"
   },
   "_moduleAliases": {},
   "keywords": [],
@@ -18,11 +21,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@onyxdevtutorials/interview-prep-shared": "^1.0.3",
+    "@onyxdevtutorials/interview-prep-shared": "^1.0.5",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "express": "^4.21.1",
     "dotenv": "^16.4.5",
+    "express": "^4.21.1",
     "joi": "^17.13.3",
     "knex": "^3.1.0",
     "module-alias": "^2.2.3",

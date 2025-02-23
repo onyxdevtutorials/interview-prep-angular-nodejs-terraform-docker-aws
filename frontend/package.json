@@ -23,7 +23,7 @@
     "@angular/platform-browser": "^18.2.8",
     "@angular/platform-browser-dynamic": "^18.2.8",
     "@angular/router": "^18.2.8",
-    "@onyxdevtutorials/interview-prep-shared": "^1.0.3",
+    "@onyxdevtutorials/interview-prep-shared": "^1.0.5",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "uuid": "^10.0.0",

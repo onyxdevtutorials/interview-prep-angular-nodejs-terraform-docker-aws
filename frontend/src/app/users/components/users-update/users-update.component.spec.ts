@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { User, UserStatus } from '@onyxdevtutorials/interview-prep-shared';
 import { mockUsers } from '../../mocks/mock-users';
 import { of, throwError } from 'rxjs';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 describe('UsersUpdateComponent', () => {
   let component: UsersUpdateComponent;
@@ -18,7 +19,7 @@ describe('UsersUpdateComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UsersUpdateComponent, BrowserAnimationsModule],
+      imports: [UsersUpdateComponent, BrowserAnimationsModule, MatSnackBarModule],
       providers: [
         provideHttpClient(),
         provideRouter(routes),
@@ -41,6 +42,11 @@ describe('UsersUpdateComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should inject UsersService and MatSnackBar', () => {
+    expect(component.usersService).toBeDefined();
+    expect(component.snackBar).toBeDefined();
   });
 
   it('should call updateUser on UsersService when handleFormSubmit is called', () => {
@@ -85,7 +91,7 @@ describe('UsersUpdateComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/users']);
   });
 
-  it('should log an error if updateUser fails', () => {
+  it('should log an error and display error in MatSnackBar if updateUser fails', () => {
     const formData = {
       first_name: 'Jerry',
       last_name: 'Doe',
@@ -96,7 +102,7 @@ describe('UsersUpdateComponent', () => {
     spyOn(mockUsersService, 'updateUser').and.returnValue(
       throwError(() => new Error('Simulated network error'))
     );
-
+    spyOn(component.snackBar, 'open');
     spyOn(console, 'error');
 
     component.handleFormSubmit(formData);
@@ -104,6 +110,12 @@ describe('UsersUpdateComponent', () => {
     expect(console.error).toHaveBeenCalledWith(
       'Error updating user:',
       new Error('Simulated network error')
+    );
+
+    expect(component.snackBar.open).toHaveBeenCalledWith(
+      'Simulated network error',
+      'Close',
+      { duration: 5000 }
     );
   });
 
@@ -120,6 +132,7 @@ describe('UsersUpdateComponent', () => {
       throwError(() => new Error('Simulated network error'))
     );
 
+    spyOn(component.snackBar, 'open');
     spyOn(console, 'error');
 
     component.ngOnInit();
@@ -127,6 +140,12 @@ describe('UsersUpdateComponent', () => {
     expect(console.error).toHaveBeenCalledWith(
       'Error getting user:',
       new Error('Simulated network error')
+    );
+
+    expect(component.snackBar.open).toHaveBeenCalledWith(
+      'Simulated network error',
+      'Close',
+      { duration: 5000 }
     );
   });
 });

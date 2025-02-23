@@ -13,18 +13,21 @@ export async function seed(knex: Knex): Promise<void> {
       first_name: 'User',
       last_name: 'One',
       status: UserStatus.ACTIVE,
+      version: 1,
     },
     {
       email: 'user2@xyz.com',
       first_name: 'User',
       last_name: 'Two',
       status: UserStatus.ACTIVE,
+      version: 1,
     },
     {
       email: 'user3@xyz.com',
       first_name: 'User',
       last_name: 'Three',
       status: UserStatus.ACTIVE,
+      version: 1,
     },
   ];
 

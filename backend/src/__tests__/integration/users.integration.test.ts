@@ -2,11 +2,8 @@ import request from 'supertest';
 import app from '../../app';
 import knex from 'knex';
 import knexConfig from '../../knexFile';
-// import dotenv from 'dotenv';
 import { User, UserStatus } from '@onyxdevtutorials/interview-prep-shared';
 import retry from "retry";
-
-// dotenv.config({ path: '../../../.env.test' });
 
 const db = knex(knexConfig['test_users']);
 
@@ -101,6 +98,7 @@ describe('POST /api/v0/users', () => {
     expect(response.body.first_name).toBe(newUser.first_name);
     expect(response.body.last_name).toBe(newUser.last_name);
     expect(response.body.status).toBe(newUser.status);
+    expect(response.body.version).toBe(1);
   });
 
   it('should return a 400 for a user with missing fields', async () => {
@@ -125,6 +123,7 @@ describe('PUT /api/v0/users/:id', () => {
       first_name: 'Elvis',
       last_name: 'Presley',
       status: UserStatus.ACTIVE,
+      version: 1,
     };
 
     const response = await request(app).put(`${usersPath}/1`).send(updatedUser);
@@ -134,6 +133,7 @@ describe('PUT /api/v0/users/:id', () => {
     expect(response.body.first_name).toBe(updatedUser.first_name);
     expect(response.body.last_name).toBe(updatedUser.last_name);
     expect(response.body.status).toBe(updatedUser.status);
+    expect(response.body.version).toBe(2);
   });
 
   it('should return 400 for a user with missing fields', async () => {
@@ -154,11 +154,55 @@ describe('PUT /api/v0/users/:id', () => {
       first_name: 'Elvis',
       last_name: 'Presley',
       status: UserStatus.ACTIVE,
+      version: 1,
     };
 
     const response = await request(app).put(`${usersPath}/999`).send(updatedUser);
 
     expect(response.status).toBe(404);
+  });
+
+  it('PUT should return a 409 for a user that has been updated by another request', async () => {
+    const user: Omit<User, 'id'> = {
+      email: 'priscilla.presley@graceland.com',
+      first_name: 'Priscilla',
+      last_name: 'Presley',
+      status: UserStatus.ACTIVE,
+    };
+
+    const [createdUser] = await db('users').insert(user).returning('*');
+
+    console.log('****** createdUser:', createdUser);
+
+    const firstUpdate: Partial<User> = {
+      ...createdUser,
+      last_name: 'Wagner',
+      version: createdUser.version,
+    };
+
+    const firstResponse = await request(app)
+      .put(`${usersPath}/${createdUser.id}`)
+      .send(firstUpdate);
+
+    console.log('****** firstResponse:', firstResponse.body);
+
+    expect(firstResponse.status).toBe(200);
+
+    // Intentionally create a version mismatch
+    const secondUpdate: Partial<User> = {
+      ...createdUser,
+      last_name: 'Smith',
+      version: createdUser.version,
+    };
+
+    const secondResponse = await request(app)
+      .put(`${usersPath}/${createdUser.id}`)
+      .send(secondUpdate);
+
+    console.log('****** secondResponse:', secondResponse.body);
+    
+    expect(secondResponse.status).toBe(409);
+    expect(secondResponse.body.error).toBe('Conflict: User has been updated by another process. Please reload the page and try again.');
   });
 
   it.todo('should handle other errors');
@@ -168,6 +212,7 @@ describe('PATCH /api/v0/users/:id', () => {
   it('should update an existing user', async () => {
     const updatedUser: Partial<User> = {
       email: 'elvis.presley@graceland.com',
+      version: 1,
     };
 
     const response = await request(app).patch(`${usersPath}/1`).send(updatedUser);
@@ -176,24 +221,62 @@ describe('PATCH /api/v0/users/:id', () => {
     expect(response.body.email).toBe(updatedUser.email);
   });
 
-  it('should return 400 for a user with "missing" fields (should return 200)', async () => {
+  // The only required field for a PATCH is the version field
+  it('should return 400 for a user with "missing" fields', async () => {
     const updatedUser: Partial<User> = {
       email: 'elvis.presley@graceland.com',
     };
 
     const response = await request(app).patch(`${usersPath}/1`).send(updatedUser);
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(400);
   });
 
   it('should return a 404 for a non-existent user', async () => {
     const updatedUser: Partial<User> = {
       email: 'elvis.presley@graceland.com',
+      version: 1,
     };
 
     const response = await request(app).patch(`${usersPath}/999`).send(updatedUser);
 
     expect(response.status).toBe(404);
+  });
+
+  it('should return a 409 for a user that has been updated by another request', async () => {
+    const user: Omit<User, 'id'> = {
+      email: 'priscilla.presley@graceland.com',
+      first_name: 'Priscilla',
+      last_name: 'Presley',
+      status: UserStatus.ACTIVE,
+      version: 1,
+    };
+
+    const [createdUser] = await db('users').insert(user).returning('*');
+
+    const firstUpdate: Partial<User> = {
+      last_name: 'Wagner',
+      version: createdUser.version,
+    };
+
+    const firstResponse = await request(app)
+      .patch(`${usersPath}/${createdUser.id}`)
+      .send(firstUpdate);
+
+    expect(firstResponse.status).toBe(200);
+
+    // Intentionally create a version mismatch
+    const secondUpdate: Partial<User> = {
+      last_name: 'Smith',
+      version: createdUser.version,
+    };
+
+    const secondResponse = await request(app)
+      .patch(`${usersPath}/${createdUser.id}`)
+      .send(secondUpdate);
+    
+    expect(secondResponse.status).toBe(409);
+    expect(secondResponse.body.error).toBe('Conflict: User has been updated by another process. Please reload the page and try again.');
   });
 
   it.todo('should handle other errors');
