@@ -13,7 +13,8 @@
     "test:clearCache": "jest --clearCache",
     "test:users": "jest --config ./jest.config.ts --testPathPattern=users.integration.test.ts",
     "test:products": "jest --config ./jest.config.ts --testPathPattern=products.integration.test.ts",
-    "test:unit": "jest --config ./jest.config.ts --testPathPattern=unit"
+    "test:unit": "jest --config ./jest.config.ts --testPathPattern=unit",
+    "load-test": "k6 run load-test.js"
   },
   "_moduleAliases": {},
   "keywords": [],
