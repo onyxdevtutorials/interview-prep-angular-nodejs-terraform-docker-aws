@@ -9,8 +9,13 @@ export let options = {
   ],
 };
 
+const BASE_URL = __ENV.BASE_URL || 'https://localhost:3000';
+
 export default function () {
-  let res = http.get('http://localhost:3000/api/v0/users');
-  check(res, { 'status was 200': (r) => r.status == 200 });
+  let res = http.get(`${BASE_URL}/api/v0/users`);
+  check(res, {
+    'status was 200': (r) => r.status == 200,
+    'response time was < 500ms': (r) => r.timings.duration < 500,
+});
   sleep(1);
 }
