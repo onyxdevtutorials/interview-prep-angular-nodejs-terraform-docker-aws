@@ -202,4 +202,4 @@ jobs:
           with:
               filename: ./backend/load-test.js
           env:
-            BASE_URL: https://dev.interviewprep.onyxdevtutorials.com
+            BASE_URL: https://api.dev.interviewprep.onyxdevtutorials.com:3000
