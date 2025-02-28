@@ -2,8 +2,8 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 // Possible test types include smoke, stress, spike, soak and load.
-// Smoke: verify system can habdle a minimal load w/o issues.
-// Stress: determine breaking point by increading number of VUs until the API starts returning errors or response times degrade significantly.
+// Smoke: verify system can handle a minimal load w/o issues.
+// Stress: determine breaking point by increasing number of VUs until the API starts returning errors or response times degrade significantly.
 // Spike: test how the system handles sudden spikes in load. A sudden increase in the number of VUs to simulate a traffic spike, followed by a return to normal load.
 // Soak (endurance): test the system's stability and performance over an extended period. Running a constant load for several hours or days to identify memory leaks or performance degradation over time.
 // Load: test the system under expected peak load conditions. Running a constant load for a period of time to verify that the system can handle the expected number of users.

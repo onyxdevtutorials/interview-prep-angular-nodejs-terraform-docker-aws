@@ -1,6 +1,6 @@
 # Interview Prep
 
-[Video](https://youtu.be/e8xXtHpPZ_o)
+[Video](https://www.youtube.com/playlist?list=PL7FXjzyGAf4WDBzSv7eUO0vu8-nZV8kTr)
 
 This project grew out of wanting to prepare for an interview for a job that would have focused on Angular. As I had been using React exclusively for several months, I needed to refresh my Angular skills. Then I began to add more things to make up for my focus on AWS Amplify. The result is in some ways the opposite of what I have in my previous videos:
 
@@ -10,9 +10,11 @@ This project grew out of wanting to prepare for an interview for a job that woul
 * REST (using a NodeJS/Express backend) vs GraphQL (using Amplify and AppSync)
 * This project has nothing in regard to authentication (yet), while the Amplify project implemented authentication right at the beginning.
 * AWS infrastructure is set up and maintained using Terraform. That is obviously different from the approach AWS Amplify takes.
-* CI/CD (continuous integration/continuous deployment) workflow.
+* CI/CD (continuous integration/continuous deployment) workflow using GitHub Actions.
 
 Also, in the Amplify project I haven't yet implemented any automated testing but in this project I have unit and integration tests. I set up a GitHub Workflow with GitHub Actions to run the tests when there is a push to or a pull request on specified branches.
+
+As of February 2025, there is a load testing using k6 in the GitHub workflow.
 
 This project is Dockerized, and I developed it in a devcontainer. 
 
@@ -130,6 +132,7 @@ A lot of `ci.yml` is self-explanatory but here are some notes to help clarify so
   * And finally zips up everything.
 * **Update Lambda migration function**: Updates the AWS Lambda function code for database migrations using the AWS CLI. The workflow waits for the update to be completed before the function is invoked.
 * **Build and push frontend Docker image**: Note that this step uses a Dockerfile in the root of the project, rather than the Dockerfile in the frontend directory. I wanted to keep the Dockerfile in the frontend directory for local development purposes, e.g., `frontend/Dockerfile` uses the Angular server and port 4200.
+* **Load testing**: using [k6](https://k6.io/).
 
 ## Infrastructure
 
@@ -295,6 +298,7 @@ Assuming CWD is `backend`, `npx knex migrate:make <migration-file-name> --knexfi
 
 ### 0.1.3
 - Added optimistic locking. (Alternatives: Pessimistic Locking, Automatic Conflict Resolution, Eventual Consistency.)
+- Added load testing to the GitHub workflow.
 
 ### 0.1.2
 - Added Terraform configuration for managing AWS infrastructure.

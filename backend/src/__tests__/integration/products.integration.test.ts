@@ -184,8 +184,6 @@ describe('PUT /api/v0/products/:id', () => {
 
     const [createdProduct] = await db('products').insert(product).returning('*');
 
-    console.log('****** createdProduct:', createdProduct);
-
     const firstUpdate: Partial<Product> = {
       ...createdProduct,
       name: 'First Update',
@@ -195,8 +193,6 @@ describe('PUT /api/v0/products/:id', () => {
       .put(`${productsPath}/${createdProduct.id}`)
       .send(firstUpdate);
     
-    console.log('****** firstResponse:', firstResponse.body);
-
     expect(firstResponse.status).toBe(200);
 
     // Intentionally create a version mismatch
