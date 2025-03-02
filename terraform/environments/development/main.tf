@@ -152,6 +152,9 @@ module "load_balancer" {
   vpc_id = module.vpc.vpc_id
   frontend_health_check_path = "/health"
   backend_health_check_path = "/health"
+  frontend_domain_name = "dev.interviewprep.onyxdevtutorials.com"
+  zone_id = aws_route53_zone.onyxdevtutorials_com.zone_id
+  frontend_cert_arn = module.dns.frontend_cert_arn
 }
 
 module "dns" {
@@ -163,6 +166,7 @@ module "dns" {
   lb_zone_id = module.load_balancer.lb_zone_id
   custom_domain_name = module.api_gateway.custom_domain_name
   custom_domain_zone_id = module.api_gateway.custom_domain_zone_id
+  environment = var.environment
 }
 
 module "api_gateway" {
@@ -172,5 +176,5 @@ module "api_gateway" {
   lb_dns_name = module.load_balancer.lb_dns_name
   region = var.region
   certificate_arn = var.certificate_arn
-  cors_origin = "http://dev.interviewprep.onyxdevtutorials.com"
+  cors_origin = "https://dev.interviewprep.onyxdevtutorials.com"
 }
