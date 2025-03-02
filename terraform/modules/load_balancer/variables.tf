@@ -29,3 +29,18 @@ variable "backend_health_check_path" {
     type        = string
     default     = "/"
 }
+
+variable "frontend_domain_name" {
+    description = "The domain name for the frontend"
+    type        = string
+}
+
+variable "zone_id" {
+    description = "The Route 53 zone ID for the domain"
+    type        = string
+}
+
+variable "frontend_cert_arn" {
+    description = "The ARN of the certificate for the frontend"
+    type        = string
+}

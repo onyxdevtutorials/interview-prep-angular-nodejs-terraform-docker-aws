@@ -137,3 +137,8 @@ output "backend_target_group_arn" {
     description = "The ARN of the backend target group"
     value = module.load_balancer.backend_target_group_arn
 }
+
+output "frontend_cert_arn" {
+    description = "The ARN of the frontend certificate"
+    value = module.dns.frontend_cert_arn
+}

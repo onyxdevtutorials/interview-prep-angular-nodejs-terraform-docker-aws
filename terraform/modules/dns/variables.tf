@@ -1,3 +1,8 @@
+variable "environment" {
+    description = "The environment in which the resources are being created"
+    type        = string
+}
+
 variable "zone_id" {
     description = "The ID of the Route 53 hosted zone"
     type        = string
