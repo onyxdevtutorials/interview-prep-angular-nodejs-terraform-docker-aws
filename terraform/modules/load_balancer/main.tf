@@ -1,3 +1,4 @@
+# Create an Application Load Balancer (ALB) to route incoming traffic to the frontend and backend services.
 resource "aws_lb" "this" {
   name               = "${var.environment}-interview-prep-lb"
   internal           = false # Set to false to create an internet-facing load balancer
@@ -63,8 +64,9 @@ resource "aws_lb_listener" "https_frontend" {
   load_balancer_arn = aws_lb.this.arn
   port              = 443
   protocol          = "HTTPS"
+  # ELBSecurityPolicy-2016-08 is a security policy that includes a set of SSL/TLS protocols and ciphers that are considered secure as of August 2016. It is designed to provide a balance between compatibility with older clients and security.
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = var.frontend_cert_arn
+  certificate_arn   = var.frontend_cert_arn # Refer to the DNS module to see how the certificate ARN is passed to the load balancer.
 
   default_action {
     type             = "forward"
