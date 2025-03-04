@@ -71,7 +71,7 @@ services:
 
 ## Frontend
 
-The frontend app, which uses Angular 18, is simple in terms of features: it allows listing, creating and editing users and products.
+The frontend app, which uses Angular 18, is simple in terms of features: it allows listing, creating and editing users and products. It is accessible via an HTTPS connection.
 
 What are some technical aspects of Angular, Angular Material and RxJS that it demonstrates?
 
@@ -143,10 +143,10 @@ The diagram above illustrates the major parts of the application infrastructure.
 * **Interview Prep VPC**: "The Virtual Private Cloud (VPC) is a logically isolated network within the AWS cloud where we can launch and manage AWS resources. It provides a secure environment to group and connect related resources and services, such as EC2 instances, RDS databases, and ECS clusters. The VPC allows us to define our own IP address range, create subnets, and configure route tables and network gateways, ensuring that our infrastructure is both secure and scalable." (GitHub Copilot came up with such a great explanation here that I'm just going to use it as-is.)
 * **Availability zones A and B**: `us-east-1a` and `us-east-1b`. These zones, along with their corresponding public and private subnets, enhance the app's resilience. Currently, one task each for the ECS frontend and backend is deployed, but this can be scaled to distribute tasks across both availability zones.
 * **Public subnets A and B**: The load balancer, bastion host, NAT gateway and Internet gateway are in the public subnets. At the moment there isn't any real load balancing going on. 
-* **Load balancer**: We're not doing any real load balancing at the moment as there's only one instance of the frontend and backend but we could easily scale up, e.g., by making the `desired_count` greater than 1 in the ECS module. Right now, the load balancer serves to connect the `dev.interviewprep.onyxdevtutorials.com` domain to the frontend ECS service, and the API gateway (`api.dev.interviewprep.onyxdevtutorials.com`) to the backend ECS service.
+* **Load balancer**: We're not doing any real load balancing at the moment as there's only one instance of the frontend and backend but we could easily scale up, e.g., by making the `desired_count` greater than 1 in the ECS module. Right now, the load balancer serves to connect the `dev.interviewprep.onyxdevtutorials.com` domain to the frontend ECS service, and the API gateway (`api.dev.interviewprep.onyxdevtutorials.com`) to the backend ECS service. The load balancer also handles SSL termination, ensuring that all traffic to the frontend and API is encrypted using HTTPS.
 * **Bastion host**: This is an EC2 instance that isn't strictly necessary but provides a relatively secure way for SSH access to application services such as the database that are in the private subnet. I have a bastion security group that allows only SSH (port 22) access and only from my dedicated VPN IP address. With this I can, for example, SSH into the bastion and then run psql commands on the RDS-hosted Postgres database (see the `bastion_sg` security group and the `allow_bastion_to_db` rule in the Terraform security groups module).
 * **Private subnets A and B**: The frontend and backend apps and ECS services, and the Postgres database, all run in the private subnets.
-* **Security groups**: There are multiple security groups defining the ingress and egress for the various services, i.e., what can access what and via which ports. At present, we're using only http (port 80 for the frontend, port 3000 for the backend). Soon we'll make the whole thing https and add authorization for accessing the API.
+* **Security groups**: There are multiple security groups defining the ingress and egress for the various services, i.e., what can access what and via which ports. At present, we're using HTTPS (port 443 for the frontend and API). Authorization for accessing the API will be added in the future.
 * **Public route table**: The public routing table is associated with the public subnets and directs traffic to the internet through the Internet Gateway. This allows resources in the public subnets, such as the load balancer and bastion host, to communicate with the internet.
 * **Private route table**: The private routing table is associated with the private subnets and directs traffic to the internet through the NAT Gateway. This allows resources in the private subnets, such as the ECS services and RDS database, to access the internet for updates and patches while keeping them isolated from direct internet access.
 * **Internet gateway**: Allows resources within the VPC to communicate with the internet.
@@ -295,6 +295,12 @@ Type `\d products` or `\d users` to get information about each of these tables.
 Assuming CWD is `backend`, `npx knex migrate:make <migration-file-name> --knexfile ./src/knexFile.ts --migrations-directory ../migrations`.
 
 ## Version History
+
+### 0.1.4
+- Used Terraform to obtain an SSL certificate from AWS Certificate Manager (ACM).
+- Configured the Application Load Balancer (ALB) to handle SSL termination.
+- Updated the Terraform configuration to manage SSL certificates and ALB listeners.
+- Ensured all HTTP traffic is redirected to HTTPS for secure communication.
 
 ### 0.1.3
 - Added optimistic locking. (Alternatives: Pessimistic Locking, Automatic Conflict Resolution, Eventual Consistency.)

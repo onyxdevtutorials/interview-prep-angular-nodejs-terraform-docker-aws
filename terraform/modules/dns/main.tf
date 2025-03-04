@@ -22,6 +22,7 @@ resource "aws_route53_record" "backend" {
   }
 }
 
+# Request an SSL certificate for the frontend domain using AWS Certificate Manager (ACM)
 resource "aws_acm_certificate" "frontend_cert" {
   domain_name       = var.frontend_record_name
   validation_method = "DNS"
@@ -32,7 +33,9 @@ resource "aws_acm_certificate" "frontend_cert" {
   }
 }
 
+# Create DNS validation records for the SSL certificate
 resource "aws_route53_record" "frontend_cert_validation" {
+  # Iterate over the domain validation options for the ACM certificate for the frontend domain. The result is then accessible via the `each` object.
   for_each = {
     for dvo in aws_acm_certificate.frontend_cert.domain_validation_options : dvo.domain_name => {
       name         = dvo.resource_record_name
@@ -52,6 +55,8 @@ resource "aws_route53_record" "frontend_cert_validation" {
   }
 }
 
+# Validate the SSL certificate using the DNS records created above
+# fqdn: Fully Qualified Domain Name, i.e., dev.interviewprep.onyxdevtutorials.com
 resource "aws_acm_certificate_validation" "frontend_cert_validation" {
   certificate_arn         = aws_acm_certificate.frontend_cert.arn
   validation_record_fqdns = [for record in aws_route53_record.frontend_cert_validation : record.fqdn]
